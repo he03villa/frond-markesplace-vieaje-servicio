@@ -1,0 +1,7 @@
+{
+  "name": "front-marketplace-de-servicios-y-viajes-compartidos",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular-standalone"
+}
