@@ -1,0 +1,417 @@
+<!-- Modal o página para crear publicación -->
+<ion-content>
+  <ion-header class="ion-no-border">
+    <ion-toolbar>
+      <ion-buttons slot="start">
+        <ion-button (click)="salir()"><ion-icon name="close-outline"></ion-icon></ion-button>
+      </ion-buttons>
+      <ion-title>Crear Nueva Publicación</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  <!-- Tabs para seleccionar tipo de publicación -->
+  <ion-segment [(ngModel)]="publicationType" (ionChange)="onTypeChange()" value="service">
+    <ion-segment-button value="service">
+      <ion-label>Servicio</ion-label>
+    </ion-segment-button>
+    <ion-segment-button value="ride">
+      <ion-label>Viaje</ion-label>
+    </ion-segment-button>
+  </ion-segment>
+
+  <!-- Formulario para SERVICIO -->
+  <form id="serviceForm" *ngIf="publicationType === 'service'">
+    <ion-list lines="none">
+      <!-- Título -->
+      <ion-item>
+        <ion-label position="stacked">
+          Título del servicio <span class="required">*</span>
+        </ion-label>
+        <ion-input 
+          type="text" 
+          [(ngModel)]="serviceForm.title" 
+          name="title"
+          placeholder="Ej: Reparación de computadora"
+          maxlength="255"
+          required>
+        </ion-input>
+      </ion-item>
+      <div class="counter">{{serviceForm.title?.length || 0}}/255</div>
+
+      <!-- Descripción -->
+      <ion-item>
+        <ion-label position="stacked">
+          Descripción detallada <span class="required">*</span>
+        </ion-label>
+        <ion-textarea 
+          [(ngModel)]="serviceForm.description" 
+          name="description"
+          placeholder="Describe qué necesitas exactamente..."
+          rows="4"
+          required>
+        </ion-textarea>
+      </ion-item>
+
+      <!-- Categoría -->
+      <ion-item>
+        <ion-label position="stacked">
+          Categoría <span class="required">*</span>
+        </ion-label>
+        <ion-select 
+          [(ngModel)]="serviceForm.category" 
+          name="category"
+          placeholder="Selecciona una categoría"
+          interface="action-sheet"
+          required>
+          <ion-select-option value="fontaneria">Fontanería</ion-select-option>
+          <ion-select-option value="electricidad">Electricidad</ion-select-option>
+          <ion-select-option value="tecnologia">Tecnología</ion-select-option>
+          <ion-select-option value="educacion">Educación</ion-select-option>
+          <ion-select-option value="diseno">Diseño</ion-select-option>
+          <ion-select-option value="reparaciones">Reparaciones</ion-select-option>
+          <ion-select-option value="limpieza">Limpieza</ion-select-option>
+          <ion-select-option value="cuidado">Cuidado personal</ion-select-option>
+          <ion-select-option value="otros">Otros</ion-select-option>
+        </ion-select>
+      </ion-item>
+
+      <!-- Ubicación del servicio -->
+      <div class="section-header">
+        <h3>Ubicación del servicio</h3>
+      </div>
+      
+      <!-- AQUÍ VA EL MAPA PARA SERVICIOS -->
+      <div style="padding: 16px;">
+        <app-location-picker
+          [mapId]="'map-service'"
+          [latitude]="serviceForm.latitude || 11.2408"
+          [longitude]="serviceForm.longitude || -74.1990"
+          (locationSelected)="onServiceLocationSelected($event)">
+        </app-location-picker>
+      </div>
+
+      <!-- Dirección seleccionada -->
+      <ion-item *ngIf="serviceForm.address">
+        <ion-label position="stacked">Dirección seleccionada:</ion-label>
+        <ion-text style="white-space: normal; padding: 8px 0;">
+          <small>{{ serviceForm.address }}</small>
+        </ion-text>
+      </ion-item>
+
+      <!-- Presupuesto -->
+      <div class="section-header">
+        <h3>Presupuesto estimado</h3>
+        <p class="subtitle">Define un rango para tu presupuesto (opcional)</p>
+      </div>
+
+      <ion-grid>
+        <ion-row>
+          <ion-col size="6">
+            <ion-item>
+              <ion-label position="stacked">Mínimo</ion-label>
+              <ion-input 
+                type="number" 
+                [(ngModel)]="serviceForm.budget_min" 
+                name="budget_min"
+                placeholder="0"
+                min="0">
+                <ion-text slot="start">$</ion-text>
+              </ion-input>
+            </ion-item>
+          </ion-col>
+          
+          <ion-col size="6">
+            <ion-item>
+              <ion-label position="stacked">Máximo</ion-label>
+              <ion-input 
+                type="number" 
+                [(ngModel)]="serviceForm.budget_max" 
+                name="budget_max"
+                placeholder="0"
+                min="0"
+                [disabled]="!serviceForm.budget_min">
+                <ion-text slot="start">$</ion-text>
+              </ion-input>
+            </ion-item>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+
+      <!-- Validación presupuesto -->
+      <div class="budget-validation" *ngIf="serviceForm.budget_min && serviceForm.budget_max">
+        <ion-icon 
+          [name]="serviceForm.budget_max >= serviceForm.budget_min ? 'checkmark-circle' : 'alert-circle'" 
+          [color]="serviceForm.budget_max >= serviceForm.budget_min ? 'success' : 'danger'">
+        </ion-icon>
+        <span *ngIf="serviceForm.budget_max >= serviceForm.budget_min">
+          Rango válido: ${{serviceForm.budget_min}} - ${{serviceForm.budget_max}}
+        </span>
+        <span *ngIf="serviceForm.budget_max < serviceForm.budget_min" class="error">
+          El máximo debe ser mayor o igual al mínimo
+        </span>
+      </div>
+
+      <!-- Fecha límite -->
+      <ion-item>
+        <ion-label position="stacked">
+          Fecha límite (opcional)
+        </ion-label>
+        <ion-datetime 
+          [(ngModel)]="serviceForm.deadline" 
+          name="deadline"
+          display-format="DD/MM/YYYY HH:mm"
+          min="{{minDate}}"
+          placeholder="Selecciona fecha y hora">
+        </ion-datetime>
+      </ion-item>
+
+      <!-- Imágenes -->
+      <image-upload-section 
+        [previewImages]="serviceImages"
+        (imagesSelected)="onServiceImagesSelected($event)"
+        (imageRemoved)="removeServiceImage($event)">
+      </image-upload-section>
+    </ion-list>
+  </form>
+
+  <!-- Formulario para VIAJE -->
+  <form id="rideForm" *ngIf="publicationType === 'ride'">
+    <ion-list lines="none">
+      <!-- Origen -->
+      <div class="section-header">
+        <h3>Punto de partida</h3>
+      </div>
+      
+      <!-- MAPA PARA ORIGEN -->
+      <div style="padding: 16px;">
+        <app-location-picker
+          mapId="map-origin"
+          [latitude]="rideForm.origin_lat || 11.2408"
+          [longitude]="rideForm.origin_lng || -74.1990"
+          (locationSelected)="onOriginLocationSelected($event)">
+        </app-location-picker>
+      </div>
+
+      <ion-item *ngIf="rideForm.origin_address">
+        <ion-label position="stacked">Origen seleccionado:</ion-label>
+        <ion-text style="white-space: normal; padding: 8px 0;">
+          <small>{{ rideForm.origin_address }}</small>
+        </ion-text>
+      </ion-item>
+
+      <!-- Destino -->
+      <div class="section-header">
+        <h3>Destino</h3>
+      </div>
+      
+      <!-- MAPA PARA DESTINO -->
+      <div style="padding: 16px;">
+        <app-location-picker
+          mapId="map-destination"
+          [latitude]="rideForm.destination_lat || 11.2408"
+          [longitude]="rideForm.destination_lng || -74.1990"
+          (locationSelected)="onDestinationLocationSelected($event)">
+        </app-location-picker>
+      </div>
+
+      <ion-item *ngIf="rideForm.destination_address">
+        <ion-label position="stacked">Destino seleccionado:</ion-label>
+        <ion-text style="white-space: normal; padding: 8px 0;">
+          <small>{{ rideForm.destination_address }}</small>
+        </ion-text>
+      </ion-item>
+
+      <!-- Resumen de ruta -->
+      <div class="route-preview" *ngIf="rideForm.origin_address && rideForm.destination_address">
+        <div class="route-line">
+          <div class="route-point origin">
+            <ion-icon name="locate-outline"></ion-icon>
+          </div>
+          <div class="route-dots">
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+          </div>
+          <div class="route-point destination">
+            <ion-icon name="location-outline"></ion-icon>
+          </div>
+        </div>
+        <div class="route-info">
+          <ion-text>
+            <strong>De:</strong> {{ rideForm.origin_address.substring(0, 50) }}...<br>
+            <strong>A:</strong> {{ rideForm.destination_address.substring(0, 50) }}...
+          </ion-text>
+        </div>
+      </div>
+
+      <!-- Detalles del viaje -->
+      <div class="section-header">
+        <h3>Detalles del viaje</h3>
+      </div>
+
+      <!-- Fecha y hora de salida -->
+      <ion-item>
+        <ion-label position="stacked">
+          Fecha y hora de salida <span class="required">*</span>
+        </ion-label>
+        <ion-datetime 
+          [(ngModel)]="rideForm.departure_time" 
+          name="departure_time"
+          display-format="DD/MM/YYYY HH:mm"
+          min="{{minDate}}"
+          placeholder="Selecciona fecha y hora"
+          required>
+        </ion-datetime>
+      </ion-item>
+
+      <!-- Asientos disponibles -->
+      <ion-item>
+        <ion-label position="stacked">
+          Asientos disponibles <span class="required">*</span>
+        </ion-label>
+        <ion-select 
+          [(ngModel)]="rideForm.available_seats" 
+          name="available_seats"
+          placeholder="Selecciona cantidad"
+          interface="action-sheet"
+          required>
+          <ion-select-option value="1">1 asiento</ion-select-option>
+          <ion-select-option value="2">2 asientos</ion-select-option>
+          <ion-select-option value="3">3 asientos</ion-select-option>
+          <ion-select-option value="4">4 asientos</ion-select-option>
+          <ion-select-option value="5">5 asientos</ion-select-option>
+          <ion-select-option value="6">6 asientos</ion-select-option>
+          <ion-select-option value="7">7 asientos</ion-select-option>
+          <ion-select-option value="8">8 asientos</ion-select-option>
+        </ion-select>
+      </ion-item>
+
+      <!-- Precio por asiento -->
+      <ion-item>
+        <ion-label position="stacked">
+          Precio por asiento <span class="required">*</span>
+        </ion-label>
+        <ion-input 
+          type="number" 
+          [(ngModel)]="rideForm.price_per_seat" 
+          name="price_per_seat"
+          placeholder="0"
+          min="0"
+          step="0.01"
+          required>
+          <ion-text slot="start">$</ion-text>
+        </ion-input>
+      </ion-item>
+
+      <!-- Total estimado -->
+      <div class="total-estimate" *ngIf="rideForm.available_seats && rideForm.price_per_seat">
+        <ion-icon name="calculator-outline"></ion-icon>
+        <span>Total estimado: <strong>${{rideForm.available_seats * rideForm.price_per_seat}}</strong></span>
+        <span class="subtotal">(${{rideForm.price_per_seat}} × {{rideForm.available_seats}} asientos)</span>
+      </div>
+
+      <!-- Notas adicionales -->
+      <ion-item>
+        <ion-label position="stacked">
+          Notas adicionales (opcional)
+        </ion-label>
+        <ion-textarea 
+          [(ngModel)]="rideForm.notes" 
+          name="notes"
+          placeholder="Ej: Solo llevo equipaje de mano, tengo mascota, paradas específicas..."
+          rows="3">
+        </ion-textarea>
+      </ion-item>
+
+      <!-- Información del vehículo (opcional) -->
+      <div class="section-header">
+        <h3>Información del vehículo (opcional)</h3>
+      </div>
+
+      <ion-grid>
+        <ion-row>
+          <ion-col size="6">
+            <ion-item>
+              <ion-label position="stacked">Marca</ion-label>
+              <ion-input 
+                type="text" 
+                [(ngModel)]="rideForm.vehicle_brand" 
+                name="vehicle_brand"
+                placeholder="Toyota">
+              </ion-input>
+            </ion-item>
+          </ion-col>
+          
+          <ion-col size="6">
+            <ion-item>
+              <ion-label position="stacked">Modelo</ion-label>
+              <ion-input 
+                type="text" 
+                [(ngModel)]="rideForm.vehicle_model" 
+                name="vehicle_model"
+                placeholder="Corolla">
+              </ion-input>
+            </ion-item>
+          </ion-col>
+        </ion-row>
+        
+        <ion-row>
+          <ion-col size="6">
+            <ion-item>
+              <ion-label position="stacked">Año</ion-label>
+              <ion-input 
+                type="number" 
+                [(ngModel)]="rideForm.vehicle_year" 
+                name="vehicle_year"
+                placeholder="2020"
+                min="1990"
+                max="{{currentYear}}">
+              </ion-input>
+            </ion-item>
+          </ion-col>
+          
+          <ion-col size="6">
+            <ion-item>
+              <ion-label position="stacked">Color</ion-label>
+              <ion-input 
+                type="text" 
+                [(ngModel)]="rideForm.vehicle_color" 
+                name="vehicle_color"
+                placeholder="Blanco">
+              </ion-input>
+            </ion-item>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </ion-list>
+  </form>
+</ion-content>
+
+<!-- Botones de acción -->
+<ion-footer class="ion-no-border">
+  <ion-toolbar>
+    <ion-grid>
+      <ion-row>
+        <ion-col size="6">
+          <ion-button 
+            expand="block" 
+            fill="outline" 
+            color="medium"
+            (click)="salir()">
+            Cancelar
+          </ion-button>
+        </ion-col>
+        <ion-col size="6">
+          <ion-button 
+            expand="block" 
+            color="primary"
+            [disabled]="!isFormValid()"
+            (click)="createPublication()">
+            <ion-icon slot="start" [name]="publicationType === 'service' ? 'hammer' : 'car'"></ion-icon>
+            {{ publicationType === 'service' ? 'Publicar Servicio' : 'Publicar Viaje' }}
+          </ion-button>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ion-toolbar>
+</ion-footer>

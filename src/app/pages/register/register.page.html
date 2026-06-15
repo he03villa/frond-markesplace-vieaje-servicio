@@ -1,0 +1,211 @@
+<div class="auth-page">
+  <div class="auth-bg">
+    <div class="gradient-orb orb-1"></div>
+    <div class="gradient-orb orb-2"></div>
+    <div class="gradient-orb orb-3"></div>
+  </div>
+
+  <div class="auth-container">
+    <div class="auth-glass">
+      <div class="auth-header">
+        <div class="logo">
+          <div class="logo-icon">
+            <i class="fas fa-user-plus"></i>
+          </div>
+          <div class="logo-text">
+            <h1>Crear Cuenta</h1>
+            <span>Completa tus datos para empezar</span>
+          </div>
+        </div>
+      </div>
+
+      <form id="registerForm" [formGroup]="form" class="auth-form" (submit)="saveUser($event)">
+        
+        <!-- Sección: Datos personales -->
+        <div class="form-section">
+          <div class="form-group" [class.has-error]="form.get('name')?.invalid && form.get('name')?.touched">
+            <label class="form-label" for="firstName">
+              <i class="fas fa-user"></i>
+              Nombre completo
+            </label>
+            <div class="input-wrapper">
+              <input 
+                type="text" 
+                id="firstName" 
+                class="form-control" 
+                placeholder="Juan Pérez" 
+                required 
+                formControlName="name"
+              >
+            </div>
+            <app-error 
+              [clase]="'error-message'" 
+              [control]="form.get('name')" 
+              [validation]="'required'"
+              [message]="'El nombre es requerido'"
+            ></app-error>
+            <app-error 
+              [clase]="'error-message'" 
+              [control]="form.get('name')" 
+              [validation]="'minlength'"
+              [message]="'Mínimo 3 caracteres'"
+            ></app-error>
+          </div>
+
+          <div class="form-group" [class.has-error]="form.get('email')?.invalid && form.get('email')?.touched">
+            <label class="form-label" for="email">
+              <i class="fas fa-envelope"></i>
+              Correo electrónico
+            </label>
+            <div class="input-wrapper">
+              <input 
+                type="email" 
+                id="email" 
+                class="form-control" 
+                placeholder="juan@ejemplo.com" 
+                required 
+                formControlName="email"
+              >
+            </div>
+            <app-error 
+              [clase]="'error-message'" 
+              [control]="form.get('email')" 
+              [validation]="'email'"
+              [message]="'El correo electrónico es inválido'"
+            ></app-error>
+            <app-error 
+              [clase]="'error-message'" 
+              [control]="form.get('email')" 
+              [validation]="'required'"
+              [message]="'El correo electrónico es requerido'"
+            ></app-error>
+          </div>
+        </div>
+
+        <!-- Sección: Seguridad -->
+        <div class="form-section">
+          <div class="section-title">
+            <i class="fas fa-shield-alt"></i>
+            <span>Seguridad</span>
+          </div>
+
+          <div class="form-group" [class.has-error]="form.get('password')?.invalid && form.get('password')?.touched">
+            <label class="form-label" for="password">
+              <i class="fas fa-lock"></i>
+              Contraseña
+            </label>
+            <div class="input-wrapper has-right-icon">
+              <input 
+                [type]="showPassword ? 'text' : 'password'" 
+                id="password" 
+                class="form-control" 
+                placeholder="Crea una contraseña segura" 
+                required
+                formControlName="password"
+              >
+              <button 
+                type="button" 
+                class="password-toggle-container" 
+                aria-label="Mostrar contraseña"
+                (click)="togglePasswordVisibility()"
+              >
+                <i [class]="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
+              </button>
+            </div>
+
+            <!-- Strength meter compacto -->
+            <div class="strength-bar">
+              <div class="strength-fill" [style.width.%]="getStrengthPercent()" [ngClass]="passwordStrength"></div>
+            </div>
+            <div class="strength-label">{{ getStrengthLabel() }}</div>
+
+            <!-- Password hints inline -->
+            <div class="password-hints-inline">
+              <span [class.met]="passwordRequirements.length">8+ chars</span>
+              <span [class.met]="passwordRequirements.uppercase">ABC</span>
+              <span [class.met]="passwordRequirements.number">123</span>
+              <span [class.met]="passwordRequirements.special">!@#</span>
+            </div>
+          </div>
+
+          <div class="form-group" [class.has-error]="(form.get('password_confirmation')?.invalid && form.get('password_confirmation')?.touched) || showPasswordMismatchError">
+            <label class="form-label" for="confirmPassword">
+              <i class="fas fa-lock"></i>
+              Confirmar contraseña
+            </label>
+            <div class="input-wrapper has-right-icon">
+              <input 
+                [type]="showConfirmPassword ? 'text' : 'password'" 
+                id="confirmPassword" 
+                class="form-control" 
+                placeholder="Repite tu contraseña" 
+                required
+                formControlName="password_confirmation"
+              >
+              <button 
+                type="button" 
+                class="password-toggle-container" 
+                aria-label="Mostrar contraseña"
+                (click)="toggleConfirmPasswordVisibility()"
+              >
+                <i [class]="showConfirmPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
+              </button>
+            </div>
+            <app-error 
+              [clase]="'error-message'" 
+              [control]="form.get('password_confirmation')" 
+              [validation]="'required'"
+              [message]="'La confirmación es requerida'"
+            ></app-error>
+            <div class="error-message" *ngIf="showPasswordMismatchError">
+              Las contraseñas no coinciden
+            </div>
+          </div>
+        </div>
+
+        <!-- Sección: Términos -->
+        <div class="form-section">
+          <div class="terms-group" [class.has-error]="form.get('terms')?.invalid && form.get('terms')?.touched">
+            <label class="terms-checkbox">
+              <input type="checkbox" id="terms" formControlName="terms">
+              <span class="checkmark">
+                <i class="fas fa-check"></i>
+              </span>
+              <span class="terms-text">
+                Acepto los <a href="#" class="terms-link">Términos y Condiciones</a> y la
+                <a href="#" class="terms-link">Política de Privacidad</a>
+              </span>
+            </label>
+            <app-error 
+              [clase]="'error-message'" 
+              [control]="form.get('terms')" 
+              [validation]="'required'"
+              [message]="'Debes aceptar los términos'"
+            ></app-error>
+          </div>
+        </div>
+
+        <!-- Submit -->
+        <button 
+          type="submit" 
+          class="submit-btn" 
+          [disabled]="!form.valid || isLoading"
+          [class.loading]="isLoading"
+        >
+          <span class="btn-content">
+            @if (isLoading) {
+              <span class="loading-spinner"></span>
+            }
+            <span class="btn-text">{{ isLoading ? 'Creando cuenta...' : 'Crear Cuenta' }}</span>
+          </span>
+          <div class="btn-ripple"></div>
+        </button>
+      </form>
+
+      <div class="auth-footer">
+        ¿Ya tienes una cuenta? 
+        <a (click)="_service.url('/login')">Inicia Sesión</a>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,76 @@
+<ion-content class="revision-modal" [fullscreen]="true">
+  <div class="modal-glass">
+    <div class="bg-orb orb-1"></div>
+    <div class="bg-orb orb-2"></div>
+    <button class="btn-close-glass" (click)="dismiss()">
+      <ion-icon name="close"></ion-icon>
+    </button>
+    <div class="modal-body">
+      <div class="header-premium">
+        <div class="icon-ring warning">
+          <div class="ring-outer"></div>
+          <div class="ring-inner"></div>
+          <div class="icon-center">
+            <ion-icon name="refresh-circle"></ion-icon>
+          </div>
+        </div>
+        <h2 class="title-glow">Solicitar Correcciones</h2>
+        <p class="subtitle">Indica a <strong>{{ workerName }}</strong> que ajustes son necesarios</p>
+      </div>
+      <div class="worker-glass-card">
+        <div class="worker-glow"></div>
+        <div class="worker-content">
+          <div class="avatar-premium">
+            <img [src]="workerAvatar" [alt]="workerName">
+            <div class="avatar-ring warning"></div>
+          </div>
+          <div class="worker-info">
+            <span class="worker-name">{{ workerName }}</span>
+            <span class="worker-role">Recibira tu feedback para ajustar</span>
+          </div>
+        </div>
+      </div>
+      <div class="quick-reasons">
+        <label class="section-label">
+          <ion-icon name="flash"></ion-icon>
+          <span>Razones rapidas</span>
+        </label>
+        <div class="reasons-chips">
+          @for (reason of quickReasons; track $index) {
+            <button class="reason-chip" [class.selected]="feedback === reason" (click)="selectReason(reason)">
+              {{ reason }}
+            </button>
+          }
+        </div>
+      </div>
+      <div class="field-premium">
+        <div class="field-label">
+          <ion-icon name="create"></ion-icon>
+          <span>Detalla las correcciones necesarias</span>
+          <span class="badge-required">requerido</span>
+        </div>
+        <div class="input-glass">
+          <textarea [(ngModel)]="feedback" placeholder="Describe que necesita ser corregido..." maxlength="1000" rows="5"></textarea>
+          <div class="input-glow warning"></div>
+        </div>
+      </div>
+      <div class="info-box">
+        <ion-icon name="information-circle"></ion-icon>
+        <p>El worker recibira tu feedback y podra re-entregar el trabajo. La solicitud volvera a <strong>"En progreso"</strong>.</p>
+      </div>
+      <div class="submit-area">
+        <button class="btn-submit-premium warning" [class.ready]="feedback.trim().length > 10" [class.submitting]="isSubmitting" [disabled]="feedback.trim().length <= 10 || isSubmitting" (click)="submit()">
+          <div class="btn-bg"></div>
+          <div class="btn-shine"></div>
+          @if(!isSubmitting) {
+            <ion-icon name="refresh-circle" class="btn-icon"></ion-icon>
+          } @else if (isSubmitting) {
+            <div class="btn-spinner"><div class="spinner-ring"></div></div>
+          }
+          <span class="btn-text">{{ isSubmitting ? 'Enviando...' : 'Solicitar correcciones' }}</span>
+        </button>
+        <button class="btn-cancel-premium" (click)="dismiss()" [disabled]="isSubmitting">Cancelar</button>
+      </div>
+    </div>
+  </div>
+</ion-content>

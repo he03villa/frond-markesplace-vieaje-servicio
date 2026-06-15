@@ -1,0 +1,135 @@
+<ion-content class="approve-modal" [fullscreen]="true">
+  <div class="modal-glass">
+    <div class="bg-orb orb-1"></div>
+    <div class="bg-orb orb-2"></div>
+    <div class="bg-orb orb-3"></div>
+    <button class="btn-close-glass" (click)="dismiss()">
+      <ion-icon name="close"></ion-icon>
+    </button>
+    <div class="modal-body">
+      <div class="header-premium">
+        <div class="success-ring">
+          <div class="ring-outer"></div>
+          <div class="ring-inner"></div>
+          <div class="check-icon">
+            <ion-icon name="checkmark"></ion-icon>
+          </div>
+        </div>
+        <h2 class="title-glow">Trabajo Entregado</h2>
+        <p class="subtitle">Califica la experiencia con <strong>{{ workerName }}</strong></p>
+      </div>
+      <div class="worker-glass-card">
+        <div class="worker-glow"></div>
+        <div class="worker-content">
+          <div class="avatar-premium">
+            <img [src]="workerAvatar" [alt]="workerName">
+            <div class="avatar-ring"></div>
+          </div>
+          <div class="worker-info">
+            <span class="worker-name">{{ workerName }}</span>
+            <span class="worker-role">Trabajador asignado</span>
+          </div>
+        </div>
+      </div>
+      @if (completionNotes) {
+        <div class="delivery-mini-summary">
+          <div class="summary-icon">
+            <ion-icon name="document-text"></ion-icon>
+          </div>
+          <div class="summary-text">
+            <p>{{ completionNotes }}</p>
+          </div>
+          @if (actualHours) {
+            <div class="hours-chip">
+              <ion-icon name="time"></ion-icon>
+              <span>{{ actualHours }}h</span>
+            </div>
+          }
+        </div>
+      }
+      <div class="rating-premium" [style.--rating-color]="getRatingColor()">
+        <div class="rating-emoji">{{ getRatingEmoji() }}</div>
+        <label class="rating-question">Como fue tu experiencia?</label>
+        <div class="stars-container">
+          @for (star of [1,2,3,4,5]; track $index) {
+            <button
+              class="star-premium"
+              [class.active]="rating >= star"
+              [class.hovered]="hoverRating >= star"
+              [style.animation-delay]="star * 0.05 + 's'"
+              (mouseenter)="hoverRating = star"
+              (mouseleave)="hoverRating = 0"
+              (click)="setRating(star)">
+              <div class="star-glow"></div>
+              <ion-icon [name]="(rating >= star || hoverRating >= star) ? 'star' : 'star-outline'"></ion-icon>
+            </button>
+          }
+        </div>
+        <div class="rating-label-container" [class.visible]="rating > 0">
+          <span class="rating-label-text" [style.color]="getRatingColor()">{{ getRatingLabel() }}</span>
+          <div class="rating-label-line"></div>
+        </div>
+      </div>
+      <div class="field-premium">
+        <div class="field-label">
+          <ion-icon name="chatbubble"></ion-icon>
+          <span>Comentario publico</span>
+          <span class="badge-optional">opcional</span>
+        </div>
+        <div class="input-glass">
+          <textarea [(ngModel)]="comment"
+            placeholder="Comparte tu experiencia para ayudar a otros usuarios..."
+            maxlength="500" rows="3"></textarea>
+          <div class="input-glow"></div>
+        </div>
+        <span class="char-counter">{{ comment.length }}/500</span>
+      </div>
+      <div class="field-premium">
+        <div class="field-label">
+          <ion-icon name="lock-closed"></ion-icon>
+          <span>Feedback privado</span>
+          <span class="badge-optional">opcional</span>
+        </div>
+        <div class="input-glass">
+          <textarea [(ngModel)]="feedback"
+            placeholder="Algo que quieras destacar o sugerir al worker..."
+            maxlength="300" rows="2"></textarea>
+          <div class="input-glow"></div>
+        </div>
+      </div>
+      <div class="submit-area">
+        <button class="btn-submit-premium"
+          [class.ready]="rating > 0"
+          [class.submitting]="isSubmitting"
+          [disabled]="rating === 0 || isSubmitting"
+          (click)="submit()">
+          <div class="btn-bg"></div>
+          <div class="btn-shine"></div>
+          @if (!isSubmitting) {
+            <ion-icon name="checkmark-circle" class="btn-icon"></ion-icon>
+          }
+          @if (isSubmitting) {
+            <div class="btn-spinner">
+              <div class="spinner-ring"></div>
+            </div>
+          }
+          <span class="btn-text">{{ isSubmitting ? 'Procesando...' : 'Aprobar y calificar' }}</span>
+        </button>
+        <button class="btn-cancel-premium" (click)="dismiss()" [disabled]="isSubmitting">
+          Cancelar
+        </button>
+      </div>
+      @if(showConfetti) {
+        <div class="confetti-container">
+          @for (i of [1,2,3,4,5,6,7,8,9,10,11,12]; track $index) {
+            <div
+              class="confetti-piece"
+              [style.--delay]="i * 0.1 + 's'"
+              [style.--color]="['#f59e0b','#ef4444','#3b82f6','#10b981','#8b5cf6','#ec4899'][i % 6]">
+            </div>
+          }
+        </div>
+      }
+    </div>
+  </div>
+</ion-content>

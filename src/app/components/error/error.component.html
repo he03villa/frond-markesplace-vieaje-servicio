@@ -1,0 +1,7 @@
+@if (control.hasError(validation) && (control.dirty || control.touched)) {
+  <div class="fv-plugins-message-container" [ngClass]="clase">
+    <span role="alert">
+      {{ message }}
+    </span>
+  </div>
+}

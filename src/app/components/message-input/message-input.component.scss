@@ -1,0 +1,662 @@
+@use '../../../theme/mixins' as app;
+
+// ═══════════════════════════════════════════════════════════════
+// VARIABLES LOCALES
+// ═══════════════════════════════════════════════════════════════
+:host {
+    --input-bg: var(--app-glass-bg);
+    --input-border: var(--app-glass-border);
+    --input-shadow: var(--app-shadow-md);
+    --send-gradient: var(--app-gradient-primary);
+    --recording-gradient: linear-gradient(135deg, var(--app-danger) 0%, #f87171 100%);
+    --wave-color: var(--app-primary);
+
+    display: block;
+    padding: var(--space-sm) var(--space-md);
+    padding-bottom: calc(var(--space-sm) + env(safe-area-inset-bottom, 20px));
+    background: var(--app-glass-bg);
+    backdrop-filter: blur(24px) saturate(1.2);
+    -webkit-backdrop-filter: blur(24px) saturate(1.2);
+    border-top: 1px solid var(--app-glass-border);
+    position: relative;
+    z-index: 100;
+
+    @include app.dark-mode {
+        --input-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// CONTENEDOR PRINCIPAL
+// ═══════════════════════════════════════════════════════════════
+.input-container {
+    position: relative;
+    transition: all 0.3s var(--smooth);
+
+    &.recording-active {
+        .input-glass {
+            border-color: rgba(var(--app-danger-rgb, 239, 68, 68), 0.3);
+            box-shadow: 0 8px 32px rgba(var(--app-danger-rgb, 239, 68, 68), 0.12);
+        }
+    }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// INPUT GLASS (barra principal)
+// ═══════════════════════════════════════════════════════════════
+.input-glass {
+    display: flex;
+    align-items: flex-end;
+    gap: 6px;
+    background: var(--input-bg);
+    backdrop-filter: blur(20px);
+    border: 1.5px solid var(--input-border);
+    border-radius: 28px;
+    padding: 6px 8px 6px 6px;
+    box-shadow: var(--input-shadow);
+    transition: all 0.4s var(--smooth);
+    position: relative;
+    overflow: visible;
+
+    &:focus-within:not(.recording) {
+        border-color: rgba(var(--app-primary-rgb), 0.25);
+        box-shadow: 0 8px 32px rgba(var(--app-primary-rgb), 0.12), 0 0 0 4px rgba(var(--app-primary-rgb), 0.04);
+        transform: translateY(-1px);
+    }
+
+    &.has-content {
+        .btn-send {
+            background: var(--send-gradient);
+            color: white;
+            box-shadow: 0 4px 16px rgba(var(--app-primary-rgb), 0.35);
+
+            &:active {
+                transform: scale(0.92);
+                box-shadow: 0 2px 8px rgba(var(--app-primary-rgb), 0.25);
+            }
+        }
+    }
+
+    &.recording {
+        .btn-send {
+            background: var(--recording-gradient);
+            color: white;
+            animation: recordingPulse 1.2s ease-in-out infinite;
+        }
+    }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// BOTÓN ADJUNTOS (+)
+// ═══════════════════════════════════════════════════════════════
+.btn-attach {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: none;
+    background: transparent;
+    color: var(--app-text-muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.25s var(--bounce);
+    flex-shrink: 0;
+    margin-bottom: 2px;
+
+    ion-icon {
+        font-size: 26px;
+        transition: transform 0.3s var(--bounce);
+    }
+
+    &:active {
+        background: rgba(var(--app-primary-rgb), 0.08);
+        color: var(--app-primary);
+
+        ion-icon {
+            transform: rotate(135deg) scale(0.9);
+        }
+    }
+
+    &:disabled {
+        opacity: 0.4;
+        pointer-events: none;
+    }
+
+    @media (hover: hover) {
+        &:hover {
+            color: var(--app-primary);
+        }
+    }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// TEXTAREA
+// ═══════════════════════════════════════════════════════════════
+.text-input-wrapper {
+    flex: 1;
+    display: flex;
+    align-items: flex-end;
+    min-height: 40px;
+    max-height: 120px;
+    padding: 8px 4px;
+
+    textarea {
+        flex: 1;
+        width: 100%;
+        background: transparent;
+        border: none;
+        outline: none;
+        font-size: 0.95rem;
+        color: var(--app-text);
+        resize: none;
+        padding: 0;
+        line-height: 1.5;
+        font-family: inherit;
+        max-height: 100px;
+
+        &::placeholder {
+            color: var(--app-text-muted);
+            opacity: 0.7;
+        }
+
+        &:disabled {
+            opacity: 0.5;
+        }
+    }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// BOTÓN EMOJI
+// ═══════════════════════════════════════════════════════════════
+.btn-emoji {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: none;
+    background: transparent;
+    color: var(--app-text-muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+    margin-bottom: 2px;
+
+    ion-icon {
+        font-size: 22px;
+    }
+
+    &:active {
+        transform: scale(0.85);
+        color: var(--app-warning);
+    }
+
+    &:disabled {
+        opacity: 0.4;
+        pointer-events: none;
+    }
+
+    @media (hover: hover) {
+        &:hover {
+            color: var(--app-warning);
+        }
+    }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// BOTÓN SEND / MIC / RECORDING
+// ═══════════════════════════════════════════════════════════════
+.btn-send {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: none;
+    background: var(--app-bg);
+    color: var(--app-text-secondary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.35s var(--bounce);
+    flex-shrink: 0;
+    position: relative;
+    overflow: visible;
+    margin-bottom: 2px;
+    touch-action: none;
+    user-select: none;
+
+    .send-icon {
+        position: relative;
+        z-index: 2;
+
+        ion-icon {
+            font-size: 22px;
+            transition: transform 0.3s var(--bounce);
+        }
+    }
+
+    &:active {
+        transform: scale(0.88);
+    }
+
+    // Ripple para recording
+    .recording-ripple {
+        position: absolute;
+        inset: -4px;
+        border-radius: 50%;
+        border: 2px solid rgba(var(--app-danger-rgb, 239, 68, 68), 0.3);
+        animation: rippleExpand 1.5s ease-out infinite;
+        pointer-events: none;
+    }
+}
+
+@keyframes recordingPulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(var(--app-danger-rgb, 239, 68, 68), 0.4); }
+    50%      { box-shadow: 0 0 0 12px rgba(var(--app-danger-rgb, 239, 68, 68), 0); }
+}
+
+@keyframes rippleExpand {
+    0%   { transform: scale(1); opacity: 1; }
+    100% { transform: scale(1.6); opacity: 0; }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// MENÚ DE ADJUNTOS (expandible con glassmorphism)
+// ═══════════════════════════════════════════════════════════════
+.attach-menu {
+    position: absolute;
+    bottom: calc(100% + 12px);
+    left: 50%;
+    transform: translateX(-50%) translateY(10px) scale(0.85);
+    display: flex;
+    gap: var(--space-md);
+    padding: var(--space-md) var(--space-lg);
+    background: var(--app-glass-bg);
+    backdrop-filter: blur(24px) saturate(1.3);
+    -webkit-backdrop-filter: blur(24px) saturate(1.3);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--app-shadow-lg), 0 0 0 1px var(--app-glass-border);
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.35s var(--bounce);
+    z-index: 1000;
+
+    &.open {
+        transform: translateX(-50%) translateY(0) scale(1);
+        opacity: 1;
+        pointer-events: all;
+    }
+
+    // Flecha decorativa
+    &::after {
+        content: '';
+        position: absolute;
+        bottom: -6px;
+        left: 50%;
+        transform: translateX(-50%) rotate(45deg);
+        width: 12px;
+        height: 12px;
+        background: var(--app-glass-bg);
+        border-radius: 2px;
+    }
+}
+
+.attach-option {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    background: none;
+    border: none;
+    padding: var(--space-sm);
+    border-radius: var(--radius-lg);
+    transition: all 0.25s var(--bounce);
+    cursor: pointer;
+    position: relative;
+    color: var(--app-text);
+
+    .attach-glow {
+        position: absolute;
+        inset: 0;
+        border-radius: var(--radius-lg);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        filter: blur(8px);
+    }
+
+    ion-icon {
+        width: 52px;
+        height: 52px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 26px;
+        color: white;
+        position: relative;
+        z-index: 1;
+        transition: transform 0.3s var(--bounce);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    &.image {
+        ion-icon {
+            background: var(--app-gradient-success);
+        }
+
+        .attach-glow {
+            background: rgba(var(--app-success-rgb, 16, 185, 129), 0.2);
+        }
+    }
+
+    &.camera {
+        ion-icon {
+            background: var(--app-gradient-primary);
+        }
+
+        .attach-glow {
+            background: rgba(var(--app-primary-rgb), 0.2);
+        }
+    }
+
+    &.file {
+        ion-icon {
+            background: linear-gradient(135deg, #fbbf24 0%, var(--app-warning) 100%);
+        }
+
+        .attach-glow {
+            background: rgba(var(--app-warning-rgb, 245, 158, 11), 0.2);
+        }
+    }
+
+    &.audio {
+        ion-icon {
+            background: linear-gradient(135deg, var(--app-danger) 0%, #f87171 100%);
+        }
+
+        .attach-glow {
+            background: rgba(var(--app-danger-rgb, 239, 68, 68), 0.2);
+        }
+    }
+
+    span {
+        font-size: 0.75rem;
+        color: var(--app-text-secondary);
+        font-weight: 500;
+    }
+
+    &:active {
+        transform: scale(0.9);
+
+        ion-icon {
+            transform: scale(0.9);
+        }
+    }
+
+    &:hover .attach-glow {
+        opacity: 1;
+    }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// PREVIEW DE ADJUNTOS (carrusel horizontal)
+// ═══════════════════════════════════════════════════════════════
+.attachment-preview-bar {
+    display: flex;
+    gap: 14px;
+    padding: 12px 8px 8px;
+    margin-bottom: 6px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+
+    &::-webkit-scrollbar {
+        display: none;
+    }
+
+    .preview-item {
+        position: relative;
+        width: 68px;
+        height: 68px;
+        border-radius: var(--radius-lg);
+        flex-shrink: 0;
+        border: 2px solid var(--app-border);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        transition: transform 0.2s ease;
+
+        .preview-content {
+            width: 100%;
+            height: 100%;
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+        }
+
+        &:active {
+            transform: scale(0.95);
+        }
+
+        img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .preview-file {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: var(--app-bg);
+            gap: 4px;
+            border-radius: var(--radius-lg);
+
+            ion-icon {
+                font-size: 24px;
+                color: var(--app-primary);
+            }
+
+            .file-meta {
+                font-size: 0.6rem;
+                color: var(--app-text-muted);
+                max-width: 90%;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                text-align: center;
+            }
+        }
+
+        // Botón remove
+        .preview-remove {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: var(--app-danger);
+            color: white;
+            border: 2.5px solid var(--app-surface);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 3px 8px rgba(var(--app-danger-rgb, 239, 68, 68), 0.35);
+            transition: all 0.25s var(--bounce);
+            z-index: 10;
+
+            ion-icon {
+                font-size: 14px;
+            }
+
+            &:active {
+                transform: scale(0.8);
+            }
+
+            &:hover {
+                background: var(--app-danger);
+                transform: scale(1.1);
+                filter: brightness(1.1);
+            }
+        }
+    }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// BARRA DE GRABACIÓN (waveform animada)
+// ═══════════════════════════════════════════════════════════════
+.recording-waveform {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    padding: 10px 16px;
+    margin-bottom: 8px;
+    background: rgba(var(--app-danger-rgb, 239, 68, 68), 0.08);
+    border: 1.5px solid rgba(var(--app-danger-rgb, 239, 68, 68), 0.15);
+    border-radius: var(--radius-xl);
+    backdrop-filter: blur(10px);
+
+    .waveform-container {
+        display: flex;
+        align-items: center;
+        gap: 3px;
+        height: 32px;
+        flex: 1;
+
+        .wave-bar {
+            width: 3px;
+            background: linear-gradient(to top, var(--app-danger), #f87171);
+            border-radius: 2px;
+            animation: waveDance 0.8s ease-in-out infinite alternate;
+            min-height: 4px;
+
+            &:nth-child(1)  { height: 12px; }
+            &:nth-child(2)  { height: 20px; }
+            &:nth-child(3)  { height: 16px; }
+            &:nth-child(4)  { height: 24px; }
+            &:nth-child(5)  { height: 14px; }
+            &:nth-child(6)  { height: 28px; }
+            &:nth-child(7)  { height: 18px; }
+            &:nth-child(8)  { height: 22px; }
+            &:nth-child(9)  { height: 10px; }
+            &:nth-child(10) { height: 26px; }
+            &:nth-child(11) { height: 16px; }
+            &:nth-child(12) { height: 20px; }
+            &:nth-child(13) { height: 14px; }
+            &:nth-child(14) { height: 24px; }
+            &:nth-child(15) { height: 18px; }
+            &:nth-child(16) { height: 22px; }
+            &:nth-child(17) { height: 12px; }
+            &:nth-child(18) { height: 28px; }
+            &:nth-child(19) { height: 16px; }
+            &:nth-child(20) { height: 20px; }
+        }
+    }
+
+    .recording-timer {
+        font-size: 0.875rem;
+        font-weight: 700;
+        color: var(--app-danger);
+        font-variant-numeric: tabular-nums;
+        min-width: 40px;
+    }
+
+    .recording-hint {
+        font-size: 0.75rem;
+        color: var(--app-text-muted);
+        font-weight: 500;
+    }
+}
+
+@keyframes waveDance {
+    0%   { transform: scaleY(0.3); opacity: 0.5; }
+    100% { transform: scaleY(1); opacity: 1; }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// PREVIEW DE AUDIO GRABADO
+// ═══════════════════════════════════════════════════════════════
+.audio-preview-bar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 14px;
+    margin-bottom: 8px;
+    background: rgba(var(--app-primary-rgb), 0.06);
+    border: 1.5px solid rgba(var(--app-primary-rgb), 0.12);
+    border-radius: var(--radius-xl);
+    backdrop-filter: blur(10px);
+
+    .audio-wave-mini {
+        display: flex;
+        align-items: center;
+        gap: 2px;
+        height: 28px;
+        flex: 1;
+
+        .mini-bar {
+            width: 3px;
+            background: var(--app-gradient-primary);
+            border-radius: 2px;
+            min-height: 4px;
+            transition: height 0.3s ease;
+        }
+    }
+
+    .audio-duration {
+        font-size: 0.8rem;
+        color: var(--app-text-secondary);
+        font-weight: 600;
+        font-variant-numeric: tabular-nums;
+    }
+
+    .audio-actions {
+        display: flex;
+        gap: 8px;
+
+        button {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.25s var(--bounce);
+            font-size: 20px;
+
+            ion-icon {
+                font-size: 22px;
+            }
+
+            &:active {
+                transform: scale(0.88);
+            }
+        }
+
+        .btn-discard {
+            background: rgba(var(--app-danger-rgb, 239, 68, 68), 0.1);
+            color: var(--app-danger);
+
+            &:hover {
+                background: rgba(var(--app-danger-rgb, 239, 68, 68), 0.2);
+            }
+        }
+
+        .btn-confirm {
+            background: var(--app-gradient-primary);
+            color: white;
+            box-shadow: 0 4px 12px rgba(var(--app-primary-rgb), 0.3);
+
+            &:hover {
+                box-shadow: 0 6px 16px rgba(var(--app-primary-rgb), 0.4);
+            }
+        }
+    }
+}

@@ -1,0 +1,60 @@
+// chat-responsive.scss
+
+// Tablet landscape y desktop
+@media (min-width: 768px) {
+    .chat-inbox {
+        max-width: 400px;
+        border-right: 1px solid var(--border-light);
+    }
+
+    .chat-conversation {
+        .messages-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 var(--space-xl);
+        }
+
+        .bubble-container {
+            max-width: 70%;
+        }
+    }
+
+    .message-input {
+        max-width: 800px;
+        margin: 0 auto;
+    }
+}
+
+// Dark mode support
+@media (prefers-color-scheme: dark) {
+    :root {
+        --glass-bg: rgba(17, 24, 39, 0.65);
+        --glass-card-bg: rgba(17, 24, 39, 0.75);
+        --glass-border: rgba(255, 255, 255, 0.1);
+        --message-bubble-other: #1f2937;
+        --bg-light: #111827;
+        --text-dark: #f9fafb;
+        --text-medium: #d1d5db;
+    }
+
+    .conversation-card {
+        background: var(--glass-card-bg);
+        border-color: var(--glass-border);
+    }
+
+    .input-container {
+        background: rgba(17, 24, 39, 0.9);
+    }
+}
+
+// Reduced motion
+@media (prefers-reduced-motion: reduce) {
+
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}

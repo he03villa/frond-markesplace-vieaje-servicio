@@ -1,0 +1,253 @@
+<!-- Header dinámico -->
+<ion-header [class.header-solid]="headerSolid" class="reviews-header">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button class="header-action back-btn" (click)="back()">
+        <ion-icon slot="icon-only" name="arrow-back-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title class="header-title">Reseñas</ion-title>
+    <ion-buttons slot="end">
+      <ion-button class="header-action" (click)="scrollToTop()">
+        <ion-icon name="arrow-up-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content 
+  [fullscreen]="true" 
+  scrollEvents="true" 
+  (ionScroll)="onScroll($event)"
+  class="reviews-content"
+>
+  <ion-refresher slot="fixed" (ionRefresh)="handleRefresh($event)">
+    <ion-refresher-content pullingIcon="arrow-down" refreshingSpinner="crescent"></ion-refresher-content>
+  </ion-refresher>
+
+  <!-- ============ HERO RATING ============ -->
+  <div class="rating-hero">
+    <div class="hero-pattern"></div>
+    
+    <div class="hero-content">
+      <div class="rating-big">
+        <span class="rating-score">{{ profileRating }}</span>
+        <div class="rating-stars">
+          @for(star of getStarArray(profileRating); track $index) {
+            <ion-icon [name]="star === 'full' ? 'star' : star === 'half' ? 'star-half' : 'star-outline'"></ion-icon>
+          }
+        </div>
+        <span class="rating-total">{{ totalReviews }} reseñas</span>
+      </div>
+
+      <div class="rating-bars">
+        @for(item of ratingBreakdown; track item.stars) {
+          <div class="bar-row" (click)="setFilter(item.stars.toString())">
+            <span class="bar-label">{{ item.stars }} <ion-icon name="star"></ion-icon></span>
+            <div class="bar-track">
+              <div class="bar-fill" [style.width.%]="item.percentage" [style.background]="getRatingColor(item.stars)"></div>
+            </div>
+            <span class="bar-count">{{ item.count }}</span>
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- Badge destacado -->
+    <!-- <div class="hero-badge">
+      <ion-icon name="trophy-outline"></ion-icon>
+      <span>Top 5% en la zona</span>
+    </div> -->
+  </div>
+
+  <!-- ============ FILTROS ============ -->
+  <div class="filters-section">
+    <!-- <div class="filters-scroll">
+      @for(chip of filterChips; track chip.id) {
+        <button 
+          class="filter-chip" 
+          [class.active]="activeFilter === chip.id"
+          (click)="setFilter(chip.id)"
+        >
+          {{ chip.label }}
+          <span class="chip-count">{{ chip.count }}</span>
+        </button>
+      }
+    </div> -->
+    
+    <div class="sort-dropdown">
+      <button class="sort-btn" (click)="(sortBy = sortBy === 'recent' ? 'helpful' : 'recent');setSort(sortBy)">
+        <ion-icon name="options-outline"></ion-icon>
+        {{ sortBy === 'recent' ? 'Más reciente' : 'Más útil' }}
+      </button>
+    </div>
+  </div>
+
+  <!-- ============ LISTADO ============ -->
+  <div class="reviews-list">
+    
+    <!-- Skeleton -->
+    @if(isLoading) {
+      @for(i of [1,2,3]; track $index) {
+        <div class="review-card skeleton">
+          <div class="review-header-skeleton">
+            <ion-skeleton-text animated class="avatar-skeleton"></ion-skeleton-text>
+            <div class="header-text-skeleton">
+              <ion-skeleton-text animated class="name-skeleton"></ion-skeleton-text>
+              <ion-skeleton-text animated class="meta-skeleton"></ion-skeleton-text>
+            </div>
+          </div>
+          <ion-skeleton-text animated class="stars-skeleton"></ion-skeleton-text>
+          <ion-skeleton-text animated class="text-skeleton"></ion-skeleton-text>
+          <ion-skeleton-text animated class="text-skeleton short"></ion-skeleton-text>
+        </div>
+      }
+    }
+
+    <!-- Reviews -->
+    @if(!isLoading) {
+      @for(review of reviews; track review.id; let i = $index) {
+        <div class="review-card" [style.animation-delay]="(i * 0.08) + 's'">
+          
+          <!-- Header -->
+          <div class="review-header">
+            <div class="reviewer-info">
+              <div class="reviewer-avatar">
+                <img [src]="review.reviewer.avatar" [alt]="review.reviewer.name" />
+                @if(review.reviewer.verified) {
+                  <div class="verified-badge">
+                    <ion-icon name="checkmark-circle"></ion-icon>
+                  </div>
+                }
+              </div>
+              <div class="reviewer-meta">
+                <div class="reviewer-name-row">
+                  <span class="reviewer-name">{{ review.reviewer.name }}</span>
+                  @if(review.reviewer.verified) {
+                    <ion-icon name="checkmark-circle" class="verified-icon"></ion-icon>
+                  }
+                </div>
+                <div class="reviewer-sub">
+                  <span class="review-count">{{ review.reviewer.review_count }} reseñas</span>
+                  <span class="dot"></span>
+                  <span class="service-type">{{ review.serviceType }}</span>
+                </div>
+              </div>
+            </div>
+            <span class="review-time">{{ review.relative_times }}</span>
+          </div>
+
+          <!-- Rating -->
+          <div class="review-rating">
+            <div class="stars">
+              @for(star of getStarArray(review.rating); track $index) {
+                <ion-icon 
+                  [name]="star === 'full' ? 'star' : star === 'half' ? 'star-half' : 'star-outline'"
+                  [style.color]="getRatingColor(review.rating)"
+                ></ion-icon>
+              }
+            </div>
+            <span class="rating-text" [style.color]="getRatingColor(review.rating)">
+              {{ review.rating === 5 ? 'Excelente' : review.rating === 4 ? 'Muy bueno' : review.rating === 3 ? 'Bueno' : 'Regular' }}
+            </span>
+          </div>
+
+          <!-- Content -->
+          <p class="review-text">{{ review.text || 'No hay comentario' }}</p>
+
+          <!-- Tags -->
+          <!-- @if(review.tags.length > 0) {
+            <div class="review-tags">
+              @for(tag of review.tags; track tag) {
+                <span class="tag">{{ tag }}</span>
+              }
+            </div>
+          } -->
+
+          <!-- Images -->
+          <!-- @if(review.images.length > 0) {
+            <div class="review-images" [class.single]="review.images.length === 1">
+              @for(img of review.images; track img.url; let imgIndex = $index) {
+                <div class="image-wrapper" (click)="openImage(img)">
+                  <img [src]="img.url" [alt]="img.caption || 'Foto'" loading="lazy" />
+                  @if(img.caption) {
+                    <span class="image-caption">{{ img.caption }}</span>
+                  }
+                  @if(imgIndex === 1 && review.images.length > 2) {
+                    <div class="image-overlay-more">+{{ review.images.length - 2 }}</div>
+                  }
+                </div>
+              }
+            </div>
+          } -->
+
+          <!-- Actions -->
+          <div class="review-actions">
+            <button class="action-btn" [class.active]="review.liked" (click)="toggleLike(review)">
+              <ion-icon [name]="review.liked ? 'heart' : 'thumbs-up-outline'"></ion-icon>
+              <span>{{ review.likes }}</span>
+            </button>
+            <button class="action-btn" (click)="markHelpful(review)">
+              <ion-icon name="chatbubble-outline"></ion-icon>
+              <span>Útil ({{ review.helpful }})</span>
+            </button>
+            <button class="action-btn report" (click)="reportReview(review)">
+              <ion-icon name="flag-outline"></ion-icon>
+            </button>
+          </div>
+
+          <!-- Reply -->
+          @if(review.reply) {
+            <div class="review-reply">
+              <div class="reply-line"></div>
+              <div class="reply-content">
+                <div class="reply-header">
+                  <img [src]="review.reply.avatar" class="reply-avatar" />
+                  <div>
+                    <span class="reply-author">{{ review.reply.author }}</span>
+                    <span class="reply-label">Respuesta del proveedor</span>
+                  </div>
+                </div>
+                <p class="reply-text">{{ review.reply.text }}</p>
+              </div>
+            </div>
+          }
+
+        </div>
+      }
+    }
+
+    <!-- Empty state -->
+    @if(!isLoading && reviews.length === 0) {
+      <div class="empty-reviews">
+        <div class="empty-icon">
+          <ion-icon name="chatbubble-outline"></ion-icon>
+        </div>
+        <h3>No hay reseñas aún</h3>
+        <p>Sé el primero en dejar una reseña</p>
+      </div>
+    }
+
+    <!-- Infinite scroll -->
+    @if (hasMorePages && !isLoading) {
+      <ion-infinite-scroll (ionInfinite)="loadMore($event)">
+        <ion-infinite-scroll-content loadingSpinner="crescent"></ion-infinite-scroll-content>
+      </ion-infinite-scroll>
+    }
+  </div>
+
+  <div class="bottom-space"></div>
+</ion-content>
+
+<!-- Modal imagen -->
+@if(showImageModal && selectedImage) {
+  <div class="image-modal" (click)="closeImageModal()">
+    <button class="modal-close" (click)="closeImageModal()">
+      <ion-icon name="close-outline"></ion-icon>
+    </button>
+    <img [src]="selectedImage.url" [alt]="selectedImage.caption || ''" />
+    @if(selectedImage.caption) {
+      <div class="modal-caption">{{ selectedImage.caption }}</div>
+    }
+  </div>
+}

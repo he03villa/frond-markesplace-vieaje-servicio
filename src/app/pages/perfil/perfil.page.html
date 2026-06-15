@@ -1,0 +1,481 @@
+<!-- Header dinámico: transparente al inicio, sólido al scroll -->
+<ion-header [class.header-solid]="headerSolid" class="profile-header-bar">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button class="header-action back-btn" (click)="back()">
+        <ion-icon slot="icon-only" name="arrow-back-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title class="header-title">{{ profile?.name }}</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="openEditModal()" class="header-action-btn">
+        <ion-icon slot="icon-only" name="create-outline"></ion-icon>
+      </ion-button>
+      <ion-button (click)="shareProfile()" class="header-action-btn">
+        <ion-icon slot="icon-only" name="share-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" scrollEvents="true" (ionScroll)="onScroll($event)" class="profile-content-wrapper">
+  <ion-refresher slot="fixed" (ionRefresh)="handleRefresh($event)">
+    <ion-refresher-content pullingIcon="arrow-down" pullingText="Tirar para actualizar"
+      refreshingSpinner="crescent"></ion-refresher-content>
+  </ion-refresher>
+
+  <!-- ============ HERO SECTION ============ -->
+  <div class="hero-section">
+    <div class="hero-pattern"></div>
+
+    <div class="hero-content">
+      <!-- Avatar con anillo de progreso -->
+      <div class="avatar-container" (click)="openEditModal()">
+        <svg class="avatar-ring-svg" viewBox="0 0 100 100">
+          <circle class="ring-bg" cx="50" cy="50" r="46" />
+          <circle class="ring-progress" cx="50" cy="50" r="46"
+            [style.stroke-dashoffset]="290 - (290 * (profile?.completionRate || 0) / 100)" />
+        </svg>
+        <div class="avatar-wrapper">
+          @if(isLoading) {
+          <ion-skeleton-text animated class="avatar-skeleton"></ion-skeleton-text>
+          } @else {
+          <img [src]="profile?.avatar" alt="Avatar" class="profile-avatar-img" />
+          }
+          <div class="avatar-badge" *ngIf="profile?.verified">
+            <ion-icon name="checkmark-circle"></ion-icon>
+          </div>
+        </div>
+      </div>
+
+      <!-- Info -->
+      <div class="hero-info">
+        @if(isLoading) {
+        <ion-skeleton-text animated class="name-skeleton"></ion-skeleton-text>
+        <ion-skeleton-text animated class="title-skeleton"></ion-skeleton-text>
+        } @else {
+        <h1 class="profile-name">{{ profile?.name }}</h1>
+        <p class="profile-title">{{ profile?.title }}</p>
+        <div class="profile-meta">
+          <span class="meta-item">
+            <ion-icon name="location-outline"></ion-icon>
+            {{ profile?.location }}
+          </span>
+          <span class="meta-dot"></span>
+          <span class="meta-item">Miembro desde {{ profile?.memberSince }}</span>
+        </div>
+        }
+      </div>
+    </div>
+
+    <!-- Stats flotantes (Glassmorphism) -->
+    <div class="floating-stats">
+      @if(isLoading) {
+      @for(i of [1,2,3,4]; track $index) {
+      <div class="stat-glass skeleton">
+        <ion-skeleton-text animated class="stat-icon-skeleton"></ion-skeleton-text>
+        <ion-skeleton-text animated class="stat-value-skeleton"></ion-skeleton-text>
+      </div>
+      }
+      } @else {
+      @for(stat of profile?.stats; track stat.label; let i = $index) {
+      <div class="stat-glass" [style.animation-delay]="(i * 0.1) + 's'">
+        <div class="stat-icon-box" [style.background]="stat.color + '20'" [style.color]="stat.color">
+          <ion-icon [name]="stat.icon"></ion-icon>
+        </div>
+        <div class="stat-text">
+          <span class="stat-number">{{ stat.value }}<small>{{ stat.suffix }}</small></span>
+          <span class="stat-label">{{ stat.label }}</span>
+        </div>
+      </div>
+      }
+      }
+    </div>
+  </div>
+
+  <!-- ============ CONTENT SHEET ============ -->
+  <div class="content-sheet">
+
+    <!-- Rating Card -->
+    <div class="sheet-card rating-card" [class.skeleton-card]="isLoading">
+      @if(isLoading) {
+      <ion-skeleton-text animated class="skeleton-block"></ion-skeleton-text>
+      } @else {
+      <div class="rating-header">
+        <div class="rating-big">
+          <span class="rating-score">{{ profile?.rating }}</span>
+          <div class="rating-stars">
+            @for(star of getStarArray(profile?.rating || 0); track $index) {
+            <ion-icon [name]="star === 'full' ? 'star' : star === 'half' ? 'star-half' : 'star-outline'"
+              class="star-icon"></ion-icon>
+            }
+          </div>
+        </div>
+        <div class="rating-divider"></div>
+        <div class="rating-info">
+          <span class="rating-count">{{ profile?.reviewCount }} reseñas</span>
+          <span class="rating-rank">Top 5% en la zona</span>
+        </div>
+      </div>
+      }
+    </div>
+
+    <!-- Verifications -->
+    <div class="sheet-card" [class.skeleton-card]="isLoading">
+      <div class="card-header">
+        <h2 class="card-title">Verificaciones</h2>
+        <ion-badge color="success" class="verified-badge" *ngIf="profile?.verified">
+          <ion-icon name="shield-checkmark"></ion-icon>
+          Verificado
+        </ion-badge>
+      </div>
+      @if(isLoading) {
+      <div class="verifications-skeleton">
+        @for(i of [1,2,3]; track $index) {
+        <ion-skeleton-text animated class="v-skeleton"></ion-skeleton-text>
+        }
+      </div>
+      } @else {
+      <div class="verifications-list">
+        @for(v of profile?.verifications; track v.type) {
+        <div class="verification-item" [class.verified]="v.verified">
+          <div class="v-icon" [class.verified]="v.verified">
+            <ion-icon [name]="v.icon"></ion-icon>
+          </div>
+          <span class="v-label">{{ v.label }}</span>
+          @if(v.verified) {
+          <ion-icon name="checkmark-outline" class="v-check"></ion-icon>
+          }
+        </div>
+        }
+      </div>
+      }
+    </div>
+
+    <!-- About -->
+    <div class="sheet-card" [class.skeleton-card]="isLoading">
+      <div class="card-header">
+        <h2 class="card-title">Acerca de mí</h2>
+        <ion-button fill="clear" size="small" class="edit-link" (click)="openEditModal()">
+          Editar
+        </ion-button>
+      </div>
+      @if(isLoading) {
+      <ion-skeleton-text animated class="skeleton-text"></ion-skeleton-text>
+      <ion-skeleton-text animated class="skeleton-text short"></ion-skeleton-text>
+      } @else {
+      <p class="about-text">{{ profile?.bio }}</p>
+      <div class="completion-bar">
+        <div class="completion-track">
+          <div class="completion-fill" [style.width.%]="profile?.completionRate"></div>
+        </div>
+        <span class="completion-label">{{ profile?.completionRate }}% tasa de finalización</span>
+      </div>
+      }
+    </div>
+
+    <!-- Skills -->
+    <div class="sheet-card" [class.skeleton-card]="isLoading">
+      <div class="card-header">
+        <h2 class="card-title">Habilidades</h2>
+      </div>
+      @if(isLoading) {
+      <div class="skills-skeleton">
+        @for(i of [1,2,3,4,5]; track $index) {
+        <ion-skeleton-text animated class="skill-skeleton"></ion-skeleton-text>
+        }
+      </div>
+      } @else {
+      <div class="skills-cloud">
+        @for(skill of profile?.skills; track skill; let i = $index) {
+        <span class="skill-pill" [style.background]="getSkillStyle(i).background" [style.color]="getSkillStyle(i).color"
+          [style.border-color]="getSkillStyle(i).borderColor">
+          {{ skill }}
+        </span>
+        }
+      </div>
+      }
+    </div>
+
+    <!-- Bento Stats -->
+    <div class="sheet-card bento-card" [class.skeleton-card]="isLoading">
+      <div class="card-header">
+        <h2 class="card-title">Rendimiento</h2>
+      </div>
+      @if(isLoading) {
+      <div class="bento-grid">
+        @for(i of [1,2,3,4]; track $index) {
+        <div class="bento-item skeleton">
+          <ion-skeleton-text animated></ion-skeleton-text>
+        </div>
+        }
+      </div>
+      } @else {
+      <div class="bento-grid">
+        <div class="bento-item wide">
+          <div class="bento-icon" style="background: rgba(99,102,241,0.15); color: #6366f1;">
+            <ion-icon name="trending-up-outline"></ion-icon>
+          </div>
+          <div class="bento-data">
+            <span class="bento-value">{{ profile?.completionRate }}%</span>
+            <span class="bento-label">Tasa de finalización</span>
+          </div>
+        </div>
+        <div class="bento-item">
+          <div class="bento-icon" style="background: rgba(16,185,129,0.15); color: #10b981;">
+            <ion-icon name="flash-outline"></ion-icon>
+          </div>
+          <div class="bento-data">
+            <span class="bento-value">{{ profile?.responseTime }}</span>
+            <span class="bento-label">Respuesta</span>
+          </div>
+        </div>
+        <div class="bento-item">
+          <div class="bento-icon" style="background: rgba(245,158,11,0.15); color: #f59e0b;">
+            <ion-icon name="people-outline"></ion-icon>
+          </div>
+          <div class="bento-data">
+            <span class="bento-value">24</span>
+            <span class="bento-label">Recurrentes</span>
+          </div>
+        </div>
+        <div class="bento-item wide">
+          <div class="bento-icon" style="background: rgba(236,72,153,0.15); color: #ec4899;">
+            <ion-icon name="calendar-outline"></ion-icon>
+          </div>
+          <div class="bento-data">
+            <span class="bento-value">48h</span>
+            <span class="bento-label">Entrega promedio</span>
+          </div>
+        </div>
+      </div>
+      }
+    </div>
+
+    <!-- Activity Timeline -->
+    <div class="sheet-card" [class.skeleton-card]="isLoading">
+      <div class="card-header">
+        <h2 class="card-title">Actividad reciente</h2>
+        <ion-button fill="clear" size="small" class="edit-link">Ver todo</ion-button>
+      </div>
+      @if(isLoading) {
+      <div class="timeline-skeleton">
+        @for(i of [1,2,3]; track $index) {
+        <div class="t-skeleton-row">
+          <ion-skeleton-text animated class="t-circle"></ion-skeleton-text>
+          <ion-skeleton-text animated class="t-line"></ion-skeleton-text>
+        </div>
+        }
+      </div>
+      } @else {
+      <div class="timeline">
+        @for(activity of profile?.activities; track activity.id; let last = $last) {
+        <div class="timeline-item" [class.last]="last">
+          <div class="timeline-connector" *ngIf="!last">
+            <div class="timeline-line"></div>
+          </div>
+          <div class="timeline-dot" [style.background]="activity.accent" [style.color]="activity.color">
+            <ion-icon [name]="activity.icon"></ion-icon>
+          </div>
+          <div class="timeline-content">
+            <h4 class="timeline-title">{{ activity.title }}</h4>
+            <span class="timeline-time">{{ activity.time }}</span>
+          </div>
+        </div>
+        }
+      </div>
+      }
+    </div>
+
+    <!-- Menu -->
+    <div class="menu-section">
+      <h3 class="section-label">Opciones</h3>
+      @if(isLoading) {
+      @for(i of [1,2,3,4,5]; track $index) {
+      <div class="menu-item skeleton">
+        <ion-skeleton-text animated class="menu-icon-skeleton"></ion-skeleton-text>
+        <ion-skeleton-text animated class="menu-text-skeleton"></ion-skeleton-text>
+      </div>
+      }
+      } @else {
+      @for(item of profile?.menuItems; track item.route; let i = $index) {
+      <div class="menu-item" (click)="navigate(item.route)" [style.animation-delay]="(i * 0.05) + 's'">
+        <div class="menu-icon-box" [style.background]="item.bg" [style.color]="item.color">
+          <ion-icon [name]="item.icon"></ion-icon>
+        </div>
+        <div class="menu-text">
+          <span class="menu-title">{{ item.title }}</span>
+          <span class="menu-desc">{{ item.description }}</span>
+        </div>
+        <ion-icon name="chevron-forward" class="menu-chevron"></ion-icon>
+      </div>
+      }
+      }
+    </div>
+
+    <div class="sheet-footer"></div>
+  </div>
+
+</ion-content>
+
+<!-- FAB Speed Dial -->
+<!-- <ion-fab slot="fixed" vertical="bottom" horizontal="end" class="profile-fab">
+  <ion-fab-button class="fab-main">
+    <ion-icon name="add-outline"></ion-icon>
+  </ion-fab-button>
+  <ion-fab-list side="top">
+    <ion-fab-button (click)="openEditModal()" class="fab-action">
+      <ion-icon name="create-outline"></ion-icon>
+    </ion-fab-button>
+    <ion-fab-button (click)="shareProfile()" class="fab-action">
+      <ion-icon name="share-outline"></ion-icon>
+    </ion-fab-button>
+    <ion-fab-button (click)="navigate('/settings')" class="fab-action">
+      <ion-icon name="settings-outline"></ion-icon>
+    </ion-fab-button>
+  </ion-fab-list>
+</ion-fab> -->
+
+<!-- Edit Modal Nativo -->
+<ion-modal #editModal [breakpoints]="[0, 0.92]" [initialBreakpoint]="0.92" handle="false">
+  <ng-template>
+    <div class="edit-sheet">
+      <!-- Handle -->
+      <div class="sheet-handle-bar"></div>
+
+      <!-- Header -->
+      <div class="sheet-header">
+        <div class="sheet-title-group">
+          <h2>Editar perfil</h2>
+          <p>Personaliza tu información pública</p>
+        </div>
+        <button class="sheet-close-btn" (click)="closeEditModal()">
+          <ion-icon name="close-outline"></ion-icon>
+        </button>
+      </div>
+
+      <!-- Body con scroll -->
+      <div class="sheet-body">
+        <!-- Avatar Section -->
+        <div class="avatar-section">
+          <div class="avatar-main" (click)="fileInput.click()">
+            <img [src]="tempAvatar || profile?.avatar" alt="Avatar" />
+            <div class="avatar-overlay">
+              <div class="avatar-overlay-content">
+                <ion-icon name="camera"></ion-icon>
+                <span>Cambiar foto</span>
+              </div>
+            </div>
+            <input type="file" #fileInput hidden accept="image/*" (change)="onFileSelected($event)" />
+          </div>
+
+          <!-- Badge de verificado -->
+          <div class="avatar-verified-badge" *ngIf="profile?.verified">
+            <ion-icon name="checkmark-circle"></ion-icon>
+            <span>Verificado</span>
+          </div>
+        </div>
+
+        <!-- Avatar Presets -->
+        <!-- <div class="presets-section">
+          <label class="section-label">Elige un avatar</label>
+          <div class="presets-scroll">
+            <div class="preset-add" (click)="fileInput.click()">
+              <ion-icon name="add-outline"></ion-icon>
+            </div>
+            @for(url of [
+            'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop',
+            'https://images.unsplash.com/photo-1494790108755-2616b786d4d7?w=200&h=200&fit=crop',
+            'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=200&h=200&fit=crop',
+            'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&h=200&fit=crop',
+            'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=200&h=200&fit=crop',
+            'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=200&h=200&fit=crop'
+            ]; track url) {
+            <div class="preset-item" [class.selected]="tempAvatar === url" (click)="selectPresetAvatar(url)">
+              <img [src]="url" alt="preset" loading="lazy" />
+            </div>
+            }
+          </div>
+        </div> -->
+
+        <!-- Formulario -->
+        <div class="form-section">
+          <div class="form-row">
+            <div class="form-group half">
+              <label class="form-label">
+                <ion-icon name="person-outline"></ion-icon>
+                Nombre completo
+              </label>
+              <input type="text" [(ngModel)]="editName" class="fancy-input" placeholder="¿Cómo te llaman?"
+                maxlength="50" />
+              <span class="char-count">{{ editName.length }}/50</span>
+            </div>
+
+            <div class="form-group half">
+              <label class="form-label">
+                <ion-icon name="call-outline"></ion-icon>
+                Teléfono
+              </label>
+              <input type="tel" [(ngModel)]="editPhone" class="fancy-input" placeholder="+54 11 1234-5678"
+                maxlength="20" />
+              <span class="char-count">{{ editPhone.length }}/20</span>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">
+              <ion-icon name="briefcase-outline"></ion-icon>
+              Título profesional
+            </label>
+            <input type="text" [(ngModel)]="editTitle" class="fancy-input" placeholder="Ej: Fontanero profesional"
+              maxlength="40" />
+            <span class="char-count">{{ editTitle.length }}/40</span>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group half">
+              <label class="form-label">
+                <ion-icon name="location-outline"></ion-icon>
+                Ubicación
+              </label>
+              <input type="text" [(ngModel)]="editLocation" class="fancy-input" placeholder="Ciudad, País"
+                maxlength="100" />
+              <span class="char-count">{{ editLocation.length }}/100</span>
+            </div>
+
+            <div class="form-group half">
+              <label class="form-label">
+                <ion-icon name="document-text-outline"></ion-icon>
+                Biografía
+              </label>
+              <textarea [(ngModel)]="editBio" class="fancy-input textarea" rows="3" placeholder="Cuéntanos sobre ti..."
+                maxlength="200"></textarea>
+              <span class="char-count">{{ editBio.length }}/200</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Preview card -->
+        <div class="preview-card">
+          <div class="preview-label">Vista previa</div>
+          <div class="preview-content">
+            <img [src]="tempAvatar || profile?.avatar" class="preview-avatar" />
+            <div class="preview-info">
+              <strong>{{ editName || profile?.name }}</strong>
+              <span>{{ editTitle || profile?.title }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Footer sticky -->
+      <div class="sheet-footer">
+        <button class="btn btn-ghost" (click)="closeEditModal()">Cancelar</button>
+        <button class="btn btn-primary" (click)="saveProfile()" [disabled]="!editName.trim()">
+          <ion-icon name="checkmark-outline"></ion-icon>
+          Guardar cambios
+        </button>
+      </div>
+    </div>
+  </ng-template>
+</ion-modal>

@@ -1,0 +1,118 @@
+<div class="location-picker-container">
+
+  <!-- MODO PICKER -->
+  <div *ngIf="mode === 'picker'" class="header-container">
+    <ion-searchbar 
+      [value]="searchQuery" 
+      (ionInput)="onSearchInput($event)" 
+      (ionClear)="clearSearch()"
+      placeholder="Buscar dirección..." 
+      [debounce]="500" 
+      animated="true">
+    </ion-searchbar>
+
+    <div class="search-results" *ngIf="searchResults.length > 0">
+      <ion-item *ngFor="let result of searchResults" button (click)="selectSearchResult(result)">
+        <ion-icon name="location-outline" slot="start"></ion-icon>
+        <ion-label>{{ result.display_name }}</ion-label>
+      </ion-item>
+    </div>
+
+    <div *ngIf="isSearching" class="search-loading">
+      <ion-spinner name="crescent"></ion-spinner>
+      <p>Buscando ubicación...</p>
+    </div>
+
+    <div class="manual-address-container" *ngIf="manualAddress">
+      <ion-item>
+        <ion-label position="stacked">Dirección detectada (editable)</ion-label>
+        <ion-input 
+          [value]="manualAddress" 
+          (ionInput)="onManualAddressInput($event)" 
+          (ionBlur)="onManualAddressChange()"
+          placeholder="Edita la dirección aquí">
+        </ion-input>
+      </ion-item>
+    </div>
+  </div>
+
+  <!-- MODO VIEWER -->
+  <div *ngIf="mode === 'viewer'" class="header-container viewer-header">
+    <div class="location-info">
+      <div class="location-icon">
+        <ion-icon name="location-outline"></ion-icon>
+      </div>
+      <div class="location-text">
+        <h3>Ubicación del servicio</h3>
+        <p>{{ destinationAddress || 'Cargando dirección...' }}</p>
+      </div>
+    </div>
+
+    <div class="route-info-panel" *ngIf="routeInfo">
+      <div class="route-stat">
+        <span class="stat-label">Distancia</span>
+        <span class="stat-value">
+          {{ routeInfo.distance | number:'1.1-1' }}
+          <small>km</small>
+        </span>
+      </div>
+      <div class="divider"></div>
+      <div class="route-stat">
+        <span class="stat-label">Tiempo</span>
+        <span class="stat-value">
+          {{ routeInfo.duration | number:'1.0-0' }}
+          <small>min</small>
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ MODO ROUTE (NUEVO) ═══ -->
+  <div *ngIf="mode === 'route'" class="header-container route-header">
+    <div class="route-pill">
+      <div class="route-stop">
+        <span class="dot origin"></span>
+        <span class="stop-text">{{ originAddress | slice:0:35 }}{{ originAddress && originAddress.length > 35 ? '...' : '' }}</span>
+      </div>
+      <div class="route-arrow">
+        <ion-icon name="arrow-forward"></ion-icon>
+      </div>
+      <div class="route-stop">
+        <span class="dot destination"></span>
+        <span class="stop-text">{{ destinationAddress | slice:0:35 }}{{ destinationAddress && destinationAddress.length > 35 ? '...' : '' }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mapa -->
+  <div [id]="mapId" style="height: 400px; width: 100%;"></div>
+
+  <!-- Controles flotantes -->
+  <div class="floating-controls right" *ngIf="mode !== 'route'">
+    <ion-button (click)="getCurrentLocation()" color="primary" size="small">
+      <ion-icon slot="icon-only" name="locate-outline"></ion-icon>
+    </ion-button>
+  </div>
+
+  <div class="left-controls" *ngIf="mode === 'viewer'">
+    <ion-button 
+      *ngIf="!routeInfo"
+      (click)="calculateRoute()" 
+      [disabled]="isCalculatingRoute"
+      color="success" 
+      size="small">
+      <ion-icon slot="start" name="navigate-outline"></ion-icon>
+      {{ isCalculatingRoute ? 'Calculando...' : 'Cómo llegar' }}
+    </ion-button>
+    
+    <ion-button 
+      *ngIf="routeInfo"
+      (click)="clearRoute()" 
+      fill="outline" 
+      color="medium" 
+      size="small">
+      <ion-icon slot="icon-only" name="close-outline"></ion-icon>
+    </ion-button>
+  </div>
+
+</div>

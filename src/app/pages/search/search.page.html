@@ -1,0 +1,585 @@
+<!-- Header Glassmorphism -->
+<ion-header [class.header-scrolled]="showHeaderShadow" class="custom-header">
+  <ion-toolbar class="main-toolbar">
+    <ion-buttons slot="start">
+      <ion-button class="header-action back-btn" (click)="back()">
+        <ion-icon slot="icon-only" name="arrow-back-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title class="page-title">Explorar</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="toggleMapView()" class="map-toggle-btn" [class.active]="isMapView">
+        <ion-icon slot="icon-only" [name]="!isMapView ? 'map-outline' : 'list-outline'"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+
+  <!-- Search Toolbar -->
+  <ion-toolbar class="search-toolbar">
+    <div class="search-container">
+      <div class="search-input-wrapper">
+        <ion-icon name="search-outline" class="search-icon"></ion-icon>
+        <input type="text" class="custom-searchbar" placeholder="Buscar servicios, viajes..." [value]="searchQuery"
+          (input)="handleSearch($event)" />
+        @if(searchQuery) {
+        <button class="clear-search-btn" (click)="clearSearch()">
+          <ion-icon name="close-outline"></ion-icon>
+        </button>
+        }
+      </div>
+      <button class="filter-btn" [class.active]="activeFiltersCount > 0" (click)="openFilterModal()">
+        <ion-icon name="options-outline"></ion-icon>
+        @if(activeFiltersCount > 0) {
+        <span class="filter-badge">{{ activeFiltersCount }}</span>
+        }
+      </button>
+    </div>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="explore-content" scroll-y="true" [fullscreen]="true" (ionScroll)="onScroll($event)"
+  [scrollEvents]="true">
+  <ion-refresher slot="fixed" (ionRefresh)="handleRefresh($event)">
+    <ion-refresher-content pullingIcon="arrow-down" pullingText="Tirar para actualizar" refreshingSpinner="crescent"
+      refreshingText="Actualizando..."></ion-refresher-content>
+  </ion-refresher>
+
+  <!-- Categories Horizontal Scroll -->
+  <div class="categories-section">
+    <div class="categories-track">
+      @for(cat of categories; track cat.id) {
+      <button class="category-pill" [class.active]="cat.active" (click)="selectCategory(cat.id)">
+        <div class="category-icon-wrapper">
+          <ion-icon [name]="cat.icon"></ion-icon>
+        </div>
+        <span>{{ cat.name }}</span>
+      </button>
+      }
+    </div>
+  </div>
+
+  <!-- Active Filters -->
+  @if(activeFiltersCount > 0) {
+  <div class="active-filters-bar">
+    <div class="filters-scroll">
+      @if(filters.search) {
+      <button class="filter-tag" (click)="removeFilter('search')">
+        "{{ filters.search }}"
+        <ion-icon name="close-outline"></ion-icon>
+      </button>
+      }
+      @if(filters.category) {
+      <button class="filter-tag" (click)="removeFilter('category')">
+        {{ getCategoryName(filters.category) }}
+        <ion-icon name="close-outline"></ion-icon>
+      </button>
+      }
+      @if(filters.type) {
+      <button class="filter-tag" (click)="removeFilter('type')">
+        {{ getTypeLabel(filters.type) }}
+        <ion-icon name="close-outline"></ion-icon>
+      </button>
+      }
+      @if(filters.availability) {
+      <button class="filter-tag" (click)="removeFilter('availability')">
+        {{ getAvailabilityLabel(filters.availability) }}
+        <ion-icon name="close-outline"></ion-icon>
+      </button>
+      }
+      @if(filters.sort !== '' && filters.sort !== null) {
+      <button class="filter-tag" (click)="removeFilter('sort')">
+        {{ getSortLabel(filters.sort) }}
+        <ion-icon name="close-outline"></ion-icon>
+      </button>
+      }
+    </div>
+    <button class="clear-all-btn" (click)="clearAllFilters(); applyFilters();">
+      Limpiar
+    </button>
+  </div>
+  }
+
+  <!-- View Toggle -->
+  @if(!isMapView) {
+  <div class="view-controls">
+    <div class="results-info">
+      @if(!isLoading && pagination) {
+      <span class="results-count">{{ pagination.total }} resultados</span>
+      }
+    </div>
+    <div class="view-segment">
+      <button class="view-btn" [class.active]="currentView === 'grid'" (click)="setView('grid')">
+        <ion-icon name="grid-outline"></ion-icon>
+      </button>
+      <button class="view-btn" [class.active]="currentView === 'list'" (click)="setView('list')">
+        <ion-icon name="list-outline"></ion-icon>
+      </button>
+    </div>
+  </div>
+  }
+
+  <!-- Map View -->
+  @if(isMapView) {
+  <div class="map-view-container">
+    <div id="leaflet-map" class="leaflet-map"></div>
+
+    <!-- Overlay con contador de resultados -->
+    <div class="map-overlay">
+      <div class="map-results-badge">
+        <span class="map-results-count">{{ publications.length || 5 }} resultados</span>
+        <span class="map-results-label">en esta zona</span>
+      </div>
+
+      <!-- Botón para volver a lista -->
+      <button class="map-list-toggle" (click)="toggleMapView()">
+        <ion-icon name="list-outline"></ion-icon>
+        <span>Ver lista</span>
+      </button>
+    </div>
+
+    <!-- Botón de ubicación -->
+    <button class="map-locate-btn" (click)="centerOnUser()">
+      <ion-icon name="navigate-outline"></ion-icon>
+    </button>
+  </div>
+  }
+
+  <!-- Content Views -->
+  @if(!isMapView) {
+
+  <!-- Skeleton Loading -->
+  @if(isLoading) {
+  <div class="skeleton-container" [class.grid]="currentView === 'grid'" [class.list]="currentView === 'list'">
+    @for(i of [1,2,3,4,5,6]; track $index) {
+    @if(currentView === 'grid') {
+    <div class="skeleton-card">
+      <ion-skeleton-text animated class="skeleton-image"></ion-skeleton-text>
+      <div class="skeleton-body">
+        <ion-skeleton-text animated class="skeleton-title"></ion-skeleton-text>
+        <ion-skeleton-text animated class="skeleton-line"></ion-skeleton-text>
+        <div class="skeleton-footer">
+          <ion-skeleton-text animated class="skeleton-badge"></ion-skeleton-text>
+          <ion-skeleton-text animated class="skeleton-price"></ion-skeleton-text>
+        </div>
+      </div>
+    </div>
+    } @else {
+    <div class="skeleton-list-item">
+      <ion-skeleton-text animated class="skeleton-thumb"></ion-skeleton-text>
+      <div class="skeleton-list-body">
+        <ion-skeleton-text animated class="skeleton-title"></ion-skeleton-text>
+        <ion-skeleton-text animated class="skeleton-line"></ion-skeleton-text>
+        <ion-skeleton-text animated class="skeleton-line short"></ion-skeleton-text>
+      </div>
+    </div>
+    }
+    }
+  </div>
+  }
+
+  <!-- Grid View -->
+  @if(currentView === 'grid' && !isLoading && !hasError) {
+  <div class="masonry-grid">
+    @for(item of publications; track item.id; let i = $index) {
+
+    <!-- SERVICE CARD -->
+    @if(item.type === 'service') {
+    <div class="service-card" [style.animation-delay]="(i * 0.05) + 's'">
+      <!-- Image Header -->
+      <div class="card-image-wrapper">
+        <img
+          [src]="item.detail && 'images' in item.detail && item?.detail?.images?.[0] ? item.detail.images[0] : 'assets/placeholder-service.jpg'"
+          [alt]="item.title" (error)="_service.errorImage($event)" loading="lazy" />
+        <div class="image-overlay"></div>
+
+        <!-- Badges -->
+        <!-- @if(item.badge) {
+        <div class="floating-badge" [class]="getBadgeClass(item.badge)">
+          @if(item.badge === 'urgent') {
+          <ion-icon name="alarm-outline"></ion-icon>
+          } @else if(item.badge === 'featured') {
+          <ion-icon name="trending-up-outline"></ion-icon>
+          } @else {
+          <ion-icon name="star-outline"></ion-icon>
+          }
+          {{ item.badge }}
+        </div>
+        } -->
+
+        <!-- Price Tag -->
+        <div class="price-tag"
+          *ngIf="item?.meta?.budget_range || (item.detail && 'budget_range' in item.detail && item.detail.budget_range)">
+          {{ item?.meta?.budget_range || (item.detail && 'budget_range' in item.detail ? item.detail.budget_range : '')
+          }}
+        </div>
+      </div>
+
+      <!-- User Header -->
+      <div class="card-user-header">
+        <div class="user-info">
+          <div class="avatar-ring" [style.border-color]="getRatingColor(item.user.rating)">
+            <img [src]="item.user.avatar || 'assets/avatar-default.jpg'" alt="avatar" />
+          </div>
+          <div class="user-meta">
+            <span class="user-name">{{ item.user.name }}</span>
+            <div class="user-rating">
+              <ion-icon name="star" [style.color]="getRatingColor(item.user.rating)"></ion-icon>
+              <span [style.color]="getRatingColor(item.user.rating)">{{ item.user.rating || 'Nuevo' }}</span>
+            </div>
+          </div>
+        </div>
+        <span class="time-badge">{{ getRelativeTime(item.published_at) }}</span>
+      </div>
+
+      <!-- Content -->
+      <div class="card-content">
+        <h3 class="card-title">{{ item.title }}</h3>
+        <p class="card-description">{{ item.description }}</p>
+
+        <div class="card-tags">
+          <span class="category-tag">{{ item.sub_category || item.category }}</span>
+          @if(item.detail && 'address' in item.detail && item.detail.address) {
+          <span class="location-tag">
+            <ion-icon name="location-outline"></ion-icon>
+            {{ item.detail.address || item?.meta?.location }}
+          </span>
+          }
+        </div>
+      </div>
+
+      <!-- Footer Stats -->
+      <div class="card-footer">
+        <div class="stats-group">
+          <div class="stat" *ngIf="item.offers_count > 0">
+            <ion-icon name="people-outline"></ion-icon>
+            <span>{{ item.offers_count }} ofertas</span>
+          </div>
+          <div class="stat">
+            <ion-icon name="eye-outline"></ion-icon>
+            <span>{{ item.views_count }}</span>
+          </div>
+        </div>
+        <div class="status-indicator" [style.background]="getStatusColor(item.status) + '20'"
+          [style.color]="getStatusColor(item.status)">
+          <span class="status-dot" [style.background]="getStatusColor(item.status)"></span>
+          {{ item.status_label || item.status }}
+        </div>
+      </div>
+    </div>
+    }
+
+    <!-- RIDE CARD (Boarding Pass Style) -->
+    @if(item.type === 'ride') {
+    <div class="ride-card" [style.animation-delay]="(i * 0.05) + 's'">
+      <!-- Ticket Header -->
+      <div class="ticket-header">
+        <div class="ride-type">
+          <ion-icon name="car-sport-outline"></ion-icon>
+          <span>{{ item.type_label }}</span>
+        </div>
+        @if(item.detail && 'price_per_seat' in item.detail) {
+        <div class="ride-price">
+          <span class="price-amount">{{ formatPrice(item.detail.price_per_seat) }}</span>
+          <span class="price-label">por asiento</span>
+        </div>
+        }
+      </div>
+
+      <!-- Route Visualization -->
+      <div class="route-section">
+        <div class="route-point">
+          <div class="route-dot origin"></div>
+          <div class="route-info">
+            <span class="route-label">Origen</span>
+            <span class="route-value">{{ item?.meta?.origin || (item.detail && 'origin' in item.detail ?
+              item.detail.origin : 'No especificado') }}</span>
+          </div>
+        </div>
+        <div class="route-line">
+          <div class="route-progress"></div>
+          <ion-icon name="navigate-outline" class="route-icon"></ion-icon>
+        </div>
+        <div class="route-point">
+          <div class="route-dot destination"></div>
+          <div class="route-info">
+            <span class="route-label">Destino</span>
+            <span class="route-value">{{ item?.meta?.destination || (item.detail && 'destination' in item.detail ?
+              item.detail.destination : 'No especificado') }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Ride Details -->
+      <div class="ride-details">
+        @if(item.detail && 'departure_time' in item.detail && item.detail.departure_time) {
+        <div class="detail-pill">
+          <ion-icon name="time-outline"></ion-icon>
+          <span>{{ item.detail.departure_time | date:'shortTime' }}</span>
+        </div>
+        }
+        @if(item.detail && 'seats_available' in item.detail) {
+        <div class="detail-pill" [class.low-seats]="item.detail.seats_available <= 2">
+          <ion-icon name="people-outline"></ion-icon>
+          <span>{{ item.detail.seats_available }} asientos</span>
+        </div>
+        }
+        @if(item.detail && 'vehicle' in item.detail && item.detail.vehicle) {
+        <div class="detail-pill">
+          <ion-icon name="car-outline"></ion-icon>
+          <span>{{ item.detail.vehicle }}</span>
+        </div>
+        }
+      </div>
+
+      <!-- Driver -->
+      <div class="ride-driver">
+        <div class="driver-info">
+          <div class="avatar-ring small" [style.border-color]="getRatingColor(item.user.rating)">
+            <img [src]="item.user.avatar || 'assets/avatar-default.jpg'" alt="driver" />
+          </div>
+          <div>
+            <span class="driver-name">{{ item.user.name }}</span>
+            <div class="driver-rating">
+              <ion-icon name="star"></ion-icon>
+              <span>{{ item.user.rating || 'Nuevo' }}</span>
+            </div>
+          </div>
+        </div>
+        <ion-button fill="clear" size="small" class="view-btn-ride">
+          Ver
+          <ion-icon name="arrow-up-outline" slot="end"></ion-icon>
+        </ion-button>
+      </div>
+
+      <!-- Ticket Perforation Effect -->
+      <div class="ticket-hole left"></div>
+      <div class="ticket-hole right"></div>
+    </div>
+    }
+
+    }
+  </div>
+  }
+
+  <!-- List View -->
+  @if(currentView === 'list' && !isLoading && !hasError) {
+  <div class="list-container">
+    @for(item of publications; track item.id; let i = $index) {
+    <div class="list-item" [style.animation-delay]="(i * 0.03) + 's'">
+
+      @if(item.type === 'service') {
+      <div class="list-item-service" (click)="viewService(item.id)">
+        <div class="list-thumb">
+          <img
+            [src]="item.detail && 'images' in item.detail && item?.detail?.images?.[0] ? item.detail.images[0] : 'assets/placeholder-service.jpg'"
+            [alt]="item.title" (error)="_service.errorImage($event)" />
+          @if(item.badge) {
+          <div class="list-badge" [class]="getBadgeClass(item.badge)">{{ item.badge }}</div>
+          }
+        </div>
+        <div class="list-body">
+          <div class="list-header-row">
+            <h3 class="list-title">{{ item.title }}</h3>
+            <span class="list-price" *ngIf="item?.meta?.budget_range">{{ item.meta.budget_range }}</span>
+          </div>
+          <p class="list-desc">{{ item.description }}</p>
+          <div class="list-meta">
+            <div class="list-user">
+              <img [src]="item.user.avatar || 'assets/avatar-default.jpg'" class="list-avatar" />
+              <span>{{ item.user.name }}</span>
+              <ion-icon name="star" class="rating-icon"></ion-icon>
+              <span class="rating-value">{{ item.user.rating }}</span>
+            </div>
+            <div class="list-stats">
+              <span><ion-icon name="people-outline"></ion-icon> {{ item.offers_count }}</span>
+              <span><ion-icon name="location-outline"></ion-icon> {{ item?.meta?.location || (item.detail && 'address'
+                in item.detail ? item.detail.address : 'Remoto') }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      }
+
+      @if(item.type === 'ride') {
+      <div class="list-item-ride" (click)="viewRide(item.id)">
+        <div class="ride-list-route">
+          <div class="route-mini">
+            <span class="mini-origin">{{ item?.meta?.origin || (item.detail && 'origin' in item.detail ?
+              item.detail.origin : '?') }}</span>
+            <ion-icon name="arrow-up-outline" class="mini-arrow"></ion-icon>
+            <span class="mini-dest">{{ item?.meta?.destination || (item.detail && 'destination' in item.detail ?
+              item.detail.destination : '?') }}</span>
+          </div>
+          <div class="ride-list-time"
+            *ngIf="item.detail && 'departure_time' in item.detail && item.detail.departure_time">
+            <ion-icon name="time-outline"></ion-icon>
+            {{ item.detail.departure_time | date:'shortTime' }}
+          </div>
+        </div>
+        <div class="ride-list-body">
+          <h3>{{ item.title }}</h3>
+          <div class="ride-list-meta">
+            <span class="seats-badge"
+              [class.low]="item.detail && 'seats_available' in item.detail && item.detail.seats_available <= 2">
+              <ion-icon name="people-outline"></ion-icon>
+              {{ item.detail && 'seats_available' in item.detail ? item.detail.seats_available : 0 }} asientos
+            </span>
+            <span class="vehicle-tag" *ngIf="item.detail && 'vehicle' in item.detail">{{ item.detail.vehicle }}</span>
+          </div>
+          <div class="ride-list-footer">
+            <div class="driver-mini">
+              <img [src]="item.user.avatar || 'assets/avatar-default.jpg'" />
+              <span>{{ item.user.name }}</span>
+              <ion-icon name="star"></ion-icon>
+              {{ item.user.rating }}
+            </div>
+            <span class="list-price-ride" *ngIf="item.detail && 'price_per_seat' in item.detail">
+              {{ formatPrice(item.detail.price_per_seat) }}
+            </span>
+          </div>
+        </div>
+      </div>
+      }
+
+    </div>
+    }
+  </div>
+  }
+
+  <!-- Empty State -->
+  @if(publications.length === 0 && !isLoading && !hasError) {
+  <div class="empty-state">
+    <div class="empty-illustration">
+      <ion-icon name="search-outline" class="empty-icon"></ion-icon>
+      <div class="empty-orbits">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+    <h3>No se encontraron resultados</h3>
+    <p>Intenta ajustar tus filtros o términos de búsqueda</p>
+    <ion-button fill="clear" (click)="clearAllFilters(); applyFilters();" class="clear-filters-btn">
+      <ion-icon name="close-outline" slot="start"></ion-icon>
+      Limpiar filtros
+    </ion-button>
+  </div>
+  }
+
+  <!-- Error State -->
+  @if(hasError && !isLoading) {
+  <div class="error-state">
+    <ion-icon name="alert-circle-outline"></ion-icon>
+    <h3>Algo salió mal</h3>
+    <p>No pudimos cargar las publicaciones</p>
+    <ion-button fill="outline" (click)="loadPublications(true)">Reintentar</ion-button>
+  </div>
+  }
+
+  <!-- Infinite Scroll -->
+  @if(!isLoading && publications.length > 0 && pagination?.has_more_pages) {
+  <ion-infinite-scroll (ionInfinite)="loadMore($event)">
+    <ion-infinite-scroll-content loadingSpinner="crescent" loadingText="Cargando más..."></ion-infinite-scroll-content>
+  </ion-infinite-scroll>
+  }
+
+  <!-- Scroll to top FAB -->
+  <ion-button class="scroll-top-btn" [class.visible]="showHeaderShadow" (click)="scrollToTop()" shape="round">
+    <ion-icon name="arrow-up-outline"></ion-icon>
+  </ion-button>
+  }
+
+</ion-content>
+
+<!-- Filter Modal -->
+<ion-modal #modal [breakpoints]="[0, 0.5, 0.85]" [initialBreakpoint]="0.85" [backdropBreakpoint]="0.5">
+  <ng-template>
+    <div class="filter-modal-content">
+      <!-- <div class="modal-handle-bar"></div> -->
+
+      <div class="filter-modal-header">
+        <h2>Filtros Avanzados</h2>
+        <ion-button fill="clear" (click)="closeFilterModal()">
+          <ion-icon name="close-outline"></ion-icon>
+        </ion-button>
+      </div>
+
+      <div class="filter-modal-body">
+        <!-- Type -->
+        <div class="filter-group">
+          <label class="filter-label">Tipo de publicación</label>
+          <div class="filter-chips">
+            <button class="chip" [class.active]="isFilterActive('type', 'all')"
+              (click)="toggleFilterType('type', 'all')">Todos</button>
+            <button class="chip" [class.active]="isFilterActive('type', 'services')"
+              (click)="toggleFilterType('type', 'services')">Servicios</button>
+            <button class="chip" [class.active]="isFilterActive('type', 'rides')"
+              (click)="toggleFilterType('type', 'rides')">Viajes</button>
+          </div>
+        </div>
+
+        <!-- Sort -->
+        <div class="filter-group">
+          <label class="filter-label">Ordenar por</label>
+          <div class="filter-chips">
+            <!-- <button class="chip" [class.active]="isFilterActive('sort', 'relevance')"
+              (click)="toggleFilterType('sort', 'relevance')">Relevancia</button> -->
+            <button class="chip" [class.active]="isFilterActive('sort', 'distance')"
+              (click)="toggleFilterType('sort', 'distance')">Más cercano</button>
+            <button class="chip" [class.active]="isFilterActive('sort', 'price_low')"
+              (click)="toggleFilterType('sort', 'price_low')">Precio ↓</button>
+            <button class="chip" [class.active]="isFilterActive('sort', 'price_high')"
+              (click)="toggleFilterType('sort', 'price_high')">Precio ↑</button>
+            <button class="chip" [class.active]="isFilterActive('sort', 'rating')"
+              (click)="toggleFilterType('sort', 'rating')">Mejor rating</button>
+          </div>
+        </div>
+
+        <!-- Distance -->
+        <div class="filter-group">
+          <label class="filter-label">Distancia máxima: <strong>{{ tempFilters.max_distance }} km</strong></label>
+          <input type="range" class="modern-range" min="1" max="50" [value]="tempFilters.max_distance"
+            (input)="updateDistanceValue($event)" />
+          <div class="range-labels">
+            <span>1 km</span>
+            <span>50 km</span>
+          </div>
+        </div>
+
+        <!-- Price -->
+        <div class="filter-group">
+          <label class="filter-label">Precio máximo: <strong>${{ tempFilters.max_price }}</strong></label>
+          <input type="range" class="modern-range" min="0" max="2000" step="50" [value]="tempFilters.max_price"
+            (input)="updatePriceValue($event)" />
+          <div class="range-labels">
+            <span>$0</span>
+            <span>$2000+</span>
+          </div>
+        </div>
+
+        <!-- Availability -->
+        <div class="filter-group">
+          <label class="filter-label">Disponibilidad</label>
+          <div class="filter-chips">
+            <button class="chip" [class.active]="isFilterActive('availability', 'all')"
+              (click)="toggleFilterType('availability', 'all')">Cualquier momento</button>
+            <button class="chip" [class.active]="isFilterActive('availability', 'today')"
+              (click)="toggleFilterType('availability', 'today')">Hoy</button>
+            <button class="chip" [class.active]="isFilterActive('availability', 'week')"
+              (click)="toggleFilterType('availability', 'week')">Esta semana</button>
+            <button class="chip" [class.active]="isFilterActive('availability', 'now')"
+              (click)="toggleFilterType('availability', 'now')">Disponible ahora</button>
+          </div>
+        </div>
+        <div style="height: 20px; flex-shrink: 0;"></div>
+      </div>
+
+      <div class="filter-modal-footer">
+        <ion-button expand="block" fill="outline" (click)="clearAllFilters()">
+          Limpiar todo
+        </ion-button>
+        <ion-button expand="block" color="primary" (click)="applyFilters()">
+          Aplicar {{ activeFiltersCount > 0 ? '(' + activeFiltersCount + ')' : '' }}
+        </ion-button>
+      </div>
+    </div>
+  </ng-template>
+</ion-modal>

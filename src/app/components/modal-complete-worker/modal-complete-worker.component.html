@@ -1,0 +1,106 @@
+<div class="modal-overlay">
+  <div class="modal-complete-work" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>Completar trabajo</h3>
+      <button class="btn-close" (click)="closeCompleteModal()">
+        <ion-icon name="close"></ion-icon>
+      </button>
+    </div>
+
+    <div class="modal-body">
+      <p class="modal-desc">Sube evidencia del trabajo realizado y un resumen para el cliente.</p>
+
+      <!-- Resumen del trabajo -->
+      <div class="form-group">
+        <label>Resumen del trabajo realizado *</label>
+        <textarea 
+          [(ngModel)]="completionNotes" 
+          placeholder="Describe lo que hiciste..."
+          rows="4">
+        </textarea>
+      </div>
+
+      <!-- Horas reales -->
+       @if (acceptedOffer?.estimated_time) {
+         <div class="form-group">
+           <label>Horas reales trabajadas (opcional)</label>
+           <input type="number" [(ngModel)]="actualHours" placeholder="Ej: 2.5" min="0" step="0.5">
+         </div>
+       }
+
+      <!-- Subir imágenes -->
+      <div class="form-group">
+        <label>Fotos de evidencia *</label>
+        <div class="upload-zone" (click)="fileInput.click()" [class.has-files]="evidenceImages.length > 0">
+          <input 
+            #fileInput 
+            type="file" 
+            multiple 
+            accept="image/*" 
+            hidden 
+            (change)="onEvidenceImagesSelected($event)">
+          
+          @if(evidenceImages.length === 0) {
+            <div class="upload-placeholder">
+              <ion-icon name="camera"></ion-icon>
+              <span>Toca para subir fotos</span>
+              <small>Máximo 5 imágenes, 5MB cada una</small>
+            </div>
+          }
+          
+          @if (evidenceImages.length > 0) {
+            <div class="upload-preview">
+              @for (img of evidenceImages; track $index) {
+                <div class="preview-item">
+                  <img [src]="img.preview" alt="Evidencia">
+                  <button class="btn-remove" (click)="removeEvidenceImage($index); $event.stopPropagation()">
+                    <ion-icon name="close"></ion-icon>
+                  </button>
+                </div>
+              }
+              @if (evidenceImages.length < 5) {
+                <div class="add-more" (click)="fileInput.click(); $event.stopPropagation()">
+                  <ion-icon name="add"></ion-icon>
+                </div>
+              }
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- Subir documentos (opcional) -->
+      <div class="form-group">
+        <label>Documentos adicionales (opcional)</label>
+        <div class="doc-upload" (click)="docInput.click()">
+          <input #docInput type="file" multiple hidden (change)="onEvidenceDocsSelected($event)">
+          <ion-icon name="document-attach"></ion-icon>
+          <span>Adjuntar documentos</span>
+        </div>
+        @if (evidenceDocs.length > 0) {
+          <div class="doc-list">
+            @for (doc of evidenceDocs; track $index) {
+              <div class="doc-item">
+                <ion-icon name="documents"></ion-icon>
+                <span>{{ doc.name }}</span>
+                <button (click)="removeEvidenceDoc($index)">
+                  <ion-icon name="trash"></ion-icon>
+                </button>
+              </div>
+            }
+          </div>
+        }
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn-cancel" (click)="closeCompleteModal()">Cancelar</button>
+      <button 
+        class="btn-submit" 
+        (click)="submitCompletion()"
+        [disabled]="!canSubmitCompletion">
+        <ion-icon name="checkmark-circle"></ion-icon>
+        <span>Entregar trabajo</span>
+      </button>
+    </div>
+  </div>
+</div>

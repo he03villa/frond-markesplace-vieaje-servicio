@@ -1,0 +1,190 @@
+<!-- delete-account-modal.component.html -->
+<div class="" (click)="onOverlayClick($event)">
+  <div class="delete-modal">
+    
+    <!-- Header -->
+    <div class="modal-header">
+      <div class="modal-handle-bar"></div>
+      <div class="header-spacer"></div>
+      <h2 class="modal-title">Eliminar cuenta</h2>
+      <button class="close-btn" (click)="dismiss()">
+        <ion-icon name="close-outline"></ion-icon>
+      </button>
+    </div>
+
+    <!-- Body -->
+    @if (step === 'confirm') {
+      <div class="modal-body">
+        
+        <!-- Warning Illustration -->
+        <div class="warning-illustration">
+          <div class="warning-ring">
+            <div class="ring-outer"></div>
+            <div class="ring-inner">
+              <ion-icon name="trash-outline" class="warning-icon"></ion-icon>
+            </div>
+          </div>
+          <h3 class="warning-title">¿Estás seguro?</h3>
+          <p class="warning-subtitle">Esta acción no se puede deshacer. Tu cuenta y todos tus datos serán eliminados permanentemente.</p>
+        </div>
+  
+        <!-- Consequences -->
+        <div class="consequences-section">
+          <p class="section-label">Esto eliminará:</p>
+          
+          <div class="consequence-item">
+            <div class="consequence-icon">
+              <ion-icon name="person-outline"></ion-icon>
+            </div>
+            <div class="consequence-text">
+              <strong>Tu perfil y datos personales</strong>
+              <span>Nombre, foto, biografía y configuración</span>
+            </div>
+          </div>
+  
+          <div class="consequence-item">
+            <div class="consequence-icon">
+              <ion-icon name="briefcase-outline"></ion-icon>
+            </div>
+            <div class="consequence-text">
+              <strong>Tus servicios y publicaciones</strong>
+              <span>Todo el contenido que hayas creado</span>
+            </div>
+          </div>
+  
+          <div class="consequence-item">
+            <div class="consequence-icon">
+              <ion-icon name="chatbubbles-outline"></ion-icon>
+            </div>
+            <div class="consequence-text">
+              <strong>Tus mensajes y conversaciones</strong>
+              <span>Historial de chats y archivos</span>
+            </div>
+          </div>
+  
+          <div class="consequence-item">
+            <div class="consequence-icon">
+              <ion-icon name="star-outline"></ion-icon>
+            </div>
+            <div class="consequence-text">
+              <strong>Tus reseñas y calificaciones</strong>
+              <span>Todo el feedback que hayas recibido</span>
+            </div>
+          </div>
+        </div>
+  
+        <!-- Password Confirmation -->
+        <div class="confirmation-section">
+          <p class="confirmation-label">
+            Para confirmar, ingresa tu <span class="highlight">contraseña</span>
+          </p>
+          <div class="password-input-wrapper">
+            <input 
+              type="password" 
+              class="password-input" 
+              [class.error]="passwordError"
+              [(ngModel)]="password"
+              (input)="validatePassword()"
+              placeholder="Tu contraseña"
+            />
+            <ion-icon 
+              name="checkmark-circle" 
+              class="input-status valid"
+              [class.visible]="passwordValid">
+            </ion-icon>
+            <ion-icon 
+              name="close-circle" 
+              class="input-status invalid"
+              [class.visible]="passwordError">
+            </ion-icon>
+          </div>
+          @if (passwordError) {
+            <div class="input-error">
+              <ion-icon name="alert-circle"></ion-icon>
+              La contraseña es incorrecta
+            </div>
+          }
+        </div>
+  
+        <!-- Checkboxes -->
+        <div class="checkboxes-section">
+          <div class="checkbox-item" (click)="toggleCheckbox('data')">
+            <div class="checkbox-custom" [class.checked]="checkboxes.data">
+              <ion-icon name="checkmark"></ion-icon>
+            </div>
+            <span class="checkbox-text">
+              Entiendo que <strong>todos mis datos serán eliminados permanentemente</strong> y no podrán ser recuperados
+            </span>
+          </div>
+          <div class="checkbox-item" (click)="toggleCheckbox('services')">
+            <div class="checkbox-custom" [class.checked]="checkboxes.services">
+              <ion-icon name="checkmark"></ion-icon>
+            </div>
+            <span class="checkbox-text">
+              Entiendo que <strong>mis servicios activos se cancelarán</strong> y los usuarios afectados serán notificados
+            </span>
+          </div>
+        </div>
+  
+        <!-- Final Warning -->
+        <div class="final-warning">
+          <div class="warning-dot"></div>
+          <p>Esta acción es irreversible. No habrá forma de recuperar tu cuenta.</p>
+        </div>
+      </div>
+    }
+
+    <!-- Deletion Progress -->
+    @if (step === 'deleting') {
+      <div class="modal-body">
+        <div class="deletion-progress">
+          <div class="progress-ring">
+            <div class="progress-spinner"></div>
+            <ion-icon name="trash-outline" class="progress-icon"></ion-icon>
+          </div>
+          <h3>Eliminando cuenta...</h3>
+          <p>Por favor no cierres la aplicación</p>
+        </div>
+      </div>
+    }
+
+    <!-- Deletion Success -->
+    @if (step === 'success') {
+      <div class="modal-body">
+        <div class="deletion-success">
+          <div class="success-animation">
+            <div class="success-circle">
+              <ion-icon name="checkmark"></ion-icon>
+            </div>
+            <div class="success-particles">
+              <span style="--x: 40px; --y: -40px"></span>
+              <span style="--x: -40px; --y: -30px"></span>
+              <span style="--x: 30px; --y: 40px"></span>
+              <span style="--x: -35px; --y: 35px"></span>
+            </div>
+          </div>
+          <h3>Cuenta eliminada</h3>
+          <p>Tu cuenta ha sido eliminada permanentemente. Gracias por haber sido parte de nuestra comunidad.</p>
+          <button class="btn-done" (click)="finish()">Entendido</button>
+        </div>
+      </div>
+    }
+
+    <!-- Footer -->
+    @if (step === 'confirm') {
+      <div class="modal-footer">
+        <div class="footer-actions">
+          <button class="btn btn-cancel" (click)="dismiss()">Cancelar</button>
+          <button 
+            class="btn btn-delete" 
+            [disabled]="!canDelete"
+            (click)="deleteAccount()"
+            [class.confirming]="isConfirming">
+            <ion-icon name="trash-outline" class="btn-icon"></ion-icon>
+            <span class="btn-text">Eliminar cuenta</span>
+          </button>
+        </div>
+      </div>
+    }
+  </div>
+</div>

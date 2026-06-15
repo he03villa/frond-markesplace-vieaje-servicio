@@ -1,2 +1,347 @@
 // For information on how to create your own theme, please refer to:
 // https://ionicframework.com/docs/theming/
+
+:root {
+  --ion-color-primary: #3880ff;
+  --ion-color-primary-rgb: 56, 128, 255;
+  --ion-color-primary-contrast: #ffffff;
+  --ion-color-primary-contrast-rgb: 255, 255, 255;
+
+  --ion-color-secondary: #3dc2ff;
+  --ion-color-success: #2dd36f;
+  --ion-color-warning: #ffc409;
+  --ion-color-danger: #eb445a;
+
+  /* Colores principales */
+  --primary-color: #4f46e5;
+  --primary-dark: #4338ca;
+  --primary-light: #6366f1;
+  --primary-gradient: linear-gradient(135deg, var(--primary-light) 0%, var(--primary-color) 100%);
+
+  /* Colores secundarios */
+  --secondary-color: #10b981;
+  --secondary-dark: #059669;
+
+  /* Colores neutros */
+  --bg-dark: #111827;
+  --bg-light: #f9fafb;
+  --bg-white: #ffffff;
+
+  /* Texto */
+  --text-dark: #1f2937;
+  --text-medium: #4b5563;
+  --text-light: #6b7280;
+  --text-white: #ffffff;
+
+  /* Bordes y líneas */
+  --border-color: #d1d5db;
+  --border-light: #e5e7eb;
+  --border-dark: #9ca3af;
+
+  /* Estados */
+  --error-color: #ef4444;
+  --error-light: #fee2e2;
+  --success-color: #10b981;
+  --success-light: #d1fae5;
+  --warning-color: #f59e0b;
+
+  /* Sombras */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+
+  /* Espaciado */
+  --space-xs: 0.25rem;
+  --space-sm: 0.5rem;
+  --space-md: 1rem;
+  --space-lg: 1.5rem;
+  --space-xl: 2rem;
+  --space-2xl: 3rem;
+
+  /* Bordes redondeados */
+  --radius-sm: 0.25rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+
+  /* Transiciones */
+  --transition-fast: 150ms ease;
+  --transition-normal: 300ms ease;
+  --transition-slow: 500ms ease;
+
+  --ion-color-primary: #4f46e5;
+  --ion-color-primary-rgb: 79, 70, 229;
+  --ion-color-primary-contrast: #ffffff;
+  --ion-color-primary-contrast-rgb: 255, 255, 255;
+  --ion-color-primary-shade: #463eca;
+  --ion-color-primary-tint: #6159e8;
+
+  --ion-color-secondary: #10b981;
+  --ion-color-secondary-rgb: 16, 185, 129;
+  --ion-color-secondary-contrast: #000000;
+  --ion-color-secondary-contrast-rgb: 0, 0, 0;
+  --ion-color-secondary-shade: #0ea372;
+  --ion-color-secondary-tint: #28c08e;
+
+  --ion-color-tertiary: #f59e0b;
+  --ion-color-tertiary-rgb: 245, 158, 11;
+  --ion-color-tertiary-contrast: #000000;
+  --ion-color-tertiary-contrast-rgb: 0, 0, 0;
+  --ion-color-tertiary-shade: #d88b0a;
+  --ion-color-tertiary-tint: #f6a823;
+
+  --ion-color-success: #10b981;
+  --ion-color-warning: #f59e0b;
+  --ion-color-danger: #ef4444;
+
+  --ion-background-color: #f8fafc;
+  --ion-background-color-rgb: 248, 250, 252;
+
+  --ion-text-color: #1f2937;
+  --ion-text-color-rgb: 31, 41, 55;
+
+  --ion-color-step-50: #f9fafb;
+  --ion-color-step-100: #f3f4f6;
+  --ion-color-step-200: #e5e7eb;
+  --ion-color-step-300: #d1d5db;
+  --ion-color-step-400: #9ca3af;
+  --ion-color-step-500: #6b7280;
+  --ion-color-step-600: #4b5563;
+  --ion-color-step-700: #374151;
+  --ion-color-step-800: #1f2937;
+  --ion-color-step-900: #111827;
+
+  --message-bubble-me: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --message-bubble-other: #f3f4f6;
+
+  // Nuevas variables de efectos
+  --glass-bg: rgba(255, 255, 255, 0.65);
+  --glass-border: rgba(255, 255, 255, 0.4);
+  --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.12);
+
+  // Neumorphism (sombras internas/externas)
+  --neu-shadow-light: 8px 8px 16px #e5e7eb, -8px -8px 16px #ffffff;
+  --neu-shadow-dark: inset 4px 4px 8px #e5e7eb, inset -4px -4px 8px #ffffff;
+  --neu-shadow-primary: 6px 6px 12px #4338ca40, -6px -6px 12px #6366f140;
+
+  // Gradientes dinámicos basados en tu paleta
+  --gradient-primary: linear-gradient(135deg, var(--primary-light) 0%, var(--primary-color) 50%, var(--primary-dark) 100%);
+  --gradient-success: linear-gradient(135deg, #34d399 0%, var(--secondary-color) 100%);
+  --gradient-warning: linear-gradient(135deg, #fbbf24 0%, var(--ion-color-tertiary) 100%);
+  --gradient-mesh: linear-gradient(135deg, rgba(79, 70, 229, 0.1) 0%, rgba(16, 185, 129, 0.1) 50%, rgba(245, 158, 11, 0.05) 100%);
+
+  // Escalas de animación
+  --bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  --smooth: cubic-bezier(0.4, 0, 0.2, 1);
+  --snap: cubic-bezier(0.86, 0, 0.07, 1);
+
+  // Tamaños fluidos
+  --header-height: 72px;
+  --bottom-safe: env(safe-area-inset-bottom, 20px);
+
+  --tab-bar-height: 80px;
+  --tab-active-color: var(--primary-color);
+  --tab-inactive-color: var(--text-light);
+  --tab-bg: rgba(255, 255, 255, 0.85);
+  --tab-glass-bg: rgba(255, 255, 255, 0.7);
+  --tab-border: rgba(255, 255, 255, 0.4);
+  --tab-shadow: 0 -8px 32px rgba(31, 38, 135, 0.1);
+  --indicator-color: var(--gradient-primary);
+
+  // Efectos especiales para detalle
+  --detail-hero-height: 45vh;
+  --glass-card-bg: rgba(255, 255, 255, 0.75);
+  --glass-card-border: rgba(255, 255, 255, 0.5);
+  --premium-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+  --glow-primary: 0 0 40px rgba(79, 70, 229, 0.3);
+
+  // Animaciones
+  --spring-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  --smooth-flow: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+:host {
+  display: block;
+  position: relative;
+
+  // Variables locales
+  --modal-bg: #f8fafc;
+  --card-bg: rgba(255, 255, 255, 0.9);
+  --glow-primary: 0 0 40px rgba(79, 70, 229, 0.15);
+  --glow-success: 0 0 40px rgba(16, 185, 129, 0.15);
+  --transition-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  --transition-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+  --local-bg: var(--ion-background-color, #f8fafc);
+  --local-card: var(--glass-card-bg, rgba(255, 255, 255, 0.9));
+
+  // Variables locales para profundidad
+  --map-height: 400px;
+  --header-bg: var(--glass-bg);
+  --accent-glow: 0 0 20px rgba(79, 70, 229, 0.3);
+}
+
+// ============================================
+// LIGHT MODE (default)
+// ============================================
+:root {
+  // Primary
+  --app-primary: #4f46e5;
+  --app-primary-rgb: 79, 70, 229;
+  --app-primary-light: #6366f1;
+  --app-primary-dark: #4338ca;
+
+  // Backgrounds
+  --app-bg: #f8fafc;
+  --app-bg-rgb: 248, 250, 252;
+  --app-surface: #ffffff;
+  --app-surface-elevated: #ffffff;
+
+  // Text
+  --app-text: #1f2937;
+  --app-text-secondary: #4b5563;
+  --app-text-muted: #6b7280;
+  --app-text-inverse: #ffffff;
+
+  // Borders
+  --app-border: #e5e7eb;
+  --app-border-light: #f3f4f6;
+  --app-divider: #f1f5f9;
+
+  // Status
+  --app-success: #10b981;
+  --app-warning: #f59e0b;
+  --app-danger: #ef4444;
+  --app-info: #3b82f6;
+
+  // Gradients
+  --app-gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --app-gradient-success: linear-gradient(135deg, #10b981 0%, #059669 100%);
+
+  // Effects
+  --app-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --app-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  --app-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  --app-glass-bg: rgba(255, 255, 255, 0.75);
+  --app-glass-border: rgba(255, 255, 255, 0.5);
+
+  // Ionic overrides
+  --ion-background-color: #f8fafc;
+  --ion-background-color-rgb: 248, 250, 252;
+  --ion-text-color: #1f2937;
+  --ion-text-color-rgb: 31, 41, 55;
+  --ion-border-color: #e5e7eb;
+  --ion-item-background: #ffffff;
+  --ion-toolbar-background: #ffffff;
+  --ion-card-background: #ffffff;
+
+  // Toggle
+  --toggle-bg: #e2e8f0;
+  --toggle-handle: #ffffff;
+
+  --app-text-inverse-rgb: 255, 255, 255;
+  --app-success-rgb: 16, 185, 129;
+  --app-warning-rgb: 245, 158, 11;
+  --app-info-rgb: 59, 130, 246;
+
+  // Dark-specific effects (se sobreescriben en dark mode)
+  --app-glass-bg-dark: rgba(255, 255, 255, 0.92);
+  --app-shadow-dark: 0 4px 20px rgba(0, 0, 0, 0.06);
+  --app-shadow-dark-sm: 0 2px 16px rgba(0, 0, 0, 0.08);
+
+  --app-focus-bg: #f0f4ff;
+
+  --app-success-light: #f0fdf4;
+  --app-danger-light: #fef2f2;
+  --app-focus-bg: #f0f4ff;
+
+  // NUEVAS - Sombras
+  --app-shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+
+  --app-danger-rgb: 239, 68, 68;
+  --app-info-rgb: 59, 130, 246;
+
+  --app-gradient-info: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  --app-info-light: #dbeafe;
+  --app-surface-rgb: 255, 255, 255;
+}
+
+// ============================================
+// DARK MODE
+// ============================================
+body.dark,
+:root[data-theme="dark"] {
+  // Primary (slightly brighter for contrast)
+  --app-primary: #6366f1;
+  --app-primary-rgb: 99, 102, 241;
+  --app-primary-light: #818cf8;
+  --app-primary-dark: #4f46e5;
+
+  // Backgrounds (dark spectrum)
+  --app-bg: #0f172a;
+  --app-bg-rgb: 15, 23, 42;
+  --app-surface: #1e293b;
+  --app-surface-elevated: #334155;
+
+  // Text (inverted)
+  --app-text: #f1f5f9;
+  --app-text-secondary: #cbd5e1;
+  --app-text-muted: #94a3b8;
+  --app-text-inverse: #0f172a;
+
+  // Borders
+  --app-border: #334155;
+  --app-border-light: #1e293b;
+  --app-divider: #334155;
+
+  // Status (slightly adjusted for dark)
+  --app-success: #34d399;
+  --app-warning: #fbbf24;
+  --app-danger: #f87171;
+  --app-info: #60a5fa;
+
+  // Gradients (adjusted)
+  --app-gradient-primary: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+  --app-gradient-success: linear-gradient(135deg, #059669 0%, #10b981 100%);
+
+  // Effects
+  --app-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --app-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
+  --app-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+  --app-glass-bg: rgba(30, 41, 59, 0.75);
+  --app-glass-border: rgba(255, 255, 255, 0.1);
+
+  // Ionic overrides
+  --ion-background-color: #0f172a;
+  --ion-background-color-rgb: 15, 23, 42;
+  --ion-text-color: #f1f5f9;
+  --ion-text-color-rgb: 241, 245, 249;
+  --ion-border-color: #334155;
+  --ion-item-background: #1e293b;
+  --ion-toolbar-background: #1e293b;
+  --ion-card-background: #1e293b;
+
+  // Toggle
+  --toggle-bg: #475569;
+  --toggle-handle: #f1f5f9;
+
+  // RGB helpers (ajustados para dark)
+  --app-text-inverse-rgb: 15, 23, 42; // = --app-bg-rgb
+  --app-success-rgb: 52, 211, 153; // = --app-success en RGB
+  --app-warning-rgb: 251, 191, 36; // = --app-warning en RGB
+  --app-info-rgb: 96, 165, 250; // = --app-info en RGB
+
+  // Dark-specific effects
+  --app-glass-bg-dark: rgba(15, 23, 42, 0.92);
+  --app-shadow-dark: 0 4px 20px rgba(0, 0, 0, 0.3);
+  --app-shadow-dark-sm: 0 2px 16px rgba(0, 0, 0, 0.2);
+
+  --app-focus-bg: rgba(99, 102, 241, 0.15);
+
+  --app-success-light: rgba(52, 211, 153, 0.15);
+  --app-danger-light: rgba(248, 113, 113, 0.15);
+  --app-focus-bg: rgba(99, 102, 241, 0.15);
+
+  // NUEVAS - Sombras en dark
+  --app-shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 10px 10px -5px rgba(0, 0, 0, 0.3);
+}

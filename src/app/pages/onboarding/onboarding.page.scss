@@ -1,0 +1,86 @@
+@use '../../../theme/mixins' as app;
+
+/* onboarding.page.scss */
+ion-content {
+  --background: var(--app-gradient-primary);
+}
+
+.swiper-container {
+  height: 80vh;
+  width: 100%;
+}
+
+.swiper-slide {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.slide-content {
+  text-align: center;
+  color: var(--app-text-inverse);
+  padding: 20px;
+
+  img {
+    width: 200px;
+    height: 200px;
+    margin-bottom: 40px;
+  }
+
+  h2 {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 16px;
+  }
+
+  p {
+    font-size: 16px;
+    line-height: 1.5;
+    opacity: 0.9;
+  }
+}
+
+/* Paginación personalizada */
+.swiper-pagination-bullet {
+  background: var(--app-text-inverse);
+  opacity: 0.5;
+  width: 8px;
+  height: 8px;
+}
+
+.swiper-pagination-bullet-active {
+  background: var(--app-warning);
+  opacity: 1;
+}
+
+/* Botones de navegación */
+.swiper-button-next,
+.swiper-button-prev {
+  color: var(--app-text-inverse);
+
+  &::after {
+    font-size: 20px;
+    font-weight: bold;
+  }
+}
+
+.button-container {
+  padding: 20px;
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  z-index: 10;
+}
+
+.start-button {
+  --background: var(--app-surface);
+  --color: var(--app-primary);
+  --border-radius: 25px;
+  font-weight: bold;
+
+  @include app.dark-mode {
+    --background: var(--app-surface-elevated);
+  }
+}

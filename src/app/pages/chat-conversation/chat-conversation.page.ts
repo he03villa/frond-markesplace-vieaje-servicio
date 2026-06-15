@@ -1,0 +1,257 @@
+import { Component, inject, OnInit, ViewChild } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { IonContent, IonFooter } from '@ionic/angular/standalone';
+import { ChatHeaderComponent } from 'src/app/components/chat-header/chat-header.component';
+import { MessageBubbleComponent } from 'src/app/components/message-bubble/message-bubble.component';
+import { TypingIndicatorComponent } from 'src/app/components/typing-indicator/typing-indicator.component';
+import { MessageInputComponent } from 'src/app/components/message-input/message-input.component';
+import { distinctUntilChanged, Subject, Subscription, takeUntil } from 'rxjs';
+import { ActivatedRoute, Router } from '@angular/router';
+import { ChatService } from 'src/app/services/chat.service';
+import { ChatSocketService } from 'src/app/services/chat-socket.service';
+import { AuthService } from 'src/app/services/auth.service';
+
+@Component({
+  selector: 'app-chat-conversation',
+  templateUrl: './chat-conversation.page.html',
+  styleUrls: ['./chat-conversation.page.scss'],
+  standalone: true,
+  imports: [IonContent, CommonModule, FormsModule, ChatHeaderComponent, MessageBubbleComponent, TypingIndicatorComponent, MessageInputComponent, IonFooter]
+})
+export class ChatConversationPage implements OnInit {
+
+  @ViewChild('content', { static: false }) content!: IonContent;
+  @ViewChild('messagesContainer', { static: false }) messagesContainer!: HTMLDivElement;
+
+  private router: Router = inject(Router);
+  private route: ActivatedRoute = inject(ActivatedRoute);
+  private chatService: ChatService = inject(ChatService);
+  private webChatService: ChatSocketService = inject(ChatSocketService);
+  private wsSubscriptions: Subscription[] = [];
+  private authService: AuthService = inject(AuthService);
+
+  private routeSub!: Subscription;
+  private conversationId!: number;
+
+  private typingSubject = new Subject<boolean>();
+  private destroy$ = new Subject<void>();
+  private lastTypingState: boolean | null = null;
+
+  conversation: any = null;
+  messages: any[] = [];
+  isTyping: boolean = false;
+  contactName: string = '';
+  user: any = this.authService.getCurrentUser();
+
+  constructor() { }
+
+  ngOnInit() {
+    this.routeSub = this.route.paramMap.subscribe(params => {
+      const id = params.get('id');
+      const user = params.get('user');
+      if (id) {
+        this.conversationId = +id;
+        this.loadConversation();
+      }
+      if (user) {
+        this.conversationId = +user;
+        this.loadConversationUser();
+      }
+    });
+    this.typingSubject.pipe(
+      distinctUntilChanged(), // solo si cambia true→false o false→true
+      takeUntil(this.destroy$)
+    ).subscribe(isTyping => {
+      this.lastTypingState = isTyping;
+      this.chatService.broadcastTyping(this.conversationId, isTyping);
+    });
+  }
+
+  ngOnDestroy() {
+    this.routeSub?.unsubscribe();
+    this.wsSubscriptions.forEach(sub => sub.unsubscribe());
+    this.destroy$.next();
+    this.destroy$.complete();
+    if (this.conversationId) {
+      this.webChatService.leaveChannel(`conversation.${this.conversationId}`);
+    }
+  }
+
+  async loadConversation() {
+    try {
+      const [res, resMessages, resRead] = await Promise.all([
+        this.chatService.getConversation(this.conversationId),
+        this.chatService.getMessages(this.conversationId),
+        this.chatService.markAsRead(this.conversationId)
+      ]);
+      console.log(res, resMessages, resRead);
+      this.conversation = res.data;
+      this.contactName = res.data?.name ?? '';
+      this.messages = resMessages.data ?? resMessages;
+      this.scrollToBottom();
+      this.connectToRealtimeUpdates(this.conversationId);
+    } catch (error) {
+      console.error('Error cargando mensajes:', error);
+    }
+  }
+
+  async loadConversationUser() {
+    console.log("USER",this.conversationId);
+    try {
+      const res = await this.chatService.getConversationUser(this.conversationId);
+      console.log(res);
+      this.conversation = res.data;
+      this.contactName = res.data?.name ?? '';
+      this.conversationId = res.data.id;
+      if (res.data?.id) {
+        const resMessages = await this.chatService.getMessages(res.data.id);
+        console.log(resMessages);
+        this.messages = resMessages.data ?? resMessages;
+        this.scrollToBottom();
+      }
+      if (this.conversationId) {
+        this.connectToRealtimeUpdates(this.conversationId);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  goBack(): void {
+    history.back();
+  }
+
+  openProfile(): void {
+    if (this.conversation?.contact?.id) {
+      this.router.navigate(['/chat/profile', this.conversation.contact.id]);
+    }
+  }
+
+  /**
+   * Determina si es el primer mensaje de un grupo consecutivo del mismo remitente
+   */
+  isFirstInGroup(msg: any, index: number): boolean {
+    if (index === 0) return true;
+    const prev = this.messages[index - 1];
+    return prev.sender_id !== msg.sender_id;
+  }
+
+  /**
+   * Determina si es el último mensaje de un grupo consecutivo del mismo remitente
+   */
+  isLastInGroup(msg: any, index: number): boolean {
+    if (index === this.messages.length - 1) return true;
+    const next = this.messages[index + 1];
+    return next.sender_id !== msg.sender_id;
+  }
+
+  /**
+   * Formatea la fecha para el divider sticky (Hoy, Ayer, etc.)
+   */
+  formatDateDivider(isoString: string | null): string {
+    if (!isoString) return '';
+
+    const date = new Date(isoString);
+    const today = new Date();
+    const yesterday = new Date(today);
+    yesterday.setDate(yesterday.getDate() - 1);
+
+    if (date.toDateString() === today.toDateString()) return 'Hoy';
+    if (date.toDateString() === yesterday.toDateString()) return 'Ayer';
+
+    return date.toLocaleDateString('es', {
+      weekday: 'long',
+      day: 'numeric',
+      month: 'long'
+    });
+  }
+
+  async sendMessage(event: { text: string; files?: File[] }) {
+    const { text, files } = event;
+
+    if (!text?.trim() && (!files || files.length === 0)) return;
+    console.log(event, this.conversation);
+
+    try {
+      const result = await this.chatService.sendMessage(this.conversation.contact.id, text, files);
+      const newMsg = result.data.message;
+      console.log(result); 
+      const pos = this.messages.findIndex((m) => m.id === newMsg.id);
+      if (pos === -1) {
+        this.messages.push(newMsg);
+      }
+      if (!this.conversation?.id) {
+        this.conversation = result.data.conversation;
+        this.conversationId = this.conversation.id;
+        this.connectToRealtimeUpdates(this.conversationId);
+      }
+      this.scrollToBottom();
+    } catch (error) {
+      console.error('Error enviando mensaje:', error);
+    }
+  }
+
+  async broadcastTyping(isTyping: boolean): Promise<void> {
+    this.typingSubject.next(isTyping);
+  }
+
+  handleAttachment(files: File[]): void {
+    // Si tu MessageInputComponent emite archivos directamente, 
+    // puedes reutilizar sendMessage o manejarlo aparte
+    this.sendMessage({ text: '', files });
+  }
+
+  scrollToBottom(): void {
+    setTimeout(() => {
+      this.content?.scrollToBottom(300);
+    }, 100);
+  }
+
+  connectToRealtimeUpdates(serviceId: number) {
+    // Conectar WebSocket si no está conectado
+    if (!this.webChatService.isConnected()) {
+      this.webChatService.connect();
+    }
+
+    // Escuchar todos los eventos del servicio
+    this.webChatService.listenToConversation(serviceId, (data) => {
+      console.log('🚗 Ride event:', data);
+      switch (data.type) {
+        case 'typing':
+          if (this.user.id !== data.typing_user_id) {
+            this.isTyping = data.is_typing;
+            this.scrollToBottom();
+          }
+          break;
+        case 'message.sent':
+          const dataMensaje = {
+            attachments: data.attachments,
+            body: data.body,
+            conversation_id: data.conversation_id,
+            id: data.id,
+            read_at: data.read_at,
+            sender: data.sender,
+            created_at: data.created_at,
+            is_mine: this.user?.id === data.sender.id
+          };
+          const pos = this.messages.findIndex((m) => m.id === data.id);
+          if (pos === -1) {
+            this.messages.push(dataMensaje);
+            this.chatService.markAsRead(this.conversationId)
+          }
+          this.conversation.last_message_at = data.last_message_at;
+          this.scrollToBottom();
+          break;
+        case 'messages.read':
+          this.messages.forEach((m) => {
+            if (m.conversation_id === data.conversation_id) {
+              m.read_at = data.read_at;
+            } 
+          })
+          break;
+      }
+    });
+  }
+
+}

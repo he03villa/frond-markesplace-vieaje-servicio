@@ -1,0 +1,81 @@
+<!-- message-bubble.component.html -->
+<div class="bubble-container" [class.mine]="message.is_mine">
+
+  <!-- Avatar del otro usuario (solo en primer mensaje del grupo) -->
+  @if (!message.is_mine && isFirstInGroup) {
+  <div class="bubble-avatar">
+    <img [src]="message.sender.avatar || 'assets/default-avatar.svg'" alt="">
+  </div>
+  }
+
+  <div class="bubble-content">
+    <!-- Adjuntos -->
+    @if (message.attachments?.length > 0) {
+    <div class="attachments">
+      <div class="attachment-grid" [class.single]="message.attachments.length === 1">
+        @for (att of message.attachments; track $index) {
+          <!-- ── Imagen ── -->
+          @if (att.type === 'image') {
+          <div class="attachment-item image" (click)="previewAttachment(att, message.attachments)">
+            <img [src]="att.url" loading="lazy">
+          </div>
+          }
+
+          <!-- ── Audio inline (sin modal) ── -->
+          @if (att.type === 'audio') {
+          <div class="attachment-item audio-inline" [class.mine]="message.is_mine">
+            <button class="btn-play-inline" (click)="toggleAudio(att)">
+              <ion-icon [name]="getAudioState(att).playing ? 'pause-circle' : 'play-circle'">
+              </ion-icon>
+            </button>
+
+            <div class="audio-track">
+              <input type="range" min="0" max="100" [value]="getAudioState(att).progress" (input)="seekAudio(att, $event)"
+                class="audio-seek">
+              <div class="audio-times">
+                <span>{{ formatTime(getAudioState(att).currentTime) }}</span>
+                <span>{{ formatTime(getAudioState(att).duration) }}</span>
+              </div>
+            </div>
+          </div>
+          }
+
+          <!-- ── Archivo ── -->
+          @if (att.type === 'file' || att.type === 'document') {
+          <div class="attachment-item file-item" (click)="previewAttachment(att, message.attachments)">
+            <ion-icon name="document-outline"></ion-icon>
+            <div class="file-info">
+              <span class="file-name">{{ att.original_name }}</span>
+              <span class="file-size">{{ att.human_size }}</span>
+            </div>
+          </div>
+          }
+
+        }
+      </div>
+    </div>
+    }
+
+    <!-- Texto -->
+    @if (message.body) {
+    <div class="bubble-text" [class.only-attachments]="!message.body">
+      <p>{{ message.body }}</p>
+    </div>
+    }
+
+    <!-- Meta info -->
+    <div class="bubble-meta">
+      <span class="time">{{ formatTime(message.created_at) }}</span>
+      @if (message.is_mine) {
+      <div class="read-status">
+        @if (!message.read_at) {
+        <ion-icon name="checkmark"></ion-icon>
+        }
+        @if (message.read_at) {
+        <ion-icon name="checkmark-done" class="read"></ion-icon>
+        }
+      </div>
+      }
+    </div>
+  </div>
+</div>

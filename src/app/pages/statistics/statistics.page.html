@@ -1,0 +1,179 @@
+<ion-header [class.header-solid]="headerSolid" class="stats-header">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button class="back-btn" (click)="back()">
+        <ion-icon slot="icon-only" name="arrow-back-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title class="header-title">Estadísticas</ion-title>
+    <ion-buttons slot="end">
+      <ion-button class="header-action" (click)="scrollToTop()">
+        <ion-icon name="arrow-up-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content
+  [fullscreen]="true"
+  scrollEvents="true"
+  (ionScroll)="onScroll($event)"
+  class="stats-content"
+>
+  <ion-refresher slot="fixed" (ionRefresh)="handleRefresh($event)">
+    <ion-refresher-content pullingIcon="arrow-down" refreshingSpinner="crescent"></ion-refresher-content>
+  </ion-refresher>
+
+  <!-- Hero Card -->
+  <div class="hero-section">
+    <div class="hero-card">
+      <div class="hero-greeting">
+        <span class="hero-label">Resumen de actividad</span>
+        <h1 class="hero-title">Tu rendimiento<br><span class="gradient-text">este mes</span></h1>
+      </div>
+
+      <div class="period-selector">
+        @for(period of periods; track period.value) {
+          <button
+            class="period-chip"
+            [class.active]="activePeriod === period.value"
+            (click)="setPeriod(period.value)"
+          >
+            {{ period.label }}
+          </button>
+        }
+      </div>
+    </div>
+  </div>
+
+  <!-- KPI Cards -->
+  <div class="kpi-section">
+    @if(isLoading) {
+      <div class="kpi-skeleton">
+        @for(i of [1,2,3,4]; track i) {
+          <div class="kpi-card-skeleton"></div>
+        }
+      </div>
+    } @else {
+      <div class="kpi-grid">
+        @for(kpi of kpis; track kpi.label; let i = $index) {
+          <div class="kpi-card" [style.animation-delay]="(i * 0.1) + 's'">
+            <div class="kpi-icon" [style.background]="kpi.bg" [style.color]="kpi.color">
+              <ion-icon [name]="kpi.icon"></ion-icon>
+            </div>
+            <div class="kpi-data">
+              <span class="kpi-value">{{ kpi.value }}</span>
+              <span class="kpi-label">{{ kpi.label }}</span>
+            </div>
+            <div class="kpi-trend" [class.positive]="kpi.change.startsWith('+')">
+              <ion-icon [name]="kpi.change.startsWith('+') ? 'trending-up-outline' : 'trending-down-outline'"></ion-icon>
+              {{ kpi.change }}
+            </div>
+          </div>
+        }
+      </div>
+    }
+  </div>
+
+  <!-- Activity Chart -->
+  <div class="chart-section">
+    <div class="section-header">
+      <h2 class="section-title">Actividad semanal</h2>
+      <div class="section-badge">
+        <ion-icon name="bar-chart-outline"></ion-icon>
+        <span>+23% vs anterior</span>
+      </div>
+    </div>
+
+    <div class="chart-card">
+      @if(isLoading) {
+        <div class="chart-skeleton">
+          <div class="skeleton-bars">
+            @for(i of [1,2,3,4,5,6,7]; track i) {
+              <div class="skeleton-bar"></div>
+            }
+          </div>
+        </div>
+      } @else {
+        <div class="chart-bars">
+          @for(bar of weeklyBars; track bar.label; let i = $index) {
+            <div class="bar-group" [style.animation-delay]="(i * 0.08) + 's'">
+              <div class="bar-wrapper">
+                <!-- Mobile: always visible value label -->
+                <div class="bar-value-label">${{ bar.value * 12 }}</div>
+                <!-- Desktop: hover tooltip -->
+                <div class="bar-tooltip">${{ bar.value * 12 }}</div>
+                <div class="bar-fill" [style.height.%]="bar.value" [style.background]="bar.color"></div>
+              </div>
+              <span class="bar-label">{{ bar.label }}</span>
+            </div>
+          }
+        </div>
+      }
+    </div>
+  </div>
+
+  <!-- Activity Heatmap -->
+  <div class="heatmap-section">
+    <div class="section-header">
+      <h2 class="section-title">Mapa de calor</h2>
+      <span class="section-subtitle">Últimos 30 días</span>
+    </div>
+
+    <div class="heatmap-card">
+      <div class="heatmap-grid">
+        @for(day of activityDays; track day.day) {
+          <div
+            class="heatmap-cell"
+            [class.intensity-0]="day.intensity === 0"
+            [class.intensity-1]="day.intensity === 1"
+            [class.intensity-2]="day.intensity === 2"
+            [class.intensity-3]="day.intensity === 3"
+            [class.intensity-4]="day.intensity === 4"
+          ></div>
+        }
+      </div>
+      <div class="heatmap-legend">
+        <span>Bajo</span>
+        <div class="legend-cells">
+          <div class="legend-cell l-0"></div>
+          <div class="legend-cell l-1"></div>
+          <div class="legend-cell l-2"></div>
+          <div class="legend-cell l-3"></div>
+          <div class="legend-cell l-4"></div>
+        </div>
+        <span>Alto</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Insights -->
+  <div class="insights-section">
+    <div class="section-header">
+      <h2 class="section-title">Insights</h2>
+      <span class="section-subtitle">Basado en tu historial</span>
+    </div>
+
+    <div class="insights-list">
+      @for(insight of insights; track insight.title; let i = $index) {
+        <div class="insight-card" [style.animation-delay]="(i * 0.12) + 's'">
+          <div class="insight-icon" [style.background]="insight.bg" [style.color]="insight.color">
+            <ion-icon [name]="insight.icon"></ion-icon>
+          </div>
+          <div class="insight-body">
+            <h3 class="insight-title">{{ insight.title }}</h3>
+            <p class="insight-desc">{{ insight.description }}</p>
+          </div>
+          @if(insight.trend !== 'neutral') {
+            <div class="insight-trend" [class.up]="insight.trend === 'up'">
+              <ion-icon [name]="insight.trend === 'up' ? 'trending-up-outline' : 'trending-down-outline'"></ion-icon>
+              <span>{{ insight.percent }}%</span>
+            </div>
+          }
+        </div>
+      }
+    </div>
+  </div>
+
+  <div class="bottom-space"></div>
+</ion-content>

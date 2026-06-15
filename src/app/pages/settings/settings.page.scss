@@ -1,0 +1,628 @@
+@use '../../../theme/mixins' as app;
+
+:host {
+    --radius-lg: 24px;
+    --radius-md: 16px;
+    --radius-sm: 12px;
+}
+
+// ============================================
+// HEADER
+// ============================================
+.settings-header {
+    --background: transparent;
+    --border-width: 0;
+    --color: white;
+    position: absolute;
+    top: 0;
+    z-index: 100;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+
+    ion-toolbar {
+        --background: transparent;
+        --min-height: 56px;
+        padding-top: env(safe-area-inset-top);
+    }
+
+    .back-btn,
+    .header-action {
+        --color: white;
+        --background: rgba(255, 255, 255, 0.2);
+        --border-radius: 12px;
+        width: 38px;
+        height: 38px;
+        backdrop-filter: blur(12px);
+    }
+
+    .header-title {
+        opacity: 0;
+        transform: translateY(-8px);
+        transition: all 0.4s ease;
+        font-weight: 700;
+        font-size: 18px;
+        letter-spacing: -0.3px;
+    }
+
+    &.header-solid {
+        --background: var(--app-glass-bg);
+        --color: var(--app-text);
+        backdrop-filter: blur(24px) saturate(1.8);
+        box-shadow: var(--app-shadow-sm);
+        position: fixed;
+
+        @include app.dark-mode {
+            --background: rgba(30, 41, 59, 0.85);
+            box-shadow: 0 1px 24px rgba(0, 0, 0, 0.3);
+        }
+
+        .header-title {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .back-btn,
+        .header-action {
+            --color: var(--app-primary);
+            --background: rgba(var(--app-primary-rgb), 0.1);
+        }
+    }
+}
+
+// ============================================
+// CONTENT
+// ============================================
+.settings-content {
+    --background: var(--app-bg);
+    --padding-bottom: calc(80px + env(safe-area-inset-bottom));
+}
+
+// ============================================
+// PROFILE SECTION
+// ============================================
+.profile-section {
+    padding: calc(80px + env(safe-area-inset-top)) 16px 20px;
+}
+
+.profile-card {
+    background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #a855f7 100%);
+    border-radius: var(--radius-lg);
+    padding: 28px 24px 20px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 20px 40px rgba(79, 70, 229, 0.25), 0 4px 12px rgba(0, 0, 0, 0.1);
+
+    @include app.dark-mode {
+        box-shadow: 0 20px 40px rgba(79, 70, 229, 0.15), 0 4px 12px rgba(0, 0, 0, 0.4);
+    }
+
+    .profile-bg-shapes {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        overflow: hidden;
+
+        .profile-shape {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(40px);
+            opacity: 0.2;
+
+            &.shape-1 {
+                width: 200px;
+                height: 200px;
+                background: white;
+                top: -60px;
+                right: -40px;
+            }
+
+            &.shape-2 {
+                width: 150px;
+                height: 150px;
+                background: rgba(255, 255, 255, 0.5);
+                bottom: -40px;
+                left: -30px;
+            }
+        }
+    }
+}
+
+.profile-content {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.avatar-wrapper {
+    position: relative;
+    margin-bottom: 16px;
+
+    .avatar-ring {
+        width: 88px;
+        height: 88px;
+        border-radius: 50%;
+        padding: 4px;
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0.1));
+        position: relative;
+
+        .avatar-img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid white;
+        }
+
+        .verified-badge {
+            position: absolute;
+            bottom: 2px;
+            right: 2px;
+            width: 26px;
+            height: 26px;
+            background: #10b981;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid white;
+            color: white;
+            font-size: 14px;
+        }
+    }
+
+    .edit-avatar-btn {
+        position: absolute;
+        bottom: -4px;
+        right: -8px;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: white;
+        border: none;
+        color: #4f46e5;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        cursor: pointer;
+        transition: transform 0.2s ease;
+
+        &:active {
+            transform: scale(0.9);
+        }
+    }
+}
+
+.profile-info {
+    .profile-name {
+        font-size: 22px;
+        font-weight: 800;
+        color: white;
+        margin: 0 0 4px;
+        letter-spacing: -0.5px;
+        text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .profile-email {
+        font-size: 14px;
+        color: rgba(255, 255, 255, 0.8);
+        margin: 0 0 12px;
+        font-weight: 500;
+    }
+
+    .profile-meta {
+        display: flex;
+        gap: 8px;
+        justify-content: center;
+        flex-wrap: wrap;
+
+        .meta-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 10px;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+
+            &.outline {
+                background: transparent;
+                border: 1px solid rgba(255, 255, 255, 0.3);
+            }
+
+            ion-icon {
+                font-size: 13px;
+            }
+        }
+    }
+}
+
+.profile-stats {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    justify-content: center;
+    gap: 32px;
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(255, 255, 255, 0.15);
+
+    .profile-stat {
+        text-align: center;
+
+        .stat-num {
+            display: block;
+            font-size: 20px;
+            font-weight: 800;
+            color: white;
+            letter-spacing: -0.5px;
+        }
+
+        .stat-label {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.7);
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+    }
+}
+
+// ============================================
+// SETTINGS BODY
+// ============================================
+.settings-body {
+    padding: 0 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+// ============================================
+// SKELETON
+// ============================================
+.settings-skeleton {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+
+    .section-skeleton {
+        .section-header-skeleton {
+            height: 20px;
+            width: 120px;
+            background: var(--app-border);
+            border-radius: 4px;
+            margin-bottom: 12px;
+
+            @include app.dark-mode {
+                background: var(--app-surface-elevated);
+            }
+        }
+
+        .item-skeleton {
+            height: 56px;
+            background: linear-gradient(90deg, var(--app-border) 25%, var(--app-bg) 50%, var(--app-border) 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+            border-radius: var(--radius-sm);
+            margin-bottom: 8px;
+
+            @include app.dark-mode {
+                background: linear-gradient(90deg, var(--app-surface-elevated) 25%, var(--app-surface) 50%, var(--app-surface-elevated) 75%);
+            }
+        }
+    }
+}
+
+// ============================================
+// SETTINGS SECTION
+// ============================================
+.settings-section {
+    animation: fadeInUp 0.5s ease forwards;
+    opacity: 0;
+
+    .section-header {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 12px;
+        padding: 0 4px;
+
+        .section-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .section-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--app-text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin: 0;
+        }
+    }
+}
+
+// ============================================
+// SECTION CARD
+// ============================================
+.section-card {
+    background: var(--app-surface);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    box-shadow: var(--app-shadow-sm);
+    border: 1px solid var(--app-border);
+
+    @include app.dark-mode {
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+        border-color: var(--app-border);
+    }
+
+    &.danger-zone {
+        border: 1px solid rgba(239, 68, 68, 0.15);
+        box-shadow: 0 2px 12px rgba(239, 68, 68, 0.06);
+
+        @include app.dark-mode {
+            border-color: rgba(248, 113, 113, 0.2);
+            box-shadow: 0 2px 12px rgba(248, 113, 113, 0.1);
+        }
+    }
+}
+
+// ============================================
+// SETTING ITEM
+// ============================================
+.setting-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 16px;
+    gap: 12px;
+    animation: slideInRight 0.4s ease forwards;
+    opacity: 0;
+    transition: background-color 0.2s ease;
+    cursor: pointer;
+    position: relative;
+
+    &:not(:last-child)::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 56px;
+        right: 16px;
+        height: 1px;
+        background: var(--app-divider);
+    }
+
+    &:active {
+        background: var(--app-bg);
+    }
+
+    @media (hover: hover) {
+        &:hover {
+            background: var(--app-bg);
+        }
+    }
+
+    @include app.dark-mode {
+        &:active {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        @media (hover: hover) {
+            &:hover {
+                background: rgba(255, 255, 255, 0.05);
+            }
+        }
+    }
+
+    &.danger {
+        .item-label {
+            color: var(--app-danger);
+        }
+
+        &:active {
+            background: rgba(239, 68, 68, 0.08);
+        }
+
+        @media (hover: hover) {
+            &:hover {
+                background: rgba(239, 68, 68, 0.08);
+            }
+        }
+
+        @include app.dark-mode {
+            &:active {
+                background: rgba(248, 113, 113, 0.1);
+            }
+
+            @media (hover: hover) {
+                &:hover {
+                    background: rgba(248, 113, 113, 0.1);
+                }
+            }
+        }
+    }
+
+    .item-main {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex: 1;
+        min-width: 0;
+
+        .item-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background: var(--app-bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--app-text-muted);
+            font-size: 18px;
+            flex-shrink: 0;
+
+            &.danger {
+                background: rgba(239, 68, 68, 0.1);
+                color: var(--app-danger);
+
+                @include app.dark-mode {
+                    background: rgba(248, 113, 113, 0.15);
+                }
+            }
+        }
+
+        .item-text {
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+
+            .item-label {
+                font-size: 15px;
+                font-weight: 600;
+                color: var(--app-text);
+                margin-bottom: 2px;
+
+                &.danger {
+                    color: var(--app-danger);
+                }
+            }
+
+            .item-desc {
+                font-size: 12px;
+                color: var(--app-text-muted);
+                font-weight: 500;
+                line-height: 1.3;
+            }
+        }
+    }
+
+    .item-action {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-shrink: 0;
+
+        .select-value {
+            font-size: 13px;
+            color: var(--app-text-muted);
+            font-weight: 500;
+        }
+
+        .link-badge {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--app-success);
+            background: rgba(16, 185, 129, 0.1);
+            padding: 3px 8px;
+            border-radius: 10px;
+
+            @include app.dark-mode {
+                background: rgba(52, 211, 153, 0.15);
+            }
+        }
+
+        .chevron {
+            font-size: 18px;
+            color: var(--app-text-muted);
+            transition: transform 0.2s ease;
+
+            &.danger {
+                color: var(--app-danger);
+            }
+        }
+    }
+
+    &.with-link,
+    &.with-action {
+        &:active {
+            .chevron {
+                transform: translateX(3px);
+            }
+        }
+    }
+}
+
+// ============================================
+// TOGGLE STYLING
+// ============================================
+ion-toggle {
+    --background: var(--toggle-bg);
+    --background-checked: var(--app-gradient-primary);
+    --handle-background: var(--toggle-handle);
+    --handle-background-checked: var(--toggle-handle);
+    width: 48px;
+    height: 28px;
+    --handle-width: 24px;
+    --handle-height: 24px;
+    --handle-spacing: 2px;
+}
+
+.bottom-space {
+    height: 40px;
+}
+
+// ============================================
+// ANIMATIONS
+// ============================================
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(-15px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: 200% 0;
+    }
+
+    100% {
+        background-position: -200% 0;
+    }
+}
+
+// ============================================
+// RESPONSIVE
+// ============================================
+@media (min-width: 768px) {
+    .profile-stats {
+        gap: 48px;
+    }
+
+    .settings-body {
+        max-width: 600px;
+        margin: 0 auto;
+    }
+}

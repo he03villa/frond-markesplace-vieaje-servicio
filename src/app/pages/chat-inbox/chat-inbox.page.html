@@ -1,0 +1,41 @@
+<!-- chat-inbox.page.html -->
+<ion-content [fullscreen]="true" class="chat-inbox">
+
+  <!-- Header flotante con glassmorphism -->
+  <div class="inbox-header">
+    <div class="header-glass">
+      <h1>Mensajes</h1>
+      <div class="header-actions">
+        <ion-button fill="clear" class="btn-icon">
+          <ion-icon name="search-outline" slot="icon-only"></ion-icon>
+        </ion-button>
+        <ion-button fill="clear" class="btn-icon">
+          <ion-icon name="create-outline" slot="icon-only"></ion-icon>
+        </ion-button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Lista con animación stagger -->
+  <ion-list class="conversations-list" lines="none">
+    @for (conv of conversations; track i; let i = $index) {
+      <app-conversation-item 
+        [conversation]="conv"
+        [index]="i"
+        (click)="openConversation(conv)">
+      </app-conversation-item>
+    }
+  </ion-list>
+
+  <!-- Empty State -->
+  @if (conversations.length === 0) {
+    <app-empty-state 
+      icon="chatbubbles-outline"
+      title="No tienes mensajes"
+      subtitle="Cuando recibas un mensaje, aparecerá aquí."
+      actionText="Nuevo mensaje"
+      (action)="createNewMessage()">
+    </app-empty-state>
+  }
+
+</ion-content>

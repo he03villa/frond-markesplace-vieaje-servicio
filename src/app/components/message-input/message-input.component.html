@@ -1,0 +1,124 @@
+<div class="input-container" [class.recording-active]="isRecording">
+
+  <!-- ═══ MENÚ DE ADJUNTOS (expandible) ═══ -->
+  <div class="attach-menu" [class.open]="attachMenuOpen">
+    <button class="attach-option image" (click)="selectImage()">
+      <div class="attach-glow"></div>
+      <ion-icon name="image-outline"></ion-icon>
+      <span>Foto</span>
+    </button>
+    <button class="attach-option camera" (click)="takePhoto()">
+      <div class="attach-glow"></div>
+      <ion-icon name="camera-outline"></ion-icon>
+      <span>Cámara</span>
+    </button>
+    <button class="attach-option file" (click)="selectFile()">
+      <div class="attach-glow"></div>
+      <ion-icon name="document-outline"></ion-icon>
+      <span>Archivo</span>
+    </button>
+    <button class="attach-option audio" (click)="recordAudio()">
+      <div class="attach-glow"></div>
+      <ion-icon name="mic-outline"></ion-icon>
+      <span>Audio</span>
+    </button>
+  </div>
+
+  <!-- ═══ PREVIEW DE ADJUNTOS (carrusel) ═══ -->
+  @if (selectedFiles.length > 0) {
+  <div class="attachment-preview-bar">
+    @for (file of selectedFiles; track $index) {
+    <div class="preview-item">
+
+      <!-- Contenedor con overflow para la imagen/archivo -->
+      <div class="preview-content">
+        @if (file?.type?.startsWith('image/')) {
+        <img [src]="file.preview" alt="Preview">
+        } @else {
+        <div class="preview-file">
+          <ion-icon [name]="iconForFile(file)"></ion-icon>
+          <span class="file-meta">{{ file.original_name }}</span>
+        </div>
+        }
+      </div>
+
+      <!-- Botón X fuera del overflow, visible completo -->
+      <button class="preview-remove" (click)="removeFile($index)">
+        <ion-icon name="close-circle"></ion-icon>
+      </button>
+
+    </div>
+    }
+  </div>
+  }
+
+  <!-- ═══ BARRA DE GRABACIÓN (waveform animada) ═══ -->
+  @if (isRecording) {
+  <div class="recording-waveform">
+    <div class="waveform-container">
+      @for (bar of [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]; track $index) {
+      <div class="wave-bar" [style.animation-delay.ms]="$index * 50"></div>
+      }
+    </div>
+    <span class="recording-timer">{{ formatRecordingTime(recordingSeconds) }}</span>
+    <span class="recording-hint">← Desliza para cancelar</span>
+  </div>
+  }
+
+  <!-- ═══ PREVIEW DE AUDIO GRABADO ═══ -->
+  @if (audioPreview) {
+  <div class="audio-preview-bar">
+    <div class="audio-wave-mini">
+      @for (bar of [1,2,3,4,5,6,7,8,9,10]; track $index) {
+      <div class="mini-bar" [style.height.px]="audioWaveHeights[$index]"></div>
+      }
+    </div>
+    <span class="audio-duration">{{ formatRecordingTime(audioPreview.duration) }}</span>
+    <div class="audio-actions">
+      <button class="btn-discard" (click)="discardAudio()">
+        <ion-icon name="trash-outline"></ion-icon>
+      </button>
+      <button class="btn-confirm" (click)="confirmAudio()">
+        <ion-icon name="checkmark-circle"></ion-icon>
+      </button>
+    </div>
+  </div>
+  }
+
+  <!-- ═══ INPUT PRINCIPAL (glassmorphism) ═══ -->
+  <div class="input-glass" [class.has-content]="hasContent" [class.recording]="isRecording">
+
+    <!-- Botón adjuntos (+) -->
+    <button class="btn-attach" (click)="toggleAttachMenu()" [disabled]="isRecording">
+      <ion-icon name="add"></ion-icon>
+    </button>
+
+    <!-- Textarea -->
+    <div class="text-input-wrapper">
+      <textarea #messageInput [(ngModel)]="messageText" (input)="onInput()" (keydown.enter)="handleEnter($event)"
+        placeholder="Escribe un mensaje..." rows="1" [disabled]="isRecording">
+      </textarea>
+    </div>
+
+    <!-- Botón emoji -->
+    <button class="btn-emoji" (click)="toggleEmoji()" [disabled]="isRecording">
+      <ion-icon name="happy-outline"></ion-icon>
+    </button>
+
+    <!-- Botón send / mic / recording -->
+    <button class="btn-send" [class.has-text]="hasContent" [class.recording]="isRecording"
+      (pointerdown)="onMicPointerDown($event)" (pointerup)="onMicPointerUp($event)"
+      (pointerleave)="onMicPointerLeave($event)">
+
+      <div class="send-icon">
+        <ion-icon [name]="sendIcon"></ion-icon>
+      </div>
+
+      <!-- Ripple effect para recording -->
+      @if (isRecording) {
+      <div class="recording-ripple"></div>
+      }
+    </button>
+
+  </div>
+</div>

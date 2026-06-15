@@ -1,0 +1,42 @@
+<!-- chat-conversation.page.html -->
+<ion-content [fullscreen]="true" class="chat-conversation" #content>
+
+  <!-- Background decorativo -->
+  <div class="chat-background">
+    <div class="gradient-mesh"></div>
+  </div>
+
+  <!-- Header dinámico que se contrae -->
+  <app-chat-header [contact]="conversation?.contact" [typing]="isTyping" (back)="goBack()" (profile)="openProfile()"></app-chat-header>
+
+  <!-- Fecha flotante (sticky date) -->
+  @if (messages.length > 0) {
+    <div class="date-divider" #dateDivider>
+      {{ formatDateDivider(messages[0].created_at) }}
+    </div>
+  }
+
+  <!-- Lista de mensajes con reverse scroll -->
+  <div class="messages-container" #messagesContainer>
+    @for (msg of messages; track $index) {
+      <div class="message-wrapper" [class.mine]="msg.is_mine"
+        [class.first]="isFirstInGroup(msg, $index)" [class.last]="isLastInGroup(msg, $index)">
+  
+        <app-message-bubble [message]="msg" [isFirstInGroup]="isFirstInGroup(msg, $index)" [isLastInGroup]="isLastInGroup(msg, $index)"></app-message-bubble>
+  
+      </div>
+    }
+
+    <!-- Typing indicator -->
+    @if (isTyping) {
+      <app-typing-indicator [contactName]="contactName" [contactAvatar]="conversation?.contact?.avatar"></app-typing-indicator>
+    }
+  </div>
+
+</ion-content>
+
+<!-- Input fijo en bottom -->
+<ion-footer class="chat-footer">
+  <app-message-input (send)="sendMessage($event)" (typing)="broadcastTyping($event)" (attach)="handleAttachment($event)">
+  </app-message-input>
+</ion-footer>

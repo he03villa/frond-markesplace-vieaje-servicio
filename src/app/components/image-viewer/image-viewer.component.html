@@ -1,0 +1,51 @@
+<ion-content class="image-viewer" [fullscreen]="true">
+  <div class="viewer-overlay" (click)="dismiss()">
+    <button class="btn-close-viewer" (click)="dismiss(); $event.stopPropagation()">
+      <ion-icon name="close"></ion-icon>
+    </button>
+    <div class="viewer-counter">
+      <span>{{ currentIndex + 1 }}</span>
+      <span class="separator">/</span>
+      <span>{{ images.length }}</span>
+    </div>
+    <div class="viewer-container" (click)="$event.stopPropagation()">
+      <div class="image-wrapper"
+        [style.transform]="'translateX(' + translateX + 'px) scale(' + scale + ')'"
+        (touchstart)="onTouchStart($event)"
+        (touchmove)="onTouchMove($event)"
+        (touchend)="onTouchEnd()">
+        <img [src]="images[currentIndex]" alt="Evidencia" draggable="false">
+      </div>
+    </div>
+    @if (images.length > 1) {
+      <div class="viewer-nav">
+        <button class="nav-btn" [disabled]="currentIndex === 0" (click)="prev(); $event.stopPropagation()">
+          <ion-icon name="chevron-back"></ion-icon>
+        </button>
+        <button class="nav-btn" [disabled]="currentIndex === images.length - 1" (click)="next(); $event.stopPropagation()">
+          <ion-icon name="chevron-forward"></ion-icon>
+        </button>
+      </div>
+    }
+    @if (images.length > 1) {
+      <div class="viewer-thumbs">
+        @for (img of images; track $index) {
+          <div
+           class="thumb"
+           [class.active]="$index === currentIndex"
+           (click)="currentIndex = $index; resetZoom(); $event.stopPropagation()">
+           <img [src]="img">
+         </div>
+        }
+      </div>
+    }
+    <div class="viewer-zoom">
+      <button class="zoom-btn" (click)="zoomIn(); $event.stopPropagation()">
+        <ion-icon name="add"></ion-icon>
+      </button>
+      <button class="zoom-btn" (click)="zoomOut(); $event.stopPropagation()">
+        <ion-icon name="remove"></ion-icon>
+      </button>
+    </div>
+  </div>
+</ion-content>

@@ -1,0 +1,41 @@
+@use '../../../theme/mixins' as app;
+
+.date-divider {
+    text-align: center;
+    margin: var(--space-lg) 0 var(--space-md);
+    position: relative;
+    z-index: 1;
+
+    // Línea horizontal decorativa
+    &::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: var(--space-xl);
+        right: var(--space-xl);
+        height: 1px;
+        background: var(--app-border);
+        z-index: -1;
+
+        @include app.dark-mode {
+            background: var(--app-border-light);
+            box-shadow: 0 0 8px rgba(var(--app-primary-rgb), 0.15);
+        }
+    }
+
+    span {
+        display: inline-block;
+        padding: 4px 14px;
+        background: var(--app-bg);
+        font-size: 0.75rem;
+        color: var(--app-text-muted);
+        font-weight: 500;
+        text-transform: capitalize;
+        position: relative;
+
+        @include app.dark-mode {
+            background: var(--app-surface);
+            color: var(--app-text-secondary);
+        }
+    }
+}

@@ -1,0 +1,649 @@
+@use '../../../theme/mixins' as app;
+
+// Base del mapa
+[id^="map-"] {
+  z-index: 1;
+  height: var(--map-height);
+  width: 100%;
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--app-shadow-lg);
+
+  // Efecto viñeta sutil en los bordes
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    box-shadow: inset 0 0 60px rgba(0, 0, 0, 0.1);
+    pointer-events: none;
+    border-radius: inherit;
+    z-index: 2;
+  }
+}
+
+// ==========================================
+// HEADER MODOS PICKER & VIEWER
+// ==========================================
+
+// Contenedor principal del header
+.header-container {
+  padding: var(--space-md);
+  background: var(--app-glass-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  border: 1px solid var(--app-glass-border);
+  border-bottom: none;
+  box-shadow: var(--app-shadow-md);
+  position: relative;
+  z-index: 10;
+
+  // Línea decorativa superior
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 40px;
+    height: 4px;
+    background: var(--app-gradient-primary);
+    border-radius: 0 0 4px 4px;
+    opacity: 0.5;
+  }
+}
+
+// ==========================================
+// MODO PICKER - Buscador
+// ==========================================
+
+ion-searchbar {
+  --background: var(--app-surface);
+  --border-radius: var(--radius-xl);
+  --box-shadow: var(--app-shadow-sm);
+  --icon-color: var(--app-primary);
+  --placeholder-color: var(--app-text-muted);
+  --placeholder-font-weight: 500;
+  --clear-button-color: var(--app-text-muted);
+
+  padding: 0;
+  margin-bottom: var(--space-sm);
+
+  // Efecto focus
+  &.searchbar-has-focus {
+    --box-shadow:
+      inset 2px 2px 6px rgba(0, 0, 0, 0.05),
+      inset -2px -2px 6px rgba(255, 255, 255, 0.8),
+      0 0 0 2px var(--app-primary-light);
+
+    @include app.dark-mode {
+      --box-shadow:
+        inset 2px 2px 6px rgba(0, 0, 0, 0.3),
+        inset -2px -2px 6px rgba(255, 255, 255, 0.05),
+        0 0 0 2px var(--app-primary-light);
+    }
+  }
+
+  .searchbar-input {
+    font-weight: 600;
+    color: var(--app-text);
+    font-size: 0.95rem;
+  }
+
+  .searchbar-search-icon {
+    font-size: 20px;
+    opacity: 0.8;
+  }
+}
+
+// Lista de resultados de búsqueda
+.search-results {
+  max-height: 220px;
+  overflow-y: auto;
+  margin-top: var(--space-sm);
+  background: var(--app-surface);
+  border-radius: var(--radius-md);
+  box-shadow: var(--app-shadow-sm);
+  border: 1px solid var(--app-border);
+  padding: var(--space-xs);
+
+  // Scrollbar estilizada
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: var(--app-border);
+    border-radius: 10px;
+  }
+
+  ion-item {
+    --background: transparent;
+    --background-hover: rgba(var(--app-primary-rgb), 0.05);
+    --border-radius: var(--radius-md);
+    --padding-start: var(--space-sm);
+    --padding-end: var(--space-sm);
+    --min-height: 48px;
+
+    margin-bottom: var(--space-xs);
+    font-size: 0.9em;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+
+    &:hover {
+      --background: rgba(var(--app-primary-rgb), 0.08);
+      transform: translateX(4px);
+    }
+
+    ion-icon {
+      color: var(--app-primary);
+      font-size: 20px;
+      margin-right: var(--space-sm);
+      opacity: 0.8;
+    }
+
+    ion-label {
+      color: var(--app-text);
+      font-weight: 500;
+      line-height: 1.4;
+      white-space: normal;
+      font-size: 0.9rem;
+    }
+  }
+}
+
+// Estado de búsqueda cargando
+.search-loading {
+  text-align: center;
+  padding: var(--space-md);
+  color: var(--app-text-secondary);
+
+  ion-spinner {
+    color: var(--app-primary);
+    width: 24px;
+    height: 24px;
+  }
+
+  p {
+    margin: var(--space-sm) 0 0;
+    font-size: 0.85em;
+    font-weight: 500;
+    color: var(--app-text-muted);
+  }
+}
+
+// Campo de dirección manual editable
+.manual-address-container {
+  margin-top: var(--space-md);
+  animation: slideDown var(--transition-normal) var(--smooth);
+
+  ion-item {
+    --background: rgba(var(--app-primary-rgb), 0.03);
+    --border-color: var(--app-primary-light);
+    --border-radius: var(--radius-md);
+    --border-style: dashed;
+    --border-width: 1px;
+
+    box-shadow: none;
+
+    ion-label {
+      --color: var(--app-primary);
+      font-weight: 700;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    ion-input {
+      --color: var(--app-text);
+      font-weight: 600;
+      font-size: 0.95rem;
+    }
+  }
+}
+
+// ==========================================
+// MODO VIEWER - Info de destino
+// ==========================================
+
+.viewer-header {
+  .location-info {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-md);
+
+    .location-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: var(--app-gradient-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 20px rgba(var(--app-primary-rgb), 0.3);
+      flex-shrink: 0;
+
+      ion-icon {
+        font-size: 24px;
+        color: white;
+      }
+    }
+
+    .location-text {
+      flex: 1;
+
+      h3 {
+        margin: 0 0 var(--space-xs);
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: var(--app-text);
+        letter-spacing: -0.02em;
+      }
+
+      p {
+        margin: 0;
+        font-size: 0.9rem;
+        color: var(--app-text-secondary);
+        line-height: 1.4;
+        font-weight: 500;
+      }
+    }
+  }
+}
+
+// Panel de info de ruta calculada
+.route-info-panel {
+  margin-top: var(--space-lg);
+  padding: var(--space-md);
+  background: var(--app-surface);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--app-shadow-sm);
+  border: 1px solid var(--app-border);
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: var(--space-md);
+  align-items: center;
+  animation: fadeScale var(--transition-normal) var(--bounce);
+
+  .route-stat {
+    text-align: center;
+
+    .stat-label {
+      font-size: 0.75rem;
+      color: var(--app-text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-weight: 700;
+      margin-bottom: var(--space-xs);
+      display: block;
+    }
+
+    .stat-value {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: var(--app-primary);
+      display: block;
+      line-height: 1;
+
+      small {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--app-text-muted);
+        margin-left: 2px;
+      }
+    }
+  }
+
+  .divider {
+    width: 1px;
+    height: 40px;
+    background: linear-gradient(to bottom, transparent, var(--app-border), transparent);
+  }
+}
+
+// ==========================================
+// BOTONES FLOTANTES DEL MAPA
+// ==========================================
+
+.floating-controls {
+  position: absolute;
+  bottom: var(--space-lg);
+  right: var(--space-md);
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+
+  // También puede estar a la izquierda según el botón
+  &.left {
+    left: var(--space-md);
+    right: auto;
+    align-items: flex-start;
+  }
+
+  &.right {
+    align-items: flex-end;
+  }
+
+  ion-button {
+    --border-radius: 50%;
+    --box-shadow: var(--app-shadow-lg);
+    width: 56px;
+    height: 56px;
+    margin: 0;
+
+    // Botón primario (ubicación actual)
+    &[color="primary"] {
+      --background: var(--app-gradient-primary);
+      --box-shadow: 0 0 20px rgba(var(--app-primary-rgb), 0.3);
+      transition: all var(--transition-normal) var(--bounce);
+
+      &:hover {
+        transform: scale(1.1) rotate(10deg);
+        --box-shadow: 0 8px 25px rgba(var(--app-primary-rgb), 0.5);
+      }
+
+      &:active {
+        transform: scale(0.95);
+      }
+    }
+
+    // Botón success (trazar ruta)
+    &[color="success"] {
+      --background: var(--app-gradient-success);
+      --box-shadow: 0 4px 15px rgba(var(--app-success-rgb, 16, 185, 129), 0.3);
+      width: auto;
+      padding: 0 var(--space-md);
+      border-radius: var(--radius-xl);
+      font-weight: 700;
+      font-size: 0.9rem;
+      letter-spacing: -0.01em;
+      height: 48px;
+
+      &:hover:not([disabled]) {
+        transform: translateY(-2px);
+        --box-shadow: 0 6px 20px rgba(var(--app-success-rgb, 16, 185, 129), 0.4);
+      }
+
+      &[disabled] {
+        opacity: 0.6;
+        --background: var(--app-text-muted);
+      }
+    }
+
+    // Botón outline (limpiar)
+    &[fill="outline"] {
+      --border-color: var(--app-border);
+      --color: var(--app-text-secondary);
+      --background: var(--app-glass-bg);
+      backdrop-filter: blur(10px);
+      width: 48px;
+      height: 48px;
+      --border-width: 2px;
+
+      &:hover {
+        --border-color: var(--app-danger);
+        --color: var(--app-danger);
+        --background: rgba(var(--app-danger-rgb, 239, 68, 68), 0.1);
+        transform: rotate(90deg);
+      }
+    }
+
+    ion-icon {
+      font-size: 24px;
+    }
+  }
+}
+
+// Grupo de botones izquierdos específico
+.left-controls {
+  position: absolute;
+  bottom: var(--space-lg);
+  left: var(--space-md);
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+// ==========================================
+// LEAFLET ROUTING MACHINE - Customización
+// ==========================================
+
+:host ::ng-deep {
+
+  // Contenedor principal de rutas oculto (usamos nuestro custom panel)
+  .leaflet-routing-container {
+    display: none !important;
+  }
+
+  // Línea de ruta estilizada
+  .leaflet-routing-alt {
+    display: none;
+  }
+
+  // Estilos para la línea de ruta en el mapa
+  .leaflet-overlay-pane {
+    path.leaflet-interactive {
+      stroke: var(--app-primary);
+      stroke-width: 6;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      filter: drop-shadow(0 2px 4px rgba(var(--app-primary-rgb), 0.3));
+      animation: dash 2s linear infinite;
+      stroke-dasharray: 20, 10;
+    }
+  }
+
+  // Marcadores de waypoints
+  .leaflet-marker-icon {
+    transition: transform var(--transition-normal) var(--bounce);
+
+    &:hover {
+      transform: scale(1.2) !important;
+      filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+    }
+  }
+
+  // Popups de Leaflet estilizados
+  .leaflet-popup-content-wrapper {
+    background: var(--app-glass-bg);
+    backdrop-filter: blur(20px);
+    border-radius: var(--radius-md);
+    box-shadow: var(--app-shadow-md);
+    border: 1px solid var(--app-glass-border);
+    padding: var(--space-sm);
+  }
+
+  .leaflet-popup-content {
+    margin: var(--space-sm);
+    font-family: inherit;
+    font-weight: 600;
+    color: var(--app-text);
+    font-size: 0.9rem;
+  }
+
+  .leaflet-popup-tip {
+    background: var(--app-glass-bg);
+    border: 1px solid var(--app-glass-border);
+    width: 12px;
+    height: 12px;
+    margin: -6px auto 0;
+  }
+}
+
+// ==========================================
+// ANIMACIONES
+// ==========================================
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeScale {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes dash {
+  to {
+    stroke-dashoffset: -30;
+  }
+}
+
+// ==========================================
+// ESTADOS ESPECIALES
+// ==========================================
+
+// Cuando está calculando ruta
+.calculating-route {
+  .route-info-panel {
+    opacity: 0.7;
+    pointer-events: none;
+
+    &::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, transparent, rgba(var(--app-bg-rgb), 0.5), transparent);
+      animation: shimmer 1.5s infinite;
+      border-radius: inherit;
+    }
+  }
+}
+
+// Responsive
+@media (max-width: 360px) {
+  .header-container {
+    padding: var(--space-sm);
+  }
+
+  ion-searchbar {
+    --border-radius: var(--radius-lg);
+  }
+
+  .floating-controls ion-button {
+    width: 48px;
+    height: 48px;
+  }
+
+  .route-info-panel {
+    .stat-value {
+      font-size: 1.1rem;
+    }
+  }
+}
+
+/* ─── Modo Route ─── */
+.route-header {
+  background: var(--app-glass-bg);
+  backdrop-filter: blur(12px);
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--app-glass-border);
+}
+
+.route-pill {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--app-surface);
+  padding: 10px 14px;
+  border-radius: 50px;
+  box-shadow: var(--app-shadow-sm);
+  border: 1px solid var(--app-border);
+}
+
+.route-stop {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--app-text);
+  min-width: 0;
+  /* para que el ellipsis funcione */
+
+  .dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+
+    &.origin {
+      background: var(--app-success);
+    }
+
+    &.destination {
+      background: var(--app-danger);
+    }
+  }
+
+  .stop-text {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 130px;
+  }
+}
+
+.route-arrow {
+  color: var(--app-text-muted);
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+/* ─── Marcadores de ruta (globales, ::ng-deep) ─── */
+::ng-deep {
+  .route-marker {
+    background: transparent !important;
+    border: none !important;
+  }
+
+  .route-pin {
+    width: 36px;
+    height: 36px;
+    border-radius: 50% 50% 50% 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 14px;
+    color: white;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    transform: rotate(-45deg);
+
+    span {
+      transform: rotate(45deg); // Texto derecho
+      display: block;
+    }
+
+    &.origin-pin {
+      background: var(--app-success);
+    }
+
+    &.dest-pin {
+      background: var(--app-danger);
+    }
+  }
+}

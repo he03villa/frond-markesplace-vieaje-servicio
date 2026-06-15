@@ -1,0 +1,8 @@
+@use '../../../theme/mixins' as app;
+
+.error-message {
+    color: var(--app-danger);
+    font-size: 0.75rem;
+    margin-top: var(--space-xs);
+    /* display: none; */
+}

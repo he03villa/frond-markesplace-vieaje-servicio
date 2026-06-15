@@ -1,0 +1,66 @@
+<ion-content [fullscreen]="true" class="verify-content">
+  <!-- Ambient Background -->
+  <div class="ambient-bg">
+    <div class="ambient-blob blob-1" [style.background]="state.gradient"></div>
+    <div class="ambient-blob blob-2" [style.background]="state.gradient"></div>
+  </div>
+
+  <!-- Main Card -->
+  <div class="verify-wrapper">
+    <div class="verify-card" [class.animating]="isAnimating">
+      <!-- Status Icon -->
+      <div class="icon-section">
+        @if(currentStatus === 'loading') {
+        <div class="loading-ring" [style.border-color]="state.iconColor">
+          <ion-icon [name]="state.icon" [style.color]="state.iconColor"></ion-icon>
+        </div>
+        } @else {
+        <div class="status-icon-wrapper" [style.background]="state.iconBg">
+          <div class="status-icon-glow" [style.background]="state.iconColor"></div>
+          <ion-icon [name]="state.icon" [style.color]="state.iconColor"></ion-icon>
+        </div>
+        }
+      </div>
+
+      <!-- Text Content -->
+      <div class="text-section">
+        <h1 class="verify-title">{{ state.title }}</h1>
+        <p class="verify-message">{{ state.message }}</p>
+      </div>
+
+      <!-- Progress Dots (loading only) -->
+      @if(currentStatus === 'loading') {
+      <div class="loading-dots">
+        <span class="dot"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
+      </div>
+      }
+
+      <!-- Actions -->
+      @if(currentStatus !== 'loading') {
+      <div class="actions-section">
+        <button class="btn-primary" [style.background]="state.gradient"
+          (click)="state.primaryAction.route ? navigate(state.primaryAction.route) : retry()">
+          <ion-icon [name]="state.primaryAction.icon"></ion-icon>
+          <span>{{ state.primaryAction.label }}</span>
+        </button>
+
+        @if(state.secondaryAction) {
+        <button class="btn-ghost" (click)="navigate(state.secondaryAction.route)">
+          <ion-icon [name]="state.secondaryAction.icon"></ion-icon>
+          <span>{{ state.secondaryAction.label }}</span>
+        </button>
+        }
+      </div>
+      }
+    </div>
+
+    <!-- Footer -->
+    <div class="verify-footer">
+      <span class="footer-brand">Tu App</span>
+      <span class="footer-dot">·</span>
+      <span class="footer-text">Verificación segura</span>
+    </div>
+  </div>
+</ion-content>

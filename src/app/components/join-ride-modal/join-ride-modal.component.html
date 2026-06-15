@@ -1,0 +1,181 @@
+<ion-content [fullscreen]="true" class="join-modal">
+
+  <!-- Header flotante -->
+  <div class="modal-header">
+    <ion-button fill="clear" class="close-btn" (click)="dismiss()">
+      <ion-icon name="close-outline" slot="icon-only"></ion-icon>
+    </ion-button>
+    <h1>Reservar asientos</h1>
+    <p>Selecciona cuántos asientos necesitas</p>
+  </div>
+
+  <!-- Hero visual del ride -->
+  <div class="ride-preview-card">
+    <div class="route-mini">
+      <div class="mini-stop origin">
+        <div class="mini-dot"></div>
+        <span>A</span>
+      </div>
+      <div class="mini-line"></div>
+      <div class="mini-car">
+        <ion-icon name="car-sport"></ion-icon>
+      </div>
+      <div class="mini-line"></div>
+      <div class="mini-stop destination">
+        <div class="mini-dot"></div>
+        <span>B</span>
+      </div>
+    </div>
+    <div class="ride-price-tag">
+      <span class="currency">$</span>
+      <span class="amount">{{ ridePrice | number:'1.0-0' }}</span>
+      <span class="unit">c/u</span>
+    </div>
+  </div>
+
+  <!-- Selector de asientos (visual tipo carro) -->
+  <div class="seats-section">
+    <h3 class="section-title">¿Cuántos asientos?</h3>
+
+    <div class="car-visual">
+      <!-- Asientos representados visualmente -->
+      @for(n of availableSeatsArray; track n) {
+        <div class="seat-option" [class.selected]="seats === n"
+          [class.disabled]="n > maxSeats" (click)="selectSeat(n)">
+          <div class="seat-icon">
+            <ion-icon [name]="seats >= n ? 'person' : 'person-outline'"></ion-icon>
+          </div>
+          <span class="seat-number">{{ n }}</span>
+          @if (seats === n) {
+            <div class="seat-glow"></div>
+          }
+        </div>
+      }
+    </div>
+
+    @if (seats > 1) {
+      <p class="seats-hint">
+        <ion-icon name="information-circle-outline"></ion-icon>
+        Estás reservando {{ seats }} asientos
+      </p>
+    }
+  </div>
+
+  <!-- Detalles adicionales (acordeón) -->
+  <div class="details-section">
+    <h3 class="section-title">Detalles adicionales</h3>
+
+    <!-- Pickup -->
+    <div class="detail-card" [class.active]="pickupLocation">
+      <div class="detail-icon">
+        <ion-icon name="location-outline"></ion-icon>
+      </div>
+      <div class="detail-content">
+        <label>Punto de recogida</label>
+        <ion-textarea [(ngModel)]="pickupLocation" rows="2" placeholder="¿Dónde te recogen? (opcional)"
+          (ionFocus)="onFieldFocus('pickup')" (ionBlur)="onFieldBlur()">
+        </ion-textarea>
+      </div>
+      @if (pickupLocation) {
+        <div class="detail-badge">
+          <ion-icon name="checkmark-circle"></ion-icon>
+        </div>
+      }
+    </div>
+
+    <!-- Dropoff -->
+    <div class="detail-card" [class.active]="dropoffLocation">
+      <div class="detail-icon">
+        <ion-icon name="navigate-outline"></ion-icon>
+      </div>
+      <div class="detail-content">
+        <label>Punto de destino</label>
+        <ion-textarea [(ngModel)]="dropoffLocation" rows="2" placeholder="¿Dónde te dejan? (opcional)"
+          (ionFocus)="onFieldFocus('dropoff')" (ionBlur)="onFieldBlur()">
+        </ion-textarea>
+      </div>
+      @if (dropoffLocation) {
+        <div class="detail-badge">
+          <ion-icon name="checkmark-circle"></ion-icon>
+        </div>
+      }
+    </div>
+
+    <!-- Special requests -->
+    <div class="detail-card" [class.active]="specialRequests">
+      <div class="detail-icon">
+        <ion-icon name="chatbubble-outline"></ion-icon>
+      </div>
+      <div class="detail-content">
+        <label>Peticiones especiales</label>
+        <ion-textarea [(ngModel)]="specialRequests" rows="2" placeholder="Ej: mascota pequeña, equipaje..."
+          (ionFocus)="onFieldFocus('special')" (ionBlur)="onFieldBlur()">
+        </ion-textarea>
+      </div>
+      @if (specialRequests) {
+        <div class="detail-badge">
+          <ion-icon name="checkmark-circle"></ion-icon>
+        </div>
+      }
+    </div>
+  </div>
+
+  <!-- Spacer para botón sticky -->
+  <div class="bottom-spacer"></div>
+
+</ion-content>
+
+<!-- Footer sticky con resumen y acción -->
+<div class="sticky-footer">
+
+  <!-- Resumen deslizable -->
+  <div class="summary-panel" [class.expanded]="showSummary">
+    <div class="summary-toggle" (click)="toggleSummary()">
+      <div class="toggle-line"></div>
+      <span>Ver detalle</span>
+    </div>
+
+    @if (showSummary) {
+      <div class="summary-content">
+        <div class="summary-row">
+          <span>{{ seats }} asiento{{ seats > 1 ? 's' : '' }} × ${{ ridePrice | number:'1.0-0' }}</span>
+          <span>${{ seats * ridePrice | number:'1.0-0' }}</span>
+        </div>
+        <!-- @if(seats > 1) {
+          <div class="summary-row fee">
+            <span>Descuento por grupo</span>
+            <span class="discount">-${{ (seats - 1) * 2000 | number:'1.0-0' }}</span>
+          </div>
+        } -->
+      </div>
+    }
+
+    <div class="summary-total">
+      <span>Total a pagar</span>
+      <span class="total-amount">${{ getTotal() | number:'1.0-0' }}</span>
+    </div>
+  </div>
+
+  <!-- Botón principal -->
+  <ion-button expand="block" size="large" class="confirm-btn" [disabled]="!seats || isSubmitting" (click)="confirm()">
+
+    @if(!isSubmitting) {
+      <div class="btn-content">
+        <ion-icon name="shield-checkmark-outline"></ion-icon>
+        <span>Confirmar reserva</span>
+        <span class="btn-price">${{ getTotal() | number:'1.0-0' }}</span>
+      </div>
+    } @else if(isSubmitting) {
+      <div class="btn-loading">
+        <ion-spinner name="crescent"></ion-spinner>
+        <span>Procesando...</span>
+      </div>
+    }
+
+  </ion-button>
+
+  <p class="secure-note">
+    <ion-icon name="lock-closed-outline"></ion-icon>
+    Pago seguro • Cancelación gratuita
+  </p>
+</div>

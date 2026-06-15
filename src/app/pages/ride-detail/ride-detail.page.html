@@ -1,0 +1,362 @@
+<ion-content [fullscreen]="true" class="ride-detail-page">
+
+  <!-- Header flotante con blur -->
+  <div class="floating-header">
+    <ion-button fill="clear" color="dark" (click)="goBack()">
+      <ion-icon name="arrow-back" slot="icon-only"></ion-icon>
+    </ion-button>
+    <span class="header-title">Detalle del viaje</span>
+    <ion-button fill="clear" color="dark" (click)="shareRide()">
+      <ion-icon name="share-outline" slot="icon-only"></ion-icon>
+    </ion-button>
+  </div>
+  @if (ride) {
+    <div class="map-hero-wrapper">
+      <app-location-picker
+        mode="route"
+        [mapId]="'ride-detail-map-' + ride.id"
+        [originLat]="ride.route.origin.lat"
+        [originLng]="ride.route.origin.lng"
+        [destinationLat]="ride.route.destination.lat"
+        [destinationLng]="ride.route.destination.lng"
+        [originAddress]="ride.route.origin.address"
+        [destinationAddress]="ride.route.destination.address">
+      </app-location-picker>
+      <!-- Hero: Ticket principal -->
+      <div class="ticket-float-card">
+        <div class="ticket-punch left"></div>
+        <div class="ticket-punch right"></div>
+    
+        <div class="route-main">
+          <div class="city-block origin">
+            <span class="city-code">{{ ride.route.origin_short ? ride.route.origin_short.substring(0, 3) : '' | uppercase }}</span>
+            <span class="city-name">{{ ride.route.origin_short }}</span>
+            @if(ride.schedule.departure_time) {
+              <span class="time">
+                {{ ride.schedule.departure_time | date:'h:mm a' }}
+              </span>
+            }
+          </div>
+    
+          <div class="route-connector">
+            <div class="plane-line">
+              <div class="line-track"></div>
+              <div class="vehicle-bubble">
+                <ion-icon name="car-sport"></ion-icon>
+              </div>
+            </div>
+            @if (ride.route.distance_km) {
+              <span class="duration">{{ ride.route.distance_km }} km</span>
+            }
+          </div>
+    
+          <div class="city-block destination">
+            <span class="city-code">{{ ride.route.destination_short ? ride.route.destination_short.substring(0, 3) : '' | uppercase }}</span>
+            <span class="city-name">{{ ride.route.destination_short }}</span>
+            @if (ride.schedule.departure_time) {
+              <span class="time">
+                ~{{ getEstimatedArrival() | date:'h:mm a' }}
+              </span>
+            }
+          </div>
+        </div>
+    
+        <!-- Status chip animado -->
+        <div class="status-chip" [class]="'status-' + ride.status">
+          <span class="pulse-dot"></span>
+          <span class="status-text">{{ statusLabel(ride.status) }}</span>
+        </div>
+      </div>
+    </div>
+  
+    <div class="content-below-map">
+      <!-- Timeline vertical -->
+      <div class="timeline-section">
+        <h3 class="section-title">Progreso</h3>
+        <div class="timeline-track">
+          <div class="timeline-line-bg"></div>
+          <div class="timeline-line-fill" [style.height.%]="getTimelineProgress()"></div>
+
+          @for (step of ride.timeline; let i = $index; track i) {
+            <div class="t-step" [class.done]="step.done"
+              [class.current]="isCurrentStep(i)">
+              <div class="t-dot">
+                @if (step.done) {
+                  <ion-icon name="checkmark"></ion-icon>
+                } @else if (!step.done && isCurrentStep(i)) {
+                  <span class="current-ring"></span>
+                }
+              </div>
+              <div class="t-content">
+                <span class="t-label">{{ step.label }}</span>
+                @if (step.time) {
+                  <span class="t-time">{{ step.time | date:'h:mm a' }}</span>
+                }
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    
+      <!-- Conductor Card -->
+      @if (ride.driver) {
+        <div class="driver-glass-card">
+          <div class="glass-bg"></div>
+          <div class="driver-content">
+            <div class="avatar-ring">
+              <img [src]="ride.driver.avatar" [alt]="ride.driver.name">
+              <div class="verified-badge">
+                <ion-icon name="shield-checkmark"></ion-icon>
+              </div>
+            </div>
+            <div class="driver-meta">
+              <h2>{{ ride.driver.name }}</h2>
+              <div class="rating-pill">
+                <ion-icon name="star"></ion-icon>
+                <span>{{ ride.driver.rating }}</span>
+              </div>
+              <p class="trips-count">{{ ride.driver.completed_jobs }} viajes realizados</p>
+            </div>
+            @if (!ride.meta.is_driver) {
+              <div class="driver-actions">
+                @if (ride.meta.can_call) {
+                  <ion-button fill="solid" shape="round" color="primary" (click)="callDriver()">
+                    <ion-icon name="call" slot="icon-only"></ion-icon>
+                  </ion-button>
+                }
+                <ion-button fill="solid" shape="round" color="medium" (click)="chatDriver()">
+                  <ion-icon name="chatbubble" slot="icon-only"></ion-icon>
+                </ion-button>
+              </div>
+            }
+          </div>
+      
+          <!-- Vehículo -->
+          @if (ride.vehicle.display) {
+            <div class="vehicle-row">
+              <ion-icon name="car-outline"></ion-icon>
+              <span>{{ ride.vehicle.display }}</span>
+              <span class="dot-sep">•</span>
+              <span class="color-badge" [style.background]="ride.vehicle.color"></span>
+              <span>{{ ride.vehicle.color }}</span>
+            </div>  
+          }
+        </div>
+      }
+    
+      <!-- Asientos Visuales (Mapa del carro) -->
+      @if (!ride.meta.is_driver) {
+        <div class="seats-section">
+          <h3 class="section-title">Asientos disponibles</h3>
+          <div class="car-layout">
+            <!-- Fila delantera -->
+            <div class="seat-row front">
+              <div class="seat driver-seat" title="Conductor">
+                <ion-icon name="person"></ion-icon>
+              </div>
+              <div class="seat" [class.occupied]="ride.seats.occupied >= 1" [class.available]="ride.seats.occupied < 1">
+                <ion-icon [name]="ride.seats.occupied >= 1 ? 'person' : 'person-outline'"></ion-icon>
+              </div>
+            </div>
+            <!-- Volante decorativo -->
+            <div class="steering-wheel">
+              <ion-icon name="ellipse-outline"></ion-icon>
+            </div>
+            <!-- Fila trasera -->
+            <div class="seat-row back">
+              @for(n of [1,2,3]; let i = $index; track i) {
+                <div class="seat"  [class.occupied]="(ride.seats.occupied - 1) > i"
+                  [class.available]="(ride.seats.occupied - 1) <= i" [class.my-seat]="isMySeat(i)">
+                  <ion-icon [name]="(ride.seats.occupied - 1) > i ? 'person' : 'person-outline'"></ion-icon>
+                </div>
+              }
+            </div>
+          </div>
+          <p class="seats-legend">
+            <span class="dot available"></span> Libre
+            <span class="dot occupied"></span> Ocupado
+            <span class="dot mine"></span> Mi reserva
+          </p>
+        </div>
+      }
+    
+      <!-- Precio Card -->
+      <div class="price-float-card">
+        <div class="price-content">
+          <div class="price-tag">
+            <span class="currency">$</span>
+            <span class="amount">{{ ride.seats.price_per_seat | number:'1.0-0' }}</span>
+            <span class="unit">por asiento</span>
+          </div>
+          @if (ride.meta.my_seats > 0) {
+            <div class="total-hint">
+              Total pagado: ${{ ride.seats.price_per_seat * ride.meta.my_seats | number:'1.0-0' }}
+            </div>
+          }
+        </div>
+      </div>
+    
+      <!-- Notas -->
+      @if (ride.notes) {
+        <div class="notes-card">
+          <ion-icon name="information-circle-outline"></ion-icon>
+          <p>{{ ride.notes }}</p>
+        </div>
+      }
+    
+      <!-- Lista de pasajeros (solo conductor) -->
+      @if (ride.meta.is_driver && ride.passengers) {
+        <div class="passengers-list">
+          <h3 class="section-title">Tus pasajeros</h3>
+          @for (p of ride.passengers; track $index) {
+            <div class="p-card" [class]="'status-' + p.status">
+              <img [src]="p.avatar" class="p-avatar">
+              <div class="p-info">
+                <span class="p-name">{{ p.name }}</span>
+                <span class="p-seats">{{ p.seats }} asiento(s)</span>
+                <span class="p-status-badge">{{ p.status }}</span>
+              </div>
+              <div class="p-actions">
+                @if (p.actions.can_confirm) {
+                  <button class="action-btn confirm" (click)="confirmPassenger(p.id)">
+                    <ion-icon name="checkmark-circle"></ion-icon>
+                  </button>
+                } @else if (p.actions.can_pickup) {
+                  <button class="action-btn pickup" (click)="pickupPassenger(p.id)">
+                    <ion-icon name="enter"></ion-icon>
+                  </button>
+                } @else if (p.actions.can_dropoff) {
+                  <button class="action-btn dropoff" (click)="dropoffPassenger(p.id)">
+                    <ion-icon name="exit"></ion-icon>
+                  </button>
+
+                }
+              </div>
+            </div>
+          }
+        </div>
+      }
+    
+      <!-- Spacer para bottom sticky -->
+      <div style="height: 120px;"></div>
+    </div>
+  }
+
+</ion-content>
+
+@if (ride) {
+  <!-- Bottom Actions (Sticky) -->
+  <div class="sticky-actions" [class]="'context-' + getActionContext()">
+
+    <!-- PASAJERO: Solicitar -->
+    @if (ride.meta.can_join) {
+      <div class="join-action">
+        <div class="seats-quick-picker">
+          @for (n of [1,2,3,4]; track $index) {
+            <button
+                    [class.selected]="selectedSeats === n"
+                    (click)="selectedSeats = n">
+              {{ n }}
+            </button>
+          }
+        </div>
+        <ion-button expand="block" size="large" color="primary" (click)="openJoinModal()">
+          <ion-icon name="add-circle" slot="start"></ion-icon>
+          Solicitar {{ selectedSeats }} asiento(s)
+        </ion-button>
+      </div>
+
+    }
+
+    <!-- PASAJERO: Esperando -->
+    @if (ride.meta.my_status === 'pending') {
+      <div class="waiting-state">
+        <div class="spinner-ring"></div>
+        <p>Esperando confirmación...</p>
+        <button class="text-btn danger" (click)="cancelMyReservation()">Cancelar solicitud</button>
+      </div>
+    }
+
+    <!-- PASAJERO: Confirmado -->
+    @if (ride.meta.my_status === 'confirmed' && !ride.meta.is_driver) {
+      <div class="confirmed-state">
+        <ion-icon name="checkmark-circle" color="success"></ion-icon>
+        <p>¡Reserva confirmada!</p>
+      </div>
+    }
+
+    <!-- PASAJERO: En curso -->
+    @if (ride.meta.my_status === 'picked_up') {
+      <div class="inprogress-state">
+        <div class="live-dot"></div>
+        <p>Viaje en curso</p>
+        <span class="sub">Dirigiéndose al destino</span>
+      </div>
+    }
+
+    <!-- CONDUCTOR: Iniciar -->
+    @if (ride.meta.can_start) {
+      <ion-button
+                  expand="block" 
+                  size="large" 
+                  color="warning"
+                  class="pulse-btn main-action"
+                  (click)="startRide()">
+        <ion-icon name="play" slot="start"></ion-icon>
+        INICIAR VIAJE AHORA
+      </ion-button>
+    }
+
+    <!-- CONDUCTOR: Completar -->
+    @if (ride.meta.can_complete) {
+      <ion-button
+                  expand="block" 
+                  size="large" 
+                  color="success"
+                  class="main-action"
+                  (click)="completeRide()">
+        <ion-icon name="flag" slot="start"></ion-icon>
+        COMPLETAR VIAJE
+      </ion-button>
+    }
+
+    <!-- Cancelar -->
+    @if (ride.meta.can_cancel && ride.status !== 'completed') {
+      <ion-button expand="block" 
+                  fill="clear" 
+                  color="danger"
+                  size="small"
+                  class="cancel-btn"
+                  (click)="cancelRide()">
+        <ion-icon name="close-circle" slot="start"></ion-icon>
+        Cancelar mi reserva
+      </ion-button>
+    }
+
+    <!-- Calificar (Post-viaje) -->
+    @if (ride.status === 'completed' && !ride.rating.already_rated && !ride.meta.is_driver) {
+      <div class="rating-sheet">
+        <h4>¿Cómo fue tu experiencia?</h4>
+        <div class="star-rater">
+          @for (s of [1,2,3,4,5]; track $index) {
+            <button [class.active]="myRating >= s" (click)="setRating(s)">
+              <ion-icon [name]="myRating >= s ? 'star' : 'star-outline'"></ion-icon>
+            </button>
+          }
+        </div>
+        <ion-textarea [(ngModel)]="ratingComment" placeholder="Cuéntanos más (opcional)..." rows="2"></ion-textarea>
+        <ion-button expand="block" [disabled]="myRating === 0" (click)="submitRating()">
+          Enviar calificación
+        </ion-button>
+      </div>
+    }
+
+    <!-- Ya calificado -->
+    @if (ride.rating.already_rated) {
+      <div class="rated-badge">
+        <ion-icon name="checkmark-circle"></ion-icon>
+        <span>Ya calificaste este viaje</span>
+      </div>
+    }
+  </div>
+}

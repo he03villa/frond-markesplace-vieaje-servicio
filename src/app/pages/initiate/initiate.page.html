@@ -1,0 +1,618 @@
+<!-- Header Flotante con Glassmorphism -->
+<header class="floating-header">
+  <div class="header-glass">
+    <button class="menu-morph" aria-label="Menú">
+      <span class="morph-line"></span>
+      <span class="morph-line"></span>
+      <span class="morph-line"></span>
+    </button>
+    
+    <div class="brand-identity">
+      <div class="logo-icon">
+        <ion-icon name="share-social"></ion-icon>
+        <div class="logo-pulse"></div>
+      </div>
+      <h1 class="brand-name">Servi<span class="brand-accent">Share</span></h1>
+    </div>
+    
+    <div class="header-actions">
+      <!-- <button class="action-pill notifications" data-count="3">
+        <ion-icon name="notifications"></ion-icon>
+        <span class="pill-ripple"></span>
+      </button>
+      <button class="action-pill cart" data-count="2">
+        <ion-icon name="cart"></ion-icon>
+      </button> -->
+    </div>
+  </div>
+</header>
+
+<!-- Contenido Principal con Scroll Suave -->
+<main class="main-scroll" id="main-container">
+  
+  <!-- Sección Hero: Perfil + Búsqueda -->
+  <section class="hero-section">
+    <div class="profile-card neumorphic">
+      <div class="profile-glow"></div>
+      <div class="profile-content">
+        <div class="avatar-wrapper">
+          <div class="avatar-ring">
+            <img [src]="currentUser?.avatar_url" [alt]="currentUser?.name" class="avatar-img">
+          </div>
+          <div class="status-dot active"></div>
+          <button class="mood-btn" aria-label="Cambiar estado">
+            <span class="mood-emoji">⚡</span>
+          </button>
+        </div>
+        
+        <div class="profile-text">
+          <h2 class="greeting">¡Hey, {{ currentUser?.name }}! <span class="wave">👋</span></h2>
+          <p class="context">¿Qué necesitas hoy?</p>
+          <div class="reputation-badge">
+            <div class="stars">
+              <ion-icon name="star" class="star-fill"></ion-icon>
+              <span class="rating">{{ currentUser?.rating | number:'1.1-1' }}</span>
+            </div>
+            <span class="reviews">({{ currentUser?.count_reviews }} reseñas)</span>
+          </div>
+        </div>
+        
+        <button class="settings-gear">
+          <ion-icon name="settings-outline"></ion-icon>
+        </button>
+      </div>
+      
+      <!-- Barra de Búsqueda Expandible -->
+      <div class="search-container">
+        <div class="search-bar glass">
+          <ion-icon name="search" class="search-icon"></ion-icon>
+          <input type="text" placeholder="Buscar servicios, viajes, personas..." class="search-input">
+          <div class="search-actions">
+            <button class="voice-search">
+              <ion-icon name="mic"></ion-icon>
+            </button>
+            <button class="filter-toggle">
+              <ion-icon name="options"></ion-icon>
+            </button>
+          </div>
+        </div>
+        <!-- Chips de búsqueda rápida -->
+        <div class="quick-chips">
+          <button class="chip glass">🚗 Viajes</button>
+          <button class="chip glass">💻 Tecnología</button>
+          <button class="chip glass">🏠 Hogar</button>
+          <button class="chip glass">📚 Clases</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Stats Dashboard: Cards Flotantes -->
+  <section class="stats-dashboard">
+    <div class="stat-float" style="--delay: 0.1s; --color: var(--primary-color)">
+      <div class="stat-icon-wrap">
+        <ion-icon name="document-text"></ion-icon>
+        <svg class="progress-ring" viewBox="0 0 36 36">
+          <path class="ring-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+          <path class="ring-progress" stroke-dasharray="75, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+        </svg>
+      </div>
+      <div class="stat-data">
+        <span class="stat-value counter" [attr.data-target]="summary?.active_services || 0">{{ summary?.active_services || 0 }}</span>
+        <span class="stat-label">Solicitudes<br>activas</span>
+      </div>
+      <!-- <div class="stat-trend up">
+        <ion-icon name="trending-up"></ion-icon>
+        <span>+2</span>
+      </div> -->
+    </div>
+
+    <div class="stat-float" style="--delay: 0.2s; --color: var(--secondary-color)">
+      <div class="stat-icon-wrap">
+        <ion-icon name="car-sport"></ion-icon>
+        <svg class="progress-ring" viewBox="0 0 36 36">
+          <path class="ring-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+          <path class="ring-progress" stroke-dasharray="50, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+        </svg>
+      </div>
+      <div class="stat-data">
+        <span class="stat-value counter" [attr.data-target]="summary?.scheduled_rides || 0">{{ summary?.scheduled_rides || 0 }}</span>
+        <span class="stat-label">Viajes<br>programados</span>
+      </div>
+      <!-- <div class="stat-trend neutral">
+        <ion-icon name="remove"></ion-icon>
+      </div> -->
+    </div>
+  </section>
+
+  <!-- Acciones Principales: Grid Molecular -->
+  <section class="actions-molecular">
+    <h3 class="section-title">Acciones rápidas</h3>
+    <div class="molecular-grid">
+      <button class="mol-cell primary" (click)="createServiceRequest('service')">
+        <div class="cell-bg"></div>
+        <div class="cell-content">
+          <div class="cell-icon">
+            <ion-icon name="add-circle"></ion-icon>
+            <div class="icon-glow"></div>
+          </div>
+          <span class="cell-title">Publicar<br>Servicio</span>
+          <div class="cell-arrow">
+            <ion-icon name="arrow-forward"></ion-icon>
+          </div>
+        </div>
+      </button>
+      
+      <button class="mol-cell secondary" (click)="searchServices('service')">
+        <div class="cell-bg" style="background: var(--gradient-success)"></div>
+        <div class="cell-content">
+          <div class="cell-icon">
+            <ion-icon name="search"></ion-icon>
+          </div>
+          <span class="cell-title">Buscar</span>
+        </div>
+      </button>
+      
+      <button class="mol-cell tertiary" (click)="createServiceRequest('ride')">
+        <div class="cell-bg" style="background: var(--gradient-warning)"></div>
+        <div class="cell-content">
+          <div class="cell-icon">
+            <ion-icon name="car-sport"></ion-icon>
+          </div>
+          <span class="cell-title">Ofrecer<br>Viaje</span>
+        </div>
+      </button>
+      
+      <button class="mol-cell quaternary" (click)="searchServices('ride')">
+        <div class="cell-bg" style="background: linear-gradient(135deg, #ec4899 0%, #8b5cf6 100%)"></div>
+        <div class="cell-content">
+          <div class="cell-icon">
+            <ion-icon name="map"></ion-icon>
+          </div>
+          <span class="cell-title">Buscar<br>Viaje</span>
+        </div>
+      </button>
+    </div>
+  </section>
+
+  <!-- Navegación por Tabs: Orbital -->
+  <nav class="orbital-tabs">
+    <div class="tab-track">
+      <div class="tab-indicator" [style.left.%]="activeTab === 'services' ? 0 : activeTab === 'rides' ? 33.33 : 66.66"></div>
+      
+      <button class="orbital-tab" [class.active]="activeTab === 'services'" (click)="switchTab('services')">
+        <div class="tab-orbit">
+          <ion-icon name="briefcase"></ion-icon>
+        </div>
+        <span class="tab-label">Servicios</span>
+      </button>
+      
+      <button class="orbital-tab" [class.active]="activeTab === 'rides'" (click)="switchTab('rides')">
+        <div class="tab-orbit">
+          <ion-icon name="car-sport"></ion-icon>
+        </div>
+        <span class="tab-label">Viajes</span>
+      </button>
+      
+      <button class="orbital-tab" [class.active]="activeTab === 'my-services'" (click)="switchTab('my-services')">
+        <div class="tab-orbit">
+          <ion-icon name="person"></ion-icon>
+          <!-- Badge de asignaciones activas -->
+          <span class="orbit-badge" *ngIf="activeAssignmentsCount > 0">
+            {{activeAssignmentsCount}}
+          </span>
+        </div>
+        <span class="tab-label">Mis Servicios</span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Contenido de Tabs -->
+  <div class="tab-contents">
+    
+    <!-- TAB: Servicios -->
+    <div class="tab-panel" [class.active]="activeTab === 'services'" id="services-panel">
+      <div class="panel-header">
+        <h3 class="panel-title">Cerca de ti</h3>
+        <div class="view-toggle">
+          <button class="toggle-btn active"><ion-icon name="grid"></ion-icon></button>
+          <button class="toggle-btn"><ion-icon name="list"></ion-icon></button>
+        </div>
+      </div>
+
+      <div class="services-feed">
+        @for(item of arrayServicesRequets; track $index) {
+          <article class="service-tile" (click)="viewService(item.id)" style="--index: {{$index}}; --accent: {{item.color}}">
+            <div class="tile-glow"></div>
+            <div class="tile-content">
+              <div class="tile-visual">
+                <div class="visual-bg" [style.background]="item.gradient"></div>
+                <ion-icon name="{{item.icon}}" class="visual-icon"></ion-icon>
+                <div class="distance-badge">
+                  <ion-icon name="location"></ion-icon>
+                  <span>{{ item.distance | number:'1.1-1' }} km</span>
+                </div>
+              </div>
+              
+              <div class="tile-body">
+                <div class="tile-header">
+                  <h4 class="tile-title">{{ item.title }}</h4>
+                  <span class="status-pill" [class]="item.status.toLowerCase()">{{ item.status }}</span>
+                </div>
+                
+                <p class="tile-desc">{{ item.description }}</p>
+                
+                <div class="tile-meta">
+                  <div class="category-tag" [style.background]="item.tagColor">
+                    {{ item.category }}
+                  </div>
+                  <div class="price-stack">
+                    <span class="currency">US$</span>
+                    <span class="amount">{{ item.budget_min }}</span>
+                    @if(item.budget_max) {
+                      <span class="range">- {{ item.budget_max }}</span>
+                    }
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div class="tile-actions">
+              <button class="action-icon-btn save">
+                <ion-icon name="bookmark-outline"></ion-icon>
+              </button>
+              <button class="action-icon-btn share">
+                <ion-icon name="share-outline"></ion-icon>
+              </button>
+            </div>
+          </article>
+        }
+      </div>
+    </div>
+
+    <!-- TAB: Viajes -->
+    <div class="tab-panel" [class.active]="activeTab === 'rides'" id="rides-panel">
+      <div class="rides-timeline">
+        <div class="timeline-now">
+          <span class="now-label">Ahora</span>
+          <div class="now-line"></div>
+        </div>
+        
+        @for(ride of arrayRides; track $index) {
+          <div class="ride-cards">
+            <article class="ride-ticket" [attr.data-ride-id]="ride.id">
+              <div class="ticket-stub">
+                <div class="stub-hole top"></div>
+                <div class="stub-hole bottom"></div>
+                <div class="stub-content">
+                  <div class="route-visual">
+                    <div class="route-point start">
+                      <div class="point-marker"></div>
+                      <span class="point-name">{{ ride.route.origin_short }}</span>
+                    </div>
+                    <div class="route-line">
+                      <div class="line-progress"></div>
+                      <div class="vehicle-icon">
+                        <ion-icon name="car"></ion-icon>
+                      </div>
+                    </div>
+                    <div class="route-point end">
+                      <div class="point-marker"></div>
+                      <span class="point-name">{{ ride.route.destination_short }}</span>
+                    </div>
+                  </div>
+                  <div class="ride-time">
+                    <ion-icon name="time"></ion-icon>
+                    <span>{{ ride.departure.human }}</span>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="ticket-body">
+                <div class="driver-profile">
+                  <div class="driver-avatar">
+                    <img [src]="ride.driver.avatar" [alt]="ride.driver.name">
+                    <div class="driver-rating">{{ ride.driver.rating }}</div>
+                  </div>
+                  <div class="driver-info">
+                    <span class="driver-name">{{ ride.driver.name }}</span>
+                    @if (ride.vehicle.display) {
+                      <span class="vehicle-info">{{ ride.vehicle.display }}</span>
+                    } @else {
+                      <span class="vehicle-info">Conductor verificado</span>
+                    }
+                  </div>
+                </div>
+                
+                <div class="seats-availability">
+                  <div class="seats-visual">
+                    @for(seat of ride.seats.visual; track $index) {
+                      <div class="seat {{ seat }}"></div>
+                    }
+                  </div>
+                  <span class="seats-text">{{ ride.seats.text }}</span>
+                </div>
+                
+                <div class="ticket-footer">
+                  <div class="price-tag large">
+                    <span class="price">{{ ride.price.formatted }}</span>
+                    <span class="unit">{{ ride.price.unit }}</span>
+                  </div>
+                  <button class="book-btn" (click)="viewRide(ride.id)">
+                    <span>Reservar</span>
+                    <ion-icon name="arrow-forward"></ion-icon>
+                  </button>
+                </div>
+              </div>
+            </article>
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- TAB: Mis Publicaciones -->
+    <div class="tab-panel" [class.active]="activeTab === 'my-services'" id="my-services-panel">
+    
+      <!-- Sub-navegación: Publicaciones | Asignados -->
+      <div class="sub-orbit-nav">
+        <button class="sub-orbit-btn" 
+                [class.active]="myServicesSubTab === 'publications'"
+                (click)="(myServicesSubTab = 'publications');cargarPublications()">
+          <ion-icon name="document-text"></ion-icon>
+          <span>Publicaciones</span>
+          <div class="sub-indicator" *ngIf="myServicesSubTab === 'publications'"></div>
+        </button>
+        
+        <button class="sub-orbit-btn" 
+                [class.active]="myServicesSubTab === 'assignments'"
+                (click)="(myServicesSubTab = 'assignments');cargarAssignments()">
+          <ion-icon name="checkmark-circle"></ion-icon>
+          <span>Asignados</span>
+          <span class="sub-badge" *ngIf="activeAssignmentsCount > 0">{{activeAssignmentsCount}}</span>
+          <div class="sub-indicator" *ngIf="myServicesSubTab === 'assignments'"></div>
+        </button>
+      </div>
+
+      <!-- SUB-CONTENIDO: Publicaciones -->
+      <div class="sub-panel" *ngIf="myServicesSubTab === 'publications'">
+        <!-- Tus publicaciones existentes -->
+        <div class="my-publications">
+          <div class="pub-filters">
+            <button class="filter-chip active">Todas</button>
+            <button class="filter-chip">Servicios</button>
+            <button class="filter-chip">Viajes</button>
+          </div>
+          
+          <!-- Lista de publicaciones (tu código actual) -->
+          <div class="pubs-list">
+            @for (item of publications; track $index) {
+              <div class="pub-card" [class.ride-type]="item.type === 'ride'" (click)="item.type === 'service' ? viewService(item.details.id) : viewRide(item.details.id)">
+                <div class="pub-accent-bar" [style.background]="item.type === 'service' ? 'var(--primary-color)' : 'var(--ion-color-tertiary)'"></div>
+                <div class="pub-content">
+                  <div class="pub-header">
+                    <div class="pub-type-icon" [style.background]="item.type === 'service' ? 'rgba(79, 70, 229, 0.1)' : 'rgba(245, 158, 11, 0.1)'">
+                      <ion-icon name="{{item.type === 'service' ? 'briefcase' : 'car'}}" [style.color]="item.type === 'service' ? 'var(--primary-color)' : 'var(--ion-color-tertiary)'"></ion-icon>
+                    </div>
+                    <div class="pub-meta">
+                      <h4 class="pub-title">{{ item.title }}</h4>
+                      <span class="pub-date">{{ item.published_at_human }}</span>
+                    </div>
+                    <div class="pub-status" [class]="item.status">{{ item?.badge?.text }}</div>
+                  </div>
+                  
+                  <p class="pub-desc">{{ item.description }}</p>
+                  
+                  <div class="pub-stats">
+                    <div class="stat-item">
+                      <ion-icon name="eye-outline"></ion-icon>
+                      <span>{{ item.views || 0 }}</span>
+                    </div>
+                    <div class="stat-item">
+                      <ion-icon name="chatbubble-outline"></ion-icon>
+                      <span>{{ item.messages || 0 }}</span>
+                    </div>
+                    <div class="stat-item">
+                      <ion-icon name="heart-outline"></ion-icon>
+                      <span>{{ item.likes || 0 }}</span>
+                    </div>
+                  </div>
+                </div>
+                @if (item.status !== 'completed') {
+                  <div class="pub-actions">
+                    <button class="pub-btn edit">
+                      <ion-icon name="create-outline"></ion-icon>
+                    </button>
+                    <button class="pub-btn delete">
+                      <ion-icon name="trash-outline"></ion-icon>
+                    </button>
+                  </div>
+                }
+              </div>
+            }
+          </div>
+          
+          <!-- Empty state si no hay publicaciones -->
+          <div class="empty-state-artistic" *ngIf="publications.length === 0">
+            <div class="empty-canvas">
+              <div class="orbit-ring ring-1"></div>
+              <div class="orbit-ring ring-2"></div>
+              <div class="floating-plus">+</div>
+            </div>
+            <h3 class="empty-title">Tu espacio está esperando</h3>
+            <p class="empty-desc">Crea tu primera publicación</p>
+            <button class="create-first-btn" (click)="createPublication()">
+              <span>Crear</span>
+              <ion-icon name="add"></ion-icon>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- SUB-CONTENIDO: Asignados (SERVICIOS DONDE ESTOY ASIGNADO) -->
+      <div class="sub-panel" *ngIf="myServicesSubTab === 'assignments'">
+        
+        <!-- Resumen visual -->
+        <div class="assignments-summary" *ngIf="assignments.length > 0">
+          <div class="summary-card glass">
+            <div class="summary-stat">
+              <div class="stat-icon service-icon">
+                <ion-icon name="briefcase"></ion-icon>
+              </div>
+              <div class="stat-info">
+                <span class="stat-number">{{activeServicesCount}}</span>
+                <span class="stat-label">Servicios activos</span>
+              </div>
+            </div>
+            <div class="summary-divider"></div>
+            <div class="summary-stat">
+              <div class="stat-icon ride-icon">
+                <ion-icon name="car"></ion-icon>
+              </div>
+              <div class="stat-info">
+                <span class="stat-number">{{activeTripsCount}}</span>
+                <span class="stat-label">Viajes activos</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Filtros de tipo -->
+        <div class="filter-bar">
+          <button class="filter-chip" [class.active]="assignmentFilter === 'all'" (click)="(assignmentFilter = 'all');cargarAssignments()">
+            <ion-icon name="apps"></ion-icon>
+            <span class="filter-label">Todos</span>
+          </button>
+          <button class="filter-chip" [class.active]="assignmentFilter == 'services'" (click)="(assignmentFilter = 'services');cargarAssignmentsService()">
+            <ion-icon name="briefcase"></ion-icon>
+            <span class="filter-label">Servicios</span>
+          </button>
+          <button class="filter-chip" [class.active]="assignmentFilter == 'driver'" (click)="(assignmentFilter = 'driver');cargarAssignmentsDriver()">
+            <ion-icon name="car"></ion-icon>
+            <span class="filter-label">Conductor</span>
+          </button>
+          <button class="filter-chip" [class.active]="assignmentFilter == 'passenger'" (click)="(assignmentFilter = 'passenger');cargarAssignmentsPassenger()">
+            <ion-icon name="person"></ion-icon>
+            <span class="filter-label">Pasajero</span>
+          </button>
+        </div>
+
+        <!-- Lista de asignaciones -->
+        <div class="assignments-list">
+          
+          <!-- Card de asignación tipo Servicio -->
+          <div class="assignment-card service-card" 
+              *ngFor="let assignment of filteredAssignments"
+              [class.pending]="assignment.status === 'pending'"
+              [class.active]="assignment.status === 'active'"
+              (click)="openAssignmentDetail(assignment)">
+            
+            <div class="assign-accent" [style.background]="assignment.type === 'service' ? 'var(--primary-color)' : 'var(--ion-color-tertiary)'"></div>
+            
+            <div class="assign-content">
+              <div class="assign-header">
+                <div class="assign-type">
+                  <ion-icon [name]="assignment.type === 'service' ? 'briefcase' : 'car'"></ion-icon>
+                  <span>{{assignment.type === 'service' ? 'Servicio' : assignment.role === 'driver' ? 'Conductor' : 'Pasajero'}}</span>
+                </div>
+                <div class="assign-status" [class]="assignment.status">
+                  {{assignment.status === 'pending' ? 'Pendiente' : assignment.status === 'active' ? 'En curso' : 'Completado'}}
+                </div>
+              </div>
+              
+              <h4 class="assign-title">{{assignment.title}}</h4>
+              <p class="assign-desc">{{assignment.description}}</p>
+              
+              <div class="assign-details">
+                <div class="detail-row" *ngIf="assignment.type === 'service'">
+                  <ion-icon name="location"></ion-icon>
+                  <span>{{assignment.address}}</span>
+                </div>
+                <div class="detail-row" *ngIf="assignment.type === 'service'">
+                  <ion-icon name="time"></ion-icon>
+                  <span>Vence: {{assignment.deadline | date:'short'}}</span>
+                </div>
+                
+                <div class="detail-row" *ngIf="assignment.type === 'trip'">
+                  <ion-icon name="navigate"></ion-icon>
+                  <span>{{assignment.origin}} → {{assignment.destination}}</span>
+                </div>
+                <div class="detail-row" *ngIf="assignment.type === 'trip' && assignment.role === 'driver'">
+                  <ion-icon name="people"></ion-icon>
+                  <span>{{assignment.passengersCount}} pasajeros</span>
+                </div>
+                <div class="detail-row" *ngIf="assignment.type === 'trip' && assignment.role === 'passenger'">
+                  <ion-icon name="person-circle"></ion-icon>
+                  <span>Conductor: {{assignment.driverName}}</span>
+                </div>
+              </div>
+              
+              <div class="assign-footer">
+                <div class="assign-price" *ngIf="assignment.price">
+                  <span class="currency">$</span>
+                  <span class="amount">{{assignment.price | number:'1.0-0'}}</span>
+                </div>
+                
+                <div class="assign-actions">
+                  <button class="action-btn chat" *ngIf="assignment.status === 'active'">
+                    <ion-icon name="chatbubble"></ion-icon>
+                    <span>Chat</span>
+                  </button>
+                  <button class="action-btn accept" *ngIf="assignment.status === 'pending'">
+                    <ion-icon name="checkmark"></ion-icon>
+                    <span>Aceptar</span>
+                  </button>
+                  <button class="action-btn review" *ngIf="assignment.status === 'completed'">
+                    <ion-icon name="star"></ion-icon>
+                    <span>Calificar</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Empty state -->
+          <div class="assignments-empty" *ngIf="filteredAssignments.length === 0">
+            <div class="empty-illustration">
+              <ion-icon name="clipboard-outline"></ion-icon>
+              <div class="empty-ripple"></div>
+            </div>
+            <h4>Sin asignaciones activas</h4>
+            <p>Explora servicios disponibles y postúlate</p>
+            <button class="explore-btn" (click)="switchTab('services')">
+              Explorar servicios
+            </button>
+          </div>
+          
+        </div>
+      </div>
+
+    </div>
+  </div>
+</main>
+
+<!-- FAB Principal: Morphing Button -->
+<div class="fab-container">
+  <button class="morph-fab" id="main-fab">
+    <div class="fab-bg"></div>
+    <div class="fab-icons">
+      <ion-icon name="add" class="icon-default"></ion-icon>
+      <ion-icon name="close" class="icon-close"></ion-icon>
+    </div>
+    <div class="fab-ripple"></div>
+  </button>
+  
+  <div class="fab-menu">
+    <button class="fab-option service" data-label="Nuevo Servicio">
+      <div class="option-bg"></div>
+      <ion-icon name="briefcase"></ion-icon>
+    </button>
+    <button class="fab-option ride" data-label="Nuevo Viaje">
+      <div class="option-bg"></div>
+      <ion-icon name="car"></ion-icon>
+    </button>
+    <button class="fab-option request" data-label="Solicitar">
+      <div class="option-bg"></div>
+      <ion-icon name="hand-left"></ion-icon>
+    </button>
+  </div>
+</div>

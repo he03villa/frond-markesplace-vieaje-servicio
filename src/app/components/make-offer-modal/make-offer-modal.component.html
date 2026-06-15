@@ -1,0 +1,327 @@
+<div class="modal-container">
+  <!-- Header Flotante -->
+  <div class="floating-modal-header">
+    <button class="header-btn back" (click)="dismiss()">
+      <ion-icon name="arrow-back"></ion-icon>
+    </button>
+    <h1 class="modal-title">Hacer Oferta</h1>
+    <button class="header-btn help" (click)="showHelp()">
+      <ion-icon name="help-circle-outline"></ion-icon>
+    </button>
+  </div>
+
+  <ion-content class="premium-modal-content" [fullscreen]="true">
+    <!-- Card de Resumen del Servicio (Glassmorphism) -->
+    <div class="service-summary-card">
+      <div class="card-glow"></div>
+      <div class="summary-content">
+        <div class="service-icon">
+          <ion-icon name="briefcase"></ion-icon>
+        </div>
+        <div class="service-info">
+          <span class="info-label">Servicio solicitado</span>
+          <h2 class="service-title">{{ service?.title }}</h2>
+          <div class="service-meta">
+            <span class="meta-item">
+              <ion-icon name="person-outline"></ion-icon>
+              {{ service?.user?.name }}
+            </span>
+            <span class="meta-divider"></span>
+            <span class="meta-item">
+              <ion-icon name="location-outline"></ion-icon>
+              {{ service?.distance | number:'1.1-1' }} km
+            </span>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Presupuesto del cliente -->
+      <div class="client-budget">
+        <div class="budget-header">
+          <ion-icon name="wallet-outline"></ion-icon>
+          <span>Presupuesto del cliente</span>
+        </div>
+        <div class="budget-amount" [class.fixed]="service?.budget_type === 'fixed'">
+          @if(service?.budget_type === 'fixed') {
+            <span class="amount">{{ service?.budget_fixed | currency:'USD':'symbol':'1.0-0' }}</span>
+            <span class="badge fixed">Fijo</span>
+          } @else {
+            <span class="amount range">
+              {{ service?.budget_min | currency:'USD':'symbol':'1.0-0' }} - 
+              {{ service?.budget_max | currency:'USD':'symbol':'1.0-0' }}
+            </span>
+            <span class="badge negotiable">Negociable</span>
+          }
+        </div>
+      </div>
+    </div>
+
+    <!-- Formulario Principal -->
+    <form [formGroup]="offerForm" (ngSubmit)="submitOffer()" class="offer-form">
+      
+      <!-- Sección de Precio -->
+      <div class="form-section price-section" [class.focused]="priceFocused">
+        <div class="section-header">
+          <div class="section-icon">
+            <ion-icon name="cash-outline"></ion-icon>
+          </div>
+          <div class="section-title">
+            <h3>Tu precio de oferta</h3>
+            <p>Define un precio competitivo</p>
+          </div>
+        </div>
+
+        <div class="price-input-container">
+          <div class="input-glow" [style.opacity]="priceFocused ? '1' : '0'"></div>
+          <div class="currency-badge">USD</div>
+          <input
+            type="number"
+            formControlName="price"
+            class="price-input"
+            placeholder="0"
+            (focus)="priceFocused = true"
+            (blur)="priceFocused = false"
+            [class.invalid]="offerForm.get('price')?.invalid && offerForm.get('price')?.touched"
+          >
+          <div class="input-actions">
+            <button type="button" class="action-btn" (click)="adjustPrice(-10)" title="-10">
+              <ion-icon name="remove"></ion-icon>
+            </button>
+            <button type="button" class="action-btn" (click)="adjustPrice(10)" title="+10">
+              <ion-icon name="add"></ion-icon>
+            </button>
+          </div>
+        </div>
+
+        <!-- Barra de comparación con presupuesto -->
+        @if(service?.budget_type === 'negotiable' && offerForm.get('price')?.value) {
+          <div class="budget-comparison">
+            <div class="comparison-bar">
+              <div class="bar-track">
+                <div 
+                  class="bar-fill" 
+                  [style.width.%]="getBudgetPercentage()"
+                  [class.within]="isWithinBudget()"
+                  [class.above]="!isWithinBudget()"
+                ></div>
+              </div>
+              <div class="bar-labels">
+                <span>Min: {{ service?.budget_min | currency:'USD':'symbol':'1.0-0' }}</span>
+                <span class="current" *ngIf="offerForm.get('price')?.value">
+                  Tu oferta: {{ offerForm.get('price')?.value | currency:'USD':'symbol':'1.0-0' }}
+                </span>
+                <span>Max: {{ service?.budget_max | currency:'USD':'symbol':'1.0-0' }}</span>
+              </div>
+            </div>
+            <div class="comparison-message" [class]="isWithinBudget() ? 'success' : 'warning'">
+              <ion-icon [name]="isWithinBudget() ? 'checkmark-circle' : 'alert-circle'"></ion-icon>
+              <span>{{ getBudgetMessage() }}</span>
+            </div>
+          </div>
+        }
+
+        @if(offerForm.get('price')?.invalid && offerForm.get('price')?.touched) {
+          <div class="error-hint">
+            <ion-icon name="warning-outline"></ion-icon>
+            <span>El precio debe ser mayor a 0</span>
+          </div>
+        }
+      </div>
+
+      <!-- Sección de Tiempo -->
+      <div class="form-section time-section">
+        <div class="section-header">
+          <div class="section-icon secondary">
+            <ion-icon name="time-outline"></ion-icon>
+          </div>
+          <div class="section-title">
+            <h3>Tiempo de entrega</h3>
+            <p>¿Cuánto tardarás en completarlo?</p>
+          </div>
+        </div>
+
+        <div class="time-selector">
+          <div class="time-options-grid">
+            @for(time of timeOptions; track time.value) {
+              <button 
+                type="button"
+                class="time-option"
+                [class.selected]="offerForm.get('estimated_time')?.value === time.value"
+                (click)="selectTime(time.value)"
+              >
+                <div class="option-radio">
+                  <div class="radio-inner"></div>
+                </div>
+                <span class="option-label">{{ time.label }}</span>
+                @if(time.value === '24 horas') {
+                  <span class="option-badge fast">Rápido</span>
+                }
+              </button>
+            }
+          </div>
+          
+          <div class="custom-time" [class.active]="isCustomTime">
+            <div class="custom-toggle" (click)="toggleCustomTime()">
+              <ion-icon name="create-outline"></ion-icon>
+              <span>Especificar otro tiempo</span>
+              <ion-icon 
+                class="toggle-icon" 
+                [name]="isCustomTime ? 'chevron-up' : 'chevron-down'"
+              ></ion-icon>
+            </div>
+            
+            @if(isCustomTime) {
+              <div class="custom-input-wrapper" @slideDown>
+                <input
+                  type="text"
+                  formControlName="estimated_time"
+                  placeholder="Ej: 5 días hábiles, 2 semanas..."
+                  class="custom-input"
+                >
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+
+      <!-- Sección de Descripción -->
+      <div class="form-section description-section">
+        <div class="section-header">
+          <div class="section-icon tertiary">
+            <ion-icon name="document-text-outline"></ion-icon>
+          </div>
+          <div class="section-title">
+            <h3>Descripción de tu propuesta</h3>
+            <p>Vende tu experiencia y habilidades</p>
+          </div>
+        </div>
+
+        <div class="textarea-container" [class.focused]="descFocused">
+          <div class="textarea-glow" [style.opacity]="descFocused ? '1' : '0'"></div>
+          <textarea
+            formControlName="description"
+            rows="5"
+            placeholder="Describe cómo resolverás este servicio, tu experiencia previa, por qué eres la mejor opción..."
+            (focus)="descFocused = true"
+            (blur)="descFocused = false"
+            [class.invalid]="offerForm.get('description')?.invalid && offerForm.get('description')?.touched"
+          ></textarea>
+          
+          <div class="textarea-toolbar">
+            <div class="toolbar-hints">
+              <button type="button" class="hint-chip" (click)="insertTemplate('experience')">
+                <ion-icon name="sparkles"></ion-icon>
+                + Experiencia
+              </button>
+              <button type="button" class="hint-chip" (click)="insertTemplate('methodology')">
+                <ion-icon name="list"></ion-icon>
+                + Metodología
+              </button>
+            </div>
+            <div class="char-counter" [class.warning]="getCharCount() > 450">
+              <div class="counter-ring" [style.--progress]="getCharProgress()">
+                <span>{{ getCharCount() }}</span>
+              </div>
+              <span class="max">/500</span>
+            </div>
+          </div>
+        </div>
+
+        @if(offerForm.get('description')?.invalid && offerForm.get('description')?.touched) {
+          <div class="error-hint">
+            <ion-icon name="warning-outline"></ion-icon>
+            <span>La descripción es requerida (mínimo 20 caracteres)</span>
+          </div>
+        }
+      </div>
+
+      <!-- Tips Inteligentes (Colapsable) -->
+      <div class="tips-section" [class.expanded]="tipsExpanded">
+        <div class="tips-header" (click)="tipsExpanded = !tipsExpanded">
+          <div class="tips-icon">
+            <ion-icon name="bulb"></ion-icon>
+          </div>
+          <span>Consejos para ganar esta oferta</span>
+          <ion-icon class="expand-icon" [name]="tipsExpanded ? 'chevron-up' : 'chevron-down'"></ion-icon>
+        </div>
+        
+        @if(tipsExpanded) {
+          <div class="tips-content" @slideDown>
+            <div class="tip-card">
+              <div class="tip-number">1</div>
+              <p>Sé específico en tu propuesta de valor. Menciona exactamente cómo resolverás el problema.</p>
+            </div>
+            <div class="tip-card">
+              <div class="tip-number">2</div>
+              <p>Incluye ejemplos de trabajos similares que hayas completado exitosamente.</p>
+            </div>
+            <div class="tip-card">
+              <div class="tip-number">3</div>
+              <p>Si tu precio es diferente al presupuesto, justifícalo con valor agregado.</p>
+            </div>
+            <div class="tip-card highlight">
+              <div class="tip-number">⭐</div>
+              <p>Las ofertas con descripción detallada tienen 3x más probabilidades de ser aceptadas.</p>
+            </div>
+          </div>
+        }
+      </div>
+
+      <!-- Espacio para footer -->
+      <div class="footer-spacer"></div>
+    </form>
+  </ion-content>
+
+  <!-- Footer Premium con Preview -->
+  <div class="floating-submit-footer">
+    <div class="footer-glass">
+      @if(offerForm.get('price')?.value && offerForm.get('description')?.value) {
+        <div class="offer-preview-bar" @slideUp>
+          <div class="preview-item">
+            <span class="label">Precio</span>
+            <span class="value">{{ offerForm.get('price')?.value | currency:'USD':'symbol':'1.0-0' }}</span>
+          </div>
+          <div class="preview-divider"></div>
+          <div class="preview-item">
+            <span class="label">Tiempo</span>
+            <span class="value">{{ offerForm.get('estimated_time')?.value || 'Por definir' }}</span>
+          </div>
+          <div class="preview-divider"></div>
+          <div class="preview-item confidence">
+            <span class="label">Confianza</span>
+            <div class="confidence-meter">
+              <div class="meter-fill" [style.width.%]="getConfidenceScore()"></div>
+              <span class="meter-value">{{ getConfidenceScore() }}%</span>
+            </div>
+          </div>
+        </div>
+      }
+
+      <div class="submit-actions">
+        <button type="button" class="btn-draft" (click)="saveDraft()">
+          <ion-icon name="save-outline"></ion-icon>
+          <span>Guardar</span>
+        </button>
+        
+        <button 
+          type="submit" 
+          class="btn-submit"
+          [class.ready]="offerForm.valid && !isSubmitting"
+          [disabled]="offerForm.invalid || isSubmitting"
+          (click)="submitOffer()"
+        >
+          @if(isSubmitting) {
+            <div class="submit-loader">
+              <div class="spinner"></div>
+              <span>Enviando...</span>
+            </div>
+          } @else {
+            <ion-icon name="paper-plane"></ion-icon>
+            <span>Enviar Oferta</span>
+            <div class="btn-glow"></div>
+          }
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

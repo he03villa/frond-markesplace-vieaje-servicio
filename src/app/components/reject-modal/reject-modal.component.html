@@ -1,0 +1,79 @@
+<ion-content class="reject-modal" [fullscreen]="true">
+  <div class="modal-glass">
+    <div class="bg-orb orb-1"></div>
+    <div class="bg-orb orb-2"></div>
+    <button class="btn-close-glass" (click)="dismiss()">
+      <ion-icon name="close"></ion-icon>
+    </button>
+    <div class="modal-body">
+      <div class="header-premium danger">
+        <div class="icon-ring danger">
+          <div class="ring-outer"></div>
+          <div class="ring-inner"></div>
+          <div class="icon-center">
+            <ion-icon name="close-circle"></ion-icon>
+          </div>
+        </div>
+        <h2 class="title-glow">Rechazar Entrega</h2>
+        <p class="subtitle">Esta accion es irreversible. Indica el motivo a <strong>{{ workerName }}</strong></p>
+      </div>
+      <div class="worker-glass-card">
+        <div class="worker-glow"></div>
+        <div class="worker-content">
+          <div class="avatar-premium">
+            <img [src]="workerAvatar" [alt]="workerName">
+            <div class="avatar-ring danger"></div>
+          </div>
+          <div class="worker-info">
+            <span class="worker-name">{{ workerName }}</span>
+            <span class="worker-role">Sera notificado del rechazo</span>
+          </div>
+        </div>
+      </div>
+      <div class="quick-reasons">
+        <label class="section-label">
+          <ion-icon name="alert-circle"></ion-icon>
+          <span>Motivos comunes</span>
+        </label>
+        <div class="reasons-chips">
+          @for (r of rejectReasons; track $index) {
+            <button class="reason-chip danger" [class.selected]="reason === r" (click)="selectReason(r)">
+              {{ r }}
+            </button>
+          }
+        </div>
+      </div>
+      <div class="field-premium">
+        <div class="field-label">
+          <ion-icon name="warning"></ion-icon>
+          <span>Motivo del rechazo</span>
+          <span class="badge-required">requerido</span>
+        </div>
+        <div class="input-glass">
+          <textarea [(ngModel)]="reason" placeholder="Explica por que rechazas esta entrega..." maxlength="1000" rows="4"></textarea>
+          <div class="input-glow danger"></div>
+        </div>
+      </div>
+      <div class="confirm-box">
+        <label class="confirm-label">
+          <input type="checkbox" [(ngModel)]="confirmed">
+          <span class="check-custom"></span>
+          <span class="confirm-text">Entiendo que esta accion es <strong>irreversible</strong> y el trabajo sera marcado como rechazado.</span>
+        </label>
+      </div>
+      <div class="submit-area">
+        <button class="btn-submit-premium danger" [class.ready]="reason.trim().length > 10 && confirmed" [class.submitting]="isSubmitting" [disabled]="reason.trim().length <= 10 || !confirmed || isSubmitting" (click)="submit()">
+          <div class="btn-bg"></div>
+          <div class="btn-shine"></div>
+          @if (!isSubmitting) {
+            <ion-icon name="close-circle" class="btn-icon"></ion-icon>
+          } @else if (isSubmitting) {
+            <div class="btn-spinner"><div class="spinner-ring"></div></div>
+          }
+          <span class="btn-text">{{ isSubmitting ? 'Procesando...' : 'Rechazar entrega' }}</span>
+        </button>
+        <button class="btn-cancel-premium" (click)="dismiss()" [disabled]="isSubmitting">Cancelar</button>
+      </div>
+    </div>
+  </div>
+</ion-content>

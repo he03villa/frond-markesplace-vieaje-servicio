@@ -1,0 +1,164 @@
+<!-- Vista principal - Lista de chats -->
+@if(!currentChatId) {
+  <div id="chatsView" class="main-container">
+    <!-- Header -->
+    <ion-header class="custom-header ion-no-border">
+      <ion-toolbar>
+        <ion-title>Mensajes</ion-title>
+        <ion-buttons slot="end">
+          <ion-button onclick="composeMessage()">
+            <ion-icon slot="icon-only" name="create-outline"></ion-icon>
+          </ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-header>
+    <!-- Barra de búsqueda -->
+    <div class="chat-search">
+      <ion-searchbar placeholder="Buscar conversaciones..." animated debounce="300" onIonInput="searchChats(event)">
+      </ion-searchbar>
+    </div>
+    <!-- Lista de chats -->
+    <div class="chats-container" id="chatsList">
+      <!-- Los chats se cargan dinámicamente -->
+      @for (chat of chatData.chats; track $index) {
+        <div class="chat-item fade-in" [class.unread]="chat.unread > 0" (click)="openChat(chat.id)">
+          <div class="chat-avatar">
+              <img [src]="chat.userAvatar" [alt]="chat.userName" (error)="_service.errorImage($event)">
+              @if(chat.online) {
+                <div class="online-indicator"></div>
+              }
+          </div>
+          <div class="chat-content">
+            <div class="chat-header">
+              <h4 class="chat-name">{{ chat.userName }}</h4>
+              <span class="chat-time">{{ chat.time }}</span>
+            </div>
+            <div class="chat-preview">
+              <p class="chat-message">{{ chat.lastMessage }}</p>
+              @if(chat.unread > 0) {
+                <span class="unread-badge">{{chat.unread}}</span>
+              }
+            </div>
+            <div class="chat-service">
+              <ion-icon name="briefcase-outline"></ion-icon>
+              {{chat.service}}
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+    @if(chatData.chats.length === 0) {
+      <!-- Estado vacío -->
+      <div class="empty-state" id="emptyState" style="display: none;">
+        <ion-icon name="chatbubbles-outline" class="empty-state-icon"></ion-icon>
+        <h3 class="empty-state-title">No hay mensajes</h3>
+        <p class="empty-state-description">
+          Comienza una conversación con alguien<br>
+          de la comunidad ServiShare
+        </p>
+        <ion-button color="primary" onclick="composeMessage()">
+          <ion-icon slot="start" name="add"></ion-icon>
+          Nuevo mensaje
+        </ion-button>
+      </div>
+    }
+  </div>
+}
+
+<!-- Vista de chat individual -->
+@if(currentChatId) {
+  <div id="chatView" class="chat-view">
+    <!-- Header del chat -->
+    <div class="chat-header-bar">
+      <button class="back-button" (click)="backToChats()">
+        <ion-icon name="arrow-back"></ion-icon>
+      </button>
+      <div class="chat-user">
+        <img id="chatUserAvatar" class="chat-user-avatar" [src]="chatData.chat.userAvatar" [alt]="chatData.chat.userName" (error)="_service.errorImage($event)">
+        <div class="chat-user-info">
+          <h3 id="chatUserName" class="chat-user-name">{{ chatData.chat.userName }}</h3>
+          <p id="chatUserStatus" class="chat-user-status">
+            @if(chatData.chat.online) {
+              <span id="statusDot" class="status-dot"></span>
+            } @else {
+              <span id="statusText">{{ chatData.chat.lastActive }}</span>
+            }
+          </p>
+        </div>
+      </div>
+      <div class="chat-actions">
+        <button class="chat-action" onclick="makeCall()">
+          <ion-icon name="call-outline"></ion-icon>
+        </button>
+        <button class="chat-action" onclick="showChatInfo()">
+          <ion-icon name="ellipsis-vertical"></ion-icon>
+        </button>
+      </div>
+    </div>
+    <!-- Mensajes -->
+    <div class="messages-container" id="messagesContainer">
+      <div class="message-date">
+        <span class="date-label">Hoy</span>
+        @for (message of chatData.chat.messages; track $index) {
+          <div class="message fade-in" [class.me]="message.sender === chatData.chat.id" [class.other]="message.sender !== chatData.chat.id">
+            @if(message.sender !== chatData.chat.id) {
+              <img [src]="chatData.chat.userAvatar" alt="" class="message-avatar" (error)="_service.errorImage($event)">
+            }
+            <div class="message-bubble">
+              <p class="message-text">{{ message.text }}</p>
+              <div class="message-time">
+                  <span>{{ message.time }}</span>
+                  <span class="message-status">
+                    @switch (message.status) {
+                      @case('sent') {
+                        ✓
+                      }
+                      @case('delivered') {
+                        ✓✓
+                      }
+                      @case('read') {
+                        ✓✓
+                      }
+                    }
+                  </span>
+              </div>
+            </div>
+            @if(message.sender === chatData.chat.id) {
+              <img [src]="chatData.currentUser.avatar" alt="" class="message-avatar" (error)="_service.errorImage($event)">
+            }
+          </div>
+        }
+      </div>
+    </div>
+    <!-- Indicador de escribiendo -->
+    <div id="typingIndicator" class="typing-indicator" style="display: none;">
+      <p class="typing-text" id="typingUserName">{{ chatData.chat.displayName }}</p>
+      <div class="typing-dots">
+        <div class="typing-dot"></div>
+        <div class="typing-dot"></div>
+        <div class="typing-dot"></div>
+      </div>
+    </div>
+    <!-- Input de mensaje -->
+    <div class="message-input-container">
+      <div class="input-actions">
+        <button class="input-action" onclick="attachImage()">
+          <ion-icon name="image-outline"></ion-icon>
+        </button>
+        <button class="input-action" onclick="attachFile()">
+          <ion-icon name="attach-outline"></ion-icon>
+        </button>
+      </div>
+      <div class="message-input-wrapper">
+        <ion-textarea placeholder="Escribe un mensaje..." rows="1" auto-grow="true" id="messageInput"
+          onKeyPress="handleKeyPress(event)">
+        </ion-textarea>
+      </div>
+      <div class="input-actions">
+        <button class="send-button" id="sendButton" onclick="sendMessage()" disabled>
+          <ion-icon name="send"></ion-icon>
+        </button>
+      </div>
+    </div>
+  </div>
+}

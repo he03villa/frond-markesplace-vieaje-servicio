@@ -1,0 +1,100 @@
+@use '../../../theme/mixins' as app;
+
+// ============================================
+// PUBLICAR PAGE
+// ============================================
+
+ion-content {
+  --background: var(--app-bg);
+}
+
+form {
+  padding: 16px;
+}
+
+ion-list {
+  background: transparent;
+
+  ion-item {
+    --background: var(--app-surface);
+    --border-radius: var(--radius-sm);
+    margin-bottom: 12px;
+    --padding-start: 16px;
+    --padding-end: 16px;
+
+    &.item-has-focus {
+      --background: var(--app-focus-bg);
+    }
+
+    @include app.dark-mode {
+      --background: var(--app-surface);
+    }
+  }
+}
+
+.error-message {
+  color: var(--app-danger);
+  font-size: 12px;
+  margin-top: 4px;
+  margin-left: 16px;
+}
+
+.ion-valid {
+  --highlight-background: var(--app-success);
+}
+
+.ion-invalid {
+  --highlight-background: var(--app-danger);
+}
+
+.submit-button {
+  margin: 24px 16px 16px;
+
+  &:disabled {
+    opacity: 0.6;
+  }
+}
+
+// ============================================
+// SEGMENT
+// ============================================
+ion-segment {
+  margin: 16px;
+  --background: var(--app-surface);
+
+  @include app.dark-mode {
+    --background: var(--app-surface-elevated);
+  }
+}
+
+// ============================================
+// RANGE
+// ============================================
+ion-range {
+  padding: 0 16px;
+}
+
+// ============================================
+// LOADING STATE
+// ============================================
+.loading-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(var(--app-text-inverse-rgb), 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+
+  .loading-content {
+    background: var(--app-surface);
+    padding: 20px;
+    border-radius: var(--radius-sm);
+    text-align: center;
+    box-shadow: var(--app-shadow-lg);
+
+    @include app.dark-mode {
+      background: var(--app-surface-elevated);
+    }
+  }
+}

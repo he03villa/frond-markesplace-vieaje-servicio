@@ -1,0 +1,1253 @@
+@use '../../../theme/mixins' as app;
+
+// ============================================
+// RIDE DETAIL PAGE - MIGRADO A SISTEMA DE TEMA
+// ============================================
+
+.ride-detail-page {
+    --background: var(--app-bg);
+    background: linear-gradient(135deg, rgba(var(--app-primary-rgb), 0.05) 0%, rgba(var(--app-success-rgb), 0.05) 100%);
+}
+
+// ============================================
+// HEADER
+// ============================================
+.floating-header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 12px;
+    background: var(--app-glass-bg);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--app-glass-border);
+
+    @include app.dark-mode {
+        background: var(--app-glass-bg-dark);
+        border-color: var(--app-glass-border);
+    }
+
+    .header-title {
+        font-weight: 700;
+        font-size: 16px;
+        color: var(--app-text);
+    }
+
+    ion-button {
+        --color: var(--app-text);
+    }
+}
+
+// ============================================
+// TICKET HERO
+// ============================================
+.ticket-hero {
+    position: relative;
+    margin: var(--space-md, 1rem);
+    padding: 28px 20px;
+    background: var(--app-gradient-primary);
+    border-radius: var(--radius-xl, 1rem);
+    color: var(--app-text-inverse);
+    box-shadow: var(--app-shadow-xl), 0 0 40px rgba(var(--app-primary-rgb), 0.3);
+    overflow: hidden;
+
+    &::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -20%;
+        width: 300px;
+        height: 300px;
+        background: radial-gradient(circle, rgba(var(--app-text-inverse-rgb), 0.12) 0%, transparent 70%);
+        pointer-events: none;
+    }
+}
+
+.ticket-punch {
+    position: absolute;
+    bottom: -12px;
+    width: 24px;
+    height: 24px;
+    background: var(--app-bg);
+    border-radius: 50%;
+
+    @include app.dark-mode {
+        background: var(--app-bg);
+    }
+
+    &.left {
+        left: -12px;
+    }
+
+    &.right {
+        right: -12px;
+    }
+}
+
+.route-main {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.city-block {
+    text-align: center;
+
+    .city-code {
+        font-size: 22px;
+        font-weight: 800;
+        display: block;
+    }
+
+    .city-name {
+        font-size: 12px;
+        opacity: 0.9;
+        display: block;
+        max-width: 90px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .time {
+        font-size: 11px;
+        opacity: 0.7;
+    }
+}
+
+.route-connector {
+    flex: 1;
+    text-align: center;
+    padding: 0 12px;
+
+    .plane-line {
+        position: relative;
+        height: 2px;
+        background: rgba(var(--app-text-inverse-rgb), 0.3);
+        margin: 10px 0;
+
+        .vehicle-bubble {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 32px;
+            height: 32px;
+            background: var(--app-surface);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            ion-icon {
+                color: var(--app-primary);
+                font-size: 16px;
+            }
+        }
+    }
+
+    .duration {
+        font-size: 11px;
+        opacity: 0.8;
+    }
+}
+
+.duration {
+    font-size: 11px;
+    opacity: 0.8;
+    background: rgba(var(--app-text-inverse-rgb), 0.15);
+    padding: 2px 8px;
+    border-radius: 10px;
+    color: var(--app-text-inverse);
+}
+
+// ============================================
+// STATUS CHIP
+// ============================================
+.status-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 12px;
+    padding: 4px 12px;
+    background: rgba(var(--app-text-inverse-rgb), 0.2);
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+
+    .pulse-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--app-success);
+        animation: pulse 2s infinite;
+    }
+}
+
+@keyframes pulse-dot {
+    0%, 100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.5;
+        transform: scale(1.3);
+    }
+}
+
+// ============================================
+// TIMELINE
+// ============================================
+.timeline-section {
+    margin: var(--space-xl, 2rem) var(--space-md, 1rem);
+    margin-top: 80px;
+
+    .section-title {
+        font-size: 18px;
+        font-weight: 700;
+        color: var(--app-text);
+        margin-bottom: var(--space-md, 1rem);
+        padding-left: 4px;
+    }
+}
+
+.timeline-track {
+    position: relative;
+    padding-left: 32px;
+}
+
+.timeline-line-bg {
+    position: absolute;
+    left: 11px;
+    top: 8px;
+    bottom: 8px;
+    width: 2px;
+    background: var(--app-border-light);
+    border-radius: 2px;
+}
+
+.timeline-line-fill {
+    position: absolute;
+    left: 11px;
+    top: 8px;
+    width: 2px;
+    background: var(--app-gradient-primary);
+    border-radius: 2px;
+    transition: height 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.t-step {
+    position: relative;
+    padding-bottom: 24px;
+    opacity: 0.4;
+    transition: all 0.4s ease;
+
+    &.done {
+        opacity: 1;
+    }
+
+    &.current {
+        opacity: 1;
+    }
+}
+
+.t-dot {
+    position: absolute;
+    left: -32px;
+    top: 2px;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--app-border-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+    transition: all 0.4s ease;
+
+    ion-icon {
+        font-size: 12px;
+        color: var(--app-text-inverse);
+        opacity: 0;
+        transform: scale(0);
+        transition: all 0.3s ease;
+    }
+
+    .current-ring {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background: var(--app-primary);
+        animation: ring-pulse 1.5s infinite;
+    }
+}
+
+.t-step.done .t-dot {
+    background: var(--app-gradient-success);
+
+    ion-icon {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.t-step.current .t-dot {
+    background: var(--app-surface);
+    border: 3px solid var(--app-primary);
+    box-shadow: 0 0 0 4px rgba(var(--app-primary-rgb), 0.15);
+}
+
+@keyframes ring-pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(var(--app-primary-rgb), 0.4);
+    }
+    100% {
+        box-shadow: 0 0 0 12px rgba(var(--app-primary-rgb), 0);
+    }
+}
+
+.t-content {
+    display: flex;
+    flex-direction: column;
+}
+
+.t-label {
+    font-weight: 600;
+    color: var(--app-text);
+    font-size: 14px;
+}
+
+.t-time {
+    font-size: 12px;
+    color: var(--app-text-muted);
+    margin-top: 2px;
+}
+
+// ============================================
+// DRIVER GLASS CARD
+// ============================================
+.driver-glass-card {
+    position: relative;
+    margin: 0 var(--space-md, 1rem) var(--space-lg, 1.5rem);
+    padding: var(--space-lg, 1.5rem);
+    border-radius: var(--radius-lg, 0.75rem);
+    overflow: hidden;
+    box-shadow: var(--app-shadow-lg);
+    border: 1px solid var(--app-glass-border);
+
+    @include app.dark-mode {
+        border-color: var(--app-border);
+    }
+
+    .glass-bg {
+        position: absolute;
+        inset: 0;
+        background: var(--app-glass-bg);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border-radius: inherit;
+        z-index: 0;
+
+        @include app.dark-mode {
+            background: var(--app-glass-bg);
+        }
+    }
+}
+
+.driver-content {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    gap: var(--space-md, 1rem);
+}
+
+.avatar-ring {
+    position: relative;
+    width: 64px;
+    height: 64px;
+    flex-shrink: 0;
+
+    img {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 3px solid var(--app-surface);
+        box-shadow: var(--app-shadow-md);
+
+        @include app.dark-mode {
+            border-color: var(--app-surface);
+        }
+    }
+
+    .verified-badge {
+        position: absolute;
+        bottom: -2px;
+        right: -2px;
+        width: 24px;
+        height: 24px;
+        background: var(--app-success);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 2px solid var(--app-surface);
+
+        @include app.dark-mode {
+            border-color: var(--app-surface);
+        }
+
+        ion-icon {
+            font-size: 12px;
+            color: var(--app-text-inverse);
+        }
+    }
+}
+
+.driver-meta {
+    flex: 1;
+
+    h2 {
+        margin: 0;
+        font-size: 18px;
+        font-weight: 700;
+        color: var(--app-text);
+    }
+
+    .rating-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        margin-top: 6px;
+        padding: 4px 10px;
+        background: rgba(var(--app-warning-rgb), 0.15);
+        border-radius: 12px;
+        color: var(--app-warning);
+        font-size: 13px;
+        font-weight: 700;
+
+        ion-icon {
+            color: var(--app-warning);
+            font-size: 14px;
+        }
+    }
+
+    .trips-count {
+        margin: 4px 0 0;
+        font-size: 12px;
+        color: var(--app-text-muted);
+    }
+}
+
+.driver-actions {
+    display: flex;
+    gap: 8px;
+
+    ion-button {
+        --padding-start: 12px;
+        --padding-end: 12px;
+        height: 40px;
+        margin: 0;
+        --border-radius: 50%;
+    }
+}
+
+.vehicle-row {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: var(--space-md, 1rem);
+    padding-top: var(--space-md, 1rem);
+    border-top: 1px solid var(--app-border-light);
+    font-size: 13px;
+    color: var(--app-text-secondary);
+
+    @include app.dark-mode {
+        border-color: var(--app-border);
+    }
+
+    ion-icon {
+        font-size: 18px;
+        color: var(--app-text-muted);
+    }
+
+    .dot-sep {
+        opacity: 0.3;
+    }
+
+    .color-badge {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        border: 1px solid var(--app-border);
+    }
+}
+
+// ============================================
+// SEATS SECTION
+// ============================================
+.seats-section {
+    margin: 0 var(--space-md, 1rem) var(--space-lg, 1.5rem);
+
+    .section-title {
+        font-size: 18px;
+        font-weight: 700;
+        color: var(--app-text);
+        margin-bottom: var(--space-md, 1rem);
+    }
+}
+
+.car-layout {
+    background: var(--app-surface);
+    border-radius: var(--radius-lg, 0.75rem);
+    padding: 24px 20px;
+    box-shadow: var(--app-shadow-sm);
+    position: relative;
+
+    @include app.dark-mode {
+        box-shadow: var(--app-shadow-dark-sm);
+    }
+}
+
+.seat-row {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-md, 1rem);
+
+    &.front {
+        margin-bottom: 8px;
+    }
+
+    &.back {
+        margin-top: 16px;
+    }
+}
+
+.seat {
+    flex: 1;
+    aspect-ratio: 1;
+    max-width: 80px;
+    background: var(--app-bg);
+    border-radius: var(--radius-md, 0.5rem);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid transparent;
+    transition: all var(--transition-normal, 300ms ease);
+
+    ion-icon {
+        font-size: 24px;
+        color: var(--app-border);
+        transition: all var(--transition-normal, 300ms ease);
+    }
+
+    &.available {
+        background: rgba(var(--app-success-rgb), 0.1);
+        border-color: var(--app-success);
+
+        ion-icon {
+            color: var(--app-success);
+        }
+    }
+
+    &.occupied {
+        background: rgba(var(--app-danger-rgb), 0.1);
+        border-color: var(--app-danger);
+
+        ion-icon {
+            color: var(--app-danger);
+        }
+    }
+
+    &.driver-seat {
+        background: var(--app-text);
+
+        ion-icon {
+            color: var(--app-text-inverse);
+        }
+    }
+
+    &.my-seat {
+        box-shadow: 0 0 0 3px var(--app-primary), 0 0 40px rgba(var(--app-primary-rgb), 0.15);
+        animation: seat-glow 2s infinite;
+    }
+}
+
+@keyframes seat-glow {
+    0%, 100% {
+        box-shadow: 0 0 0 3px var(--app-primary), 0 0 20px rgba(var(--app-primary-rgb), 0.2);
+    }
+    50% {
+        box-shadow: 0 0 0 6px rgba(var(--app-primary-rgb), 0.1), 0 0 30px rgba(var(--app-primary-rgb), 0.3);
+    }
+}
+
+.steering-wheel {
+    text-align: right;
+    padding-right: 8px;
+    opacity: 0.2;
+
+    ion-icon {
+        font-size: 20px;
+        color: var(--app-text-secondary);
+    }
+}
+
+.seats-legend {
+    display: flex;
+    justify-content: center;
+    gap: var(--space-lg, 1.5rem);
+    margin-top: var(--space-md, 1rem);
+    font-size: 12px;
+    color: var(--app-text-muted);
+
+    .dot {
+        display: inline-block;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        margin-right: 4px;
+
+        &.available {
+            background: var(--app-success);
+        }
+
+        &.occupied {
+            background: var(--app-danger);
+        }
+
+        &.mine {
+            background: var(--app-primary);
+        }
+    }
+}
+
+// ============================================
+// PRICE FLOAT CARD
+// ============================================
+.price-float-card {
+    margin: 0 var(--space-md, 1rem) var(--space-lg, 1.5rem);
+    background: var(--app-gradient-primary);
+    border-radius: var(--radius-lg, 0.75rem);
+    padding: var(--space-lg, 1.5rem);
+    color: var(--app-text-inverse);
+    box-shadow: 0 0 40px rgba(var(--app-primary-rgb), 0.3);
+}
+
+.price-tag {
+    display: flex;
+    align-items: baseline;
+    gap: 2px;
+
+    .currency {
+        font-size: 20px;
+        font-weight: 600;
+    }
+
+    .amount {
+        font-size: 36px;
+        font-weight: 800;
+    }
+
+    .unit {
+        font-size: 14px;
+        opacity: 0.85;
+        margin-left: 4px;
+    }
+}
+
+.total-hint {
+    margin-top: var(--space-sm, 0.5rem);
+    font-size: 13px;
+    opacity: 0.9;
+    padding-top: var(--space-sm, 0.5rem);
+    border-top: 1px solid rgba(var(--app-text-inverse-rgb), 0.2);
+}
+
+// ============================================
+// NOTES CARD
+// ============================================
+.notes-card {
+    margin: 0 var(--space-md, 1rem) var(--space-lg, 1.5rem);
+    background: rgba(var(--app-warning-rgb), 0.08);
+    border-radius: var(--radius-md, 0.5rem);
+    padding: var(--space-md, 1rem);
+    display: flex;
+    gap: var(--space-md, 1rem);
+    align-items: flex-start;
+    border: 1px solid rgba(var(--app-warning-rgb), 0.15);
+
+    ion-icon {
+        font-size: 20px;
+        color: var(--app-warning);
+        flex-shrink: 0;
+        margin-top: 2px;
+    }
+
+    p {
+        margin: 0;
+        font-size: 13px;
+        color: var(--app-text-secondary);
+        line-height: 1.5;
+    }
+}
+
+// ============================================
+// PASSENGERS LIST
+// ============================================
+.passengers-list {
+    margin: 0 var(--space-md, 1rem) var(--space-lg, 1.5rem);
+
+    .section-title {
+        font-size: 18px;
+        font-weight: 700;
+        color: var(--app-text);
+        margin-bottom: var(--space-md, 1rem);
+    }
+}
+
+.p-card {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md, 1rem);
+    background: var(--app-surface);
+    padding: var(--space-md, 1rem) var(--space-lg, 1.5rem);
+    border-radius: var(--radius-md, 0.5rem);
+    margin-bottom: var(--space-sm, 0.5rem);
+    box-shadow: var(--app-shadow-sm);
+    border-left: 4px solid var(--app-border-light);
+    transition: transform var(--transition-fast, 150ms ease);
+
+    @include app.dark-mode {
+        border-color: var(--app-border);
+    }
+
+    &:active {
+        transform: scale(0.98);
+    }
+
+    &.status-confirmed {
+        border-left-color: var(--app-success);
+    }
+
+    &.status-picked_up {
+        border-left-color: var(--app-primary);
+    }
+
+    &.status-dropped_off {
+        border-left-color: var(--app-primary-dark);
+    }
+
+    &.status-pending {
+        border-left-color: var(--app-warning);
+    }
+
+    .p-avatar {
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid var(--app-surface);
+        box-shadow: var(--app-shadow-sm);
+    }
+
+    .p-info {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+
+        .p-name {
+            font-weight: 700;
+            font-size: 14px;
+            color: var(--app-text);
+        }
+
+        .p-seats {
+            font-size: 12px;
+            color: var(--app-text-muted);
+        }
+
+        .p-status-badge {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 2px;
+            font-weight: 600;
+            color: var(--app-text-secondary);
+        }
+    }
+
+    .p-actions {
+        display: flex;
+        gap: 6px;
+    }
+
+    .action-btn {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        border: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: transform var(--transition-fast, 150ms ease);
+
+        &:active {
+            transform: scale(0.9);
+        }
+
+        &.confirm {
+            background: var(--app-success-light);
+            color: var(--app-success);
+        }
+
+        &.pickup {
+            background: rgba(var(--app-primary-rgb), 0.1);
+            color: var(--app-primary);
+        }
+
+        &.dropoff {
+            background: rgba(var(--app-primary-rgb), 0.1);
+            color: var(--app-primary-dark);
+        }
+
+        ion-icon {
+            font-size: 18px;
+        }
+    }
+}
+
+// ============================================
+// BOTTOM ACTIONS
+// ============================================
+.bottom-actions {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: var(--app-glass-bg);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    padding: var(--space-md, 1rem) var(--space-lg, 1.5rem) calc(var(--space-md, 1rem) + env(safe-area-inset-bottom));
+    box-shadow: var(--app-shadow-lg);
+    border-top: 1px solid var(--app-glass-border);
+    z-index: 90;
+
+    @include app.dark-mode {
+        background: var(--app-glass-bg-dark);
+        border-color: var(--app-border);
+    }
+
+    ion-button {
+        margin: 0;
+        --border-radius: var(--radius-lg, 0.75rem);
+        font-weight: 700;
+        letter-spacing: 0.3px;
+        --box-shadow: var(--app-shadow-lg);
+
+        &.pulse-btn {
+            animation: btn-pulse 2s infinite;
+        }
+    }
+}
+
+@keyframes btn-pulse {
+    0%, 100% {
+        box-shadow: 0 0 0 0 rgba(var(--app-warning-rgb), 0.4);
+    }
+    50% {
+        box-shadow: 0 0 0 12px rgba(var(--app-warning-rgb), 0);
+    }
+}
+
+// ============================================
+// SEATS QUICK PICKER
+// ============================================
+.seats-quick-picker {
+    display: flex;
+    justify-content: center;
+    gap: var(--space-md, 1rem);
+    margin-bottom: var(--space-md, 1rem);
+
+    button {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        border: 2px solid var(--app-border-light);
+        background: var(--app-surface);
+        font-size: 18px;
+        font-weight: 700;
+        color: var(--app-text-muted);
+        transition: all var(--transition-fast, 150ms ease);
+        box-shadow: var(--app-shadow-sm);
+
+        @include app.dark-mode {
+            background: var(--app-surface-elevated);
+            border-color: var(--app-border);
+        }
+
+        &.selected {
+            background: var(--app-primary);
+            border-color: var(--app-primary);
+            color: var(--app-text-inverse);
+            transform: scale(1.1);
+            box-shadow: var(--app-shadow-lg);
+        }
+
+        &:active {
+            transform: scale(0.95);
+        }
+    }
+}
+
+// ============================================
+// STATES
+// ============================================
+.waiting-state,
+.confirmed-state,
+.inprogress-state {
+    text-align: center;
+    padding: 10px;
+
+    ion-icon {
+        font-size: 32px;
+        margin-bottom: 8px;
+    }
+
+    p {
+        margin: 0;
+        font-weight: 600;
+        color: var(--app-text);
+    }
+}
+
+.spinner-ring {
+    width: 32px;
+    height: 32px;
+    border: 3px solid var(--app-border-light);
+    border-top-color: var(--app-primary);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 8px;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.success-icon {
+    font-size: 40px;
+    color: var(--app-success);
+    margin-bottom: var(--space-sm, 0.5rem);
+}
+
+.live-dot {
+    width: 12px;
+    height: 12px;
+    background: var(--app-danger);
+    border-radius: 50%;
+    margin: 0 auto var(--space-sm, 0.5rem);
+    animation: live-blink 1s infinite;
+}
+
+@keyframes live-blink {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.3;
+    }
+}
+
+.text-btn {
+    background: none;
+    border: none;
+    color: var(--app-danger);
+    font-size: 13px;
+    margin-top: 8px;
+    text-decoration: underline;
+}
+
+// ============================================
+// RATING
+// ============================================
+.rating-sheet {
+    text-align: center;
+    padding: var(--space-sm, 0.5rem) 0;
+
+    h4 {
+        margin: 0 0 var(--space-md, 1rem);
+        font-size: 16px;
+        color: var(--app-text);
+    }
+}
+
+.star-rater {
+    display: flex;
+    justify-content: center;
+    gap: var(--space-md, 1rem);
+    margin-bottom: var(--space-md, 1rem);
+
+    button {
+        background: none;
+        border: none;
+        font-size: 36px;
+        color: var(--app-border-light);
+        transition: all var(--transition-fast, 150ms ease);
+        cursor: pointer;
+        padding: 4px;
+
+        &.active {
+            color: var(--app-warning);
+            transform: scale(1.2);
+        }
+
+        &:active {
+            transform: scale(0.9);
+        }
+    }
+}
+
+.rated-badge {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-sm, 0.5rem);
+    color: var(--app-success);
+    font-weight: 600;
+    font-size: 14px;
+    padding: var(--space-md, 1rem);
+
+    ion-icon {
+        font-size: 20px;
+    }
+}
+
+// ============================================
+// ALERTS
+// ============================================
+:global(.ux-alert) {
+    --backdrop-opacity: 0.6;
+
+    .alert-wrapper {
+        border-radius: var(--radius-lg, 0.75rem);
+        box-shadow: var(--app-shadow-xl);
+    }
+
+    .alert-button {
+        border-radius: var(--radius-md, 0.5rem);
+        font-weight: 600;
+    }
+
+    .alert-button-role-cancel {
+        color: var(--app-text-secondary);
+    }
+}
+
+:global(.ux-toast) {
+    --border-radius: var(--radius-md, 0.5rem);
+    font-weight: 500;
+}
+
+// ============================================
+// MAP HERO
+// ============================================
+.map-hero-wrapper {
+    position: relative;
+    width: 100%;
+    height: 50vh;
+    min-height: 350px;
+
+    app-location-picker {
+        display: block;
+        width: 100%;
+        height: 100%;
+
+        ::ng-deep .leaflet-container {
+            border-radius: 0 0 24px 24px;
+        }
+    }
+}
+
+// ============================================
+// TICKET FLOAT CARD
+// ============================================
+.ticket-float-card {
+    position: absolute;
+    bottom: -30px;
+    left: 16px;
+    right: 16px;
+    padding: 20px;
+    background: var(--app-gradient-primary);
+    border-radius: 20px;
+    color: var(--app-text-inverse);
+    box-shadow: 0 20px 40px rgba(var(--app-primary-rgb), 0.3);
+    z-index: 10;
+
+    .ticket-punch {
+        position: absolute;
+        bottom: -12px;
+        width: 24px;
+        height: 24px;
+        background: var(--app-bg);
+        border-radius: 50%;
+
+        &.left {
+            left: -12px;
+        }
+
+        &.right {
+            right: -12px;
+        }
+    }
+}
+
+// ============================================
+// CONTENT BELOW MAP
+// ============================================
+.content-below-map {
+    padding-top: 50px;
+    padding-bottom: 20px;
+}
+
+bottom-spacer {
+    height: 200px;
+}
+
+// ============================================
+// STICKY ACTIONS
+// ============================================
+.sticky-actions {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: var(--app-glass-bg);
+    backdrop-filter: blur(20px);
+    padding: 16px 20px calc(16px + env(safe-area-inset-bottom));
+    box-shadow: var(--app-shadow-lg);
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    @include app.dark-mode {
+        background: var(--app-glass-bg-dark);
+    }
+
+    .main-action {
+        margin: 0;
+        --border-radius: 14px;
+        font-weight: 700;
+        height: 52px;
+        font-size: 16px;
+        letter-spacing: 0.5px;
+    }
+
+    .pulse-btn {
+        animation: btn-pulse 2s infinite;
+    }
+
+    .cancel-btn {
+        margin: 0;
+        --border-radius: 10px;
+        font-size: 13px;
+        height: 40px;
+        opacity: 0.8;
+    }
+}
+
+// ============================================
+// CUSTOM MARKERS
+// ============================================
+::ng-deep {
+    .custom-marker .pin {
+        width: 32px;
+        height: 32px;
+        border-radius: 50% 50% 50% 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 800;
+        font-size: 14px;
+        color: var(--app-text-inverse);
+        box-shadow: 0 4px 12px rgba(var(--app-text-inverse-rgb), 0.3);
+        transform: rotate(-45deg);
+    }
+
+    .custom-marker .pin.origin {
+        background: var(--app-success);
+    }
+
+    .custom-marker .pin.destination {
+        background: var(--app-danger);
+    }
+
+    .custom-marker .pin span {
+        display: block;
+        transform: rotate(45deg);
+    }
+}
+
+// ============================================
+// ROUTE HEADER
+// ============================================
+.route-header {
+    background: var(--app-glass-bg);
+    backdrop-filter: blur(12px);
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--app-glass-border);
+}
+
+.route-pill {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--app-surface);
+    padding: 10px 16px;
+    border-radius: 50px;
+    box-shadow: var(--app-shadow-sm);
+}
+
+.route-stop {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--app-text);
+
+    .dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+
+        &.origin {
+            background: var(--app-success);
+        }
+
+        &.destination {
+            background: var(--app-danger);
+        }
+    }
+
+    .stop-text {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 120px;
+    }
+}
+
+.route-arrow {
+    color: var(--app-text-muted);
+    font-size: 16px;
+}

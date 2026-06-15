@@ -1,0 +1,221 @@
+<ion-header [class.header-solid]="headerSolid" class="rides-header">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button class="back-btn" (click)="back()">
+        <ion-icon slot="icon-only" name="arrow-back-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title class="header-title">Mis Viajes</ion-title>
+    <ion-buttons slot="end">
+      <ion-button class="header-action" (click)="scrollToTop()">
+        <ion-icon name="arrow-up-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content 
+  [fullscreen]="true" 
+  scrollEvents="true" 
+  (ionScroll)="onScroll($event)"
+  class="rides-content"
+>
+  <ion-refresher slot="fixed" (ionRefresh)="handleRefresh($event)">
+    <ion-refresher-content pullingIcon="arrow-down" refreshingSpinner="crescent"></ion-refresher-content>
+  </ion-refresher>
+
+  <!-- Stats -->
+  <div class="stats-section">
+    @if(isLoading) {
+      <div class="stats-skeleton">
+        @for(i of [1,2,3,4]; track i) {
+          <ion-skeleton-text animated class="stat-skeleton"></ion-skeleton-text>
+        }
+      </div>
+    } @else {
+      <div class="stats-grid">
+        <div class="stat-card primary">
+          <div class="stat-icon">
+            <ion-icon name="car-outline"></ion-icon>
+          </div>
+          <div class="stat-data">
+            <span class="stat-value">{{ stats.upcoming + stats.completed + stats.cancelled }}</span>
+            <span class="stat-label">Total</span>
+          </div>
+        </div>
+        <div class="stat-card info">
+          <div class="stat-icon">
+            <ion-icon name="calendar-outline"></ion-icon>
+          </div>
+          <div class="stat-data">
+            <span class="stat-value">{{ stats.upcoming }}</span>
+            <span class="stat-label">Próximos</span>
+          </div>
+        </div>
+        <div class="stat-card success">
+          <div class="stat-icon">
+            <ion-icon name="people-outline"></ion-icon>
+          </div>
+          <div class="stat-data">
+            <span class="stat-value">{{ stats.total_passengers }}</span>
+            <span class="stat-label">Pasajeros</span>
+          </div>
+        </div>
+        <div class="stat-card warning">
+          <div class="stat-icon">
+            <ion-icon name="cash-outline"></ion-icon>
+          </div>
+          <div class="stat-data">
+            <span class="stat-value">${{ stats.total_earnings }}</span>
+            <span class="stat-label">Ganado</span>
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs-section">
+    <div class="tabs-scroll">
+      <button class="tab-btn" [class.active]="activeTab === 'all'" (click)="setTab('all')">
+        Todos
+        <span class="tab-badge">{{ rides.length }}</span>
+      </button>
+      <button class="tab-btn" [class.active]="activeTab === 'upcoming'" (click)="setTab('upcoming')">
+        Próximos
+        <span class="tab-badge">{{ stats.upcoming }}</span>
+      </button>
+      <button class="tab-btn" [class.active]="activeTab === 'completed'" (click)="setTab('completed')">
+        Completados
+        <span class="tab-badge">{{ stats.completed }}</span>
+      </button>
+      <button class="tab-btn" [class.active]="activeTab === 'cancelled'" (click)="setTab('cancelled')">
+        Cancelados
+        <span class="tab-badge">{{ stats.cancelled }}</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Rides List -->
+  <div class="rides-list">
+    @if(isLoading) {
+      @for(i of [1,2,3]; track i) {
+        <div class="ride-card skeleton">
+          <ion-skeleton-text animated class="skeleton-route"></ion-skeleton-text>
+          <ion-skeleton-text animated class="skeleton-line"></ion-skeleton-text>
+          <ion-skeleton-text animated class="skeleton-line short"></ion-skeleton-text>
+        </div>
+      }
+    } @else {
+      @for(ride of filteredRides; track ride.id; let i = $index) {
+        <div class="ride-card" [style.animation-delay]="(i * 0.08) + 's'">
+          <!-- Route Header -->
+          <div class="route-header">
+            <div class="route-status" [style.background]="getStatusColor(ride.status) + '20'" [style.color]="getStatusColor(ride.status)">
+              <ion-icon [name]="ride.status === 'upcoming' ? 'calendar-outline' : ride.status === 'completed' ? 'checkmark-circle-outline' : 'close-outline'"></ion-icon>
+              {{ ride.statusLabel }}
+            </div>
+            <button class="more-btn" (click)="openActions(ride)">
+              <ion-icon name="options-outline"></ion-icon>
+            </button>
+          </div>
+
+          <!-- Route Visualization -->
+          <div class="route-visual" (click)="viewRide(ride.publishable_id || 0)">
+            <div class="route-points">
+              <div class="point origin">
+                <div class="dot"></div>
+                <div class="point-info">
+                  <span class="point-label">Origen</span>
+                  <span class="point-value">{{ ride.origin }}</span>
+                </div>
+              </div>
+              <div class="route-connector">
+                <div class="line"></div>
+                <div class="route-meta">
+                  <ion-icon name="time-outline"></ion-icon>
+                  <span>{{ ride.time }}</span>
+                  <span class="divider">|</span>
+                  <span>{{ ride.date | date:'shortDate' }}</span>
+                </div>
+              </div>
+              <div class="point destination">
+                <div class="dot"></div>
+                <div class="point-info">
+                  <span class="point-label">Destino</span>
+                  <span class="point-value">{{ ride.destination }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Ride Info -->
+          <div class="ride-info">
+            <div class="info-row">
+              <div class="info-item">
+                <ion-icon name="cash-outline"></ion-icon>
+                <div>
+                  <span class="info-value">${{ ride.pricePerSeat }}</span>
+                  <span class="info-label">por asiento</span>
+                </div>
+              </div>
+              <div class="info-item">
+                <ion-icon name="people-outline"></ion-icon>
+                <div>
+                  <span class="info-value">{{ ride.seatsTotal - ride.seatsAvailable }}/{{ ride.seatsTotal }}</span>
+                  <span class="info-label">ocupados</span>
+                </div>
+              </div>
+              <div class="info-item">
+                <ion-icon name="car-outline"></ion-icon>
+                <div>
+                  <span class="info-value">{{ ride.vehicle.split(' ')[0] }}</span>
+                  <span class="info-label">{{ ride.vehicle.split(' ').slice(1).join(' ') }}</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Occupancy Bar -->
+            <div class="occupancy-bar">
+              <div class="occupancy-track">
+                <div class="occupancy-fill" [style.width.%]="getOccupancyRate(ride)" [style.background]="getStatusColor(ride.status)"></div>
+              </div>
+              <span class="occupancy-label">{{ ride.seatsAvailable }} asientos disponibles</span>
+            </div>
+
+            <!-- Earnings (for completed) -->
+            @if(ride.status === 'completed') {
+            <div class="earnings-badge">
+              <ion-icon name="cash-outline"></ion-icon>
+              <span>Ganancia: ${{ ride.earnings }}</span>
+            </div>
+            }
+          </div>
+        </div>
+      }
+
+      <!-- Empty -->
+      @if(filteredRides.length === 0) {
+        <div class="empty-state">
+          <div class="empty-icon">
+            <ion-icon name="car-outline"></ion-icon>
+          </div>
+          <h3>No hay viajes</h3>
+          <p>Aún no has publicado ningún viaje compartido</p>
+          <ion-button fill="clear" (click)="createRide()">
+            <ion-icon name="add-outline" slot="start"></ion-icon>
+            Crear mi primer viaje
+          </ion-button>
+        </div>
+      }
+    }
+  </div>
+
+  <div class="bottom-space"></div>
+</ion-content>
+
+<ion-fab slot="fixed" vertical="bottom" horizontal="end" class="rides-fab">
+  <ion-fab-button (click)="createRide()">
+    <ion-icon name="add-outline"></ion-icon>
+  </ion-fab-button>
+</ion-fab>

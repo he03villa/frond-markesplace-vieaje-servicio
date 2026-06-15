@@ -1,0 +1,144 @@
+<div class="login-page">
+  <div class="login-bg">
+    <div class="gradient-orb orb-1"></div>
+    <div class="gradient-orb orb-2"></div>
+    <div class="gradient-orb orb-3"></div>
+  </div>
+
+  <div class="login-container">
+    <div class="login-glass">
+      <div class="login-header">
+        <div class="logo">
+          <div class="logo-icon">
+            <i class="fas fa-user-circle"></i>
+          </div>
+          <div class="logo-text">
+            <h1>Bienvenido</h1>
+            <span>Inicia sesión para continuar</span>
+          </div>
+        </div>
+      </div>
+
+      <form id="loginForm" [formGroup]="form" class="login-form" (submit)="login($event)">
+        <!-- Email -->
+        <div class="form-group" [class.has-error]="form.get('email')?.invalid && form.get('email')?.touched">
+          <label class="form-label" for="email">
+            <i class="fas fa-envelope"></i>
+            Usuario o Email
+          </label>
+          <div class="input-wrapper">
+            <input 
+              type="text" 
+              id="email" 
+              class="form-control" 
+              placeholder="usuario@ejemplo.com" 
+              required 
+              formControlName="email"
+            >
+          </div>
+          <app-error 
+            [clase]="'error-message'" 
+            [control]="form.get('email')" 
+            [validation]="'email'"
+            [message]="'El correo electrónico es inválido'"
+          ></app-error>
+          <app-error 
+            [clase]="'error-message'" 
+            [control]="form.get('email')" 
+            [validation]="'required'"
+            [message]="'El correo electrónico es requerido'"
+          ></app-error>
+        </div>
+
+        <!-- Password -->
+        <div class="form-group" [class.has-error]="form.get('password')?.invalid && form.get('password')?.touched">
+          <label class="form-label" for="password">
+            <i class="fas fa-lock"></i>
+            Contraseña
+          </label>
+          <div class="input-wrapper has-right-icon">
+            <input 
+              [type]="showPassword ? 'text' : 'password'" 
+              id="password" 
+              class="form-control" 
+              placeholder="••••••••" 
+              required
+              formControlName="password"
+            >
+            <button 
+              type="button" 
+              class="password-toggle-container" 
+              aria-label="Mostrar contraseña"
+              (click)="togglePasswordVisibility()"
+            >
+              <i [class]="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
+            </button>
+          </div>
+          <app-error 
+            [clase]="'error-message'" 
+            [control]="form.get('password')" 
+            [validation]="'required'"
+            [message]="'La contraseña es requerida'"
+          ></app-error>
+          <app-error 
+            [clase]="'error-message'" 
+            [control]="form.get('password')" 
+            [validation]="'minlength'"
+            [message]="'Mínimo 8 caracteres'"
+          ></app-error>
+        </div>
+
+        <!-- Actions -->
+        <div class="remember-forgot">
+          <label class="toggle-switch">
+            <input type="checkbox" id="remember">
+            <span class="toggle-slider"></span>
+            <span class="toggle-label">Recordarme</span>
+          </label>
+          <a class="forgot-link" (click)="_service.url('/forgot-password')">
+            ¿Olvidaste tu contraseña?
+          </a>
+        </div>
+
+        <!-- Submit -->
+        <button 
+          type="submit" 
+          class="submit-btn" 
+          [disabled]="!form.valid || isLoading"
+          [class.loading]="isLoading"
+        >
+          <span class="btn-content">
+            @if (isLoading) {
+              <span class="loading-spinner"></span>
+            }
+            <span class="btn-text">{{ isLoading ? 'Ingresando...' : 'Iniciar Sesión' }}</span>
+          </span>
+          <div class="btn-ripple"></div>
+        </button>
+      </form>
+
+      <!-- Divider -->
+      <!-- <div class="divider">
+        <span>o continúa con</span>
+      </div> -->
+
+      <!-- Social Login -->
+      <div class="social-login">
+        <!-- <button type="button" class="social-btn google" aria-label="Google">
+          <i class="fab fa-google"></i>
+        </button>
+        <button type="button" class="social-btn github" aria-label="GitHub">
+          <i class="fab fa-github"></i>
+        </button>
+        <button type="button" class="social-btn microsoft" aria-label="Microsoft">
+          <i class="fab fa-microsoft"></i>
+        </button> -->
+      </div>
+
+      <div class="register-link">
+        ¿No tienes cuenta? 
+        <a (click)="_service.url('/register')">Crea una gratis</a>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,142 @@
+<!-- publicar.page.html -->
+<ion-content>
+  <ion-header>
+    <ion-toolbar>
+      <ion-title>Publicar</ion-title>
+      <ion-buttons slot="start">
+        <ion-button (click)="cancelar()">Cancelar</ion-button>
+      </ion-buttons>
+    </ion-toolbar>
+  </ion-header>
+
+  <ion-segment value="servicio" (ionChange)="tipoPublicacionChange($event)">
+    <ion-segment-button value="servicio">
+      <ion-label>Servicio</ion-label>
+    </ion-segment-button>
+    <ion-segment-button value="viaje">
+      <ion-label>Viaje</ion-label>
+    </ion-segment-button>
+  </ion-segment>
+
+  <!-- Formulario Servicio -->
+  <form *ngIf="tipoPublicacion === 'servicio'" [formGroup]="servicioForm">
+    <ion-list>
+      <ion-item>
+        <ion-label position="stacked">Título del Servicio *</ion-label>
+        <ion-input formControlName="titulo" placeholder="Ej: Necesito estucar una pared"></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="stacked">Descripción *</ion-label>
+        <ion-textarea formControlName="descripcion" rows="4" 
+          placeholder="Describe en detalle lo que necesitas..."></ion-textarea>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="stacked">Categoría</ion-label>
+        <ion-select formControlName="categoria">
+          <ion-select-option value="hogar">Hogar</ion-select-option>
+          <ion-select-option value="construccion">Construcción</ion-select-option>
+          <ion-select-option value="reparaciones">Reparaciones</ion-select-option>
+          <ion-select-option value="otros">Otros</ion-select-option>
+        </ion-select>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="stacked">Medidas (opcional)</ion-label>
+        <ion-input formControlName="medidas" placeholder="Ej: 3m x 4m"></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="stacked">Presupuesto Estimado</ion-label>
+        <ion-input type="number" formControlName="presupuesto" 
+          placeholder="Presupuesto aproximado"></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="stacked">Ubicación</ion-label>
+        <ion-input formControlName="ubicacion" placeholder="Dirección"></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label>Fecha Límite</ion-label>
+        <ion-datetime formControlName="fechaLimite"></ion-datetime>
+      </ion-item>
+    </ion-list>
+
+    <ion-button expand="block" (click)="publicarServicio()" 
+                [disabled]="!servicioForm.valid">
+      Publicar Servicio
+    </ion-button>
+  </form>
+
+  <!-- Formulario Viaje -->
+  <form *ngIf="tipoPublicacion === 'viaje'" [formGroup]="viajeForm">
+    <ion-list>
+      <ion-item>
+        <ion-label position="stacked">Origen *</ion-label>
+        <ion-input formControlName="origen" placeholder="Lugar de salida"></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="stacked">Destino *</ion-label>
+        <ion-input formControlName="destino" placeholder="Lugar de llegada"></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="stacked">Fecha y Hora *</ion-label>
+        <ion-datetime formControlName="fechaHora" 
+          displayFormat="DD/MM/YYYY HH:mm"></ion-datetime>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="stacked">Asientos Disponibles</ion-label>
+        <ion-range formControlName="asientos" min="1" max="6" pin="true">
+          <ion-label slot="start">1</ion-label>
+          <ion-label slot="end">6</ion-label>
+        </ion-range>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="stacked">Costo por Persona</ion-label>
+        <ion-input type="number" formControlName="costo" 
+          placeholder="Costo compartido"></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="stacked">Descripción (opcional)</ion-label>
+        <ion-textarea formControlName="descripcion" rows="3"
+          placeholder="Detalles del vehículo, puntos de encuentro..."></ion-textarea>
+      </ion-item>
+    </ion-list>
+
+    <ion-button expand="block" (click)="publicarViaje()" 
+                [disabled]="!viajeForm.valid">
+      Publicar Viaje
+    </ion-button>
+  </form>
+</ion-content>
+<ion-item>
+  <ion-label position="stacked">Título del Servicio *</ion-label>
+  <ion-input formControlName="titulo" placeholder="Ej: Necesito estucar una pared"></ion-input>
+</ion-item>
+<div class="error-message" *ngIf="servicioTitulo?.touched && servicioTitulo?.errors">
+  {{ getErrorMessages(servicioTitulo) }}
+</div>
+
+<!-- Ejemplo para presupuesto -->
+<ion-item>
+  <ion-label position="stacked">Presupuesto Estimado</ion-label>
+  <ion-input type="number" formControlName="presupuesto" 
+    placeholder="Presupuesto aproximado"></ion-input>
+</ion-item>
+<div class="error-message" *ngIf="servicioPresupuesto?.touched && servicioPresupuesto?.errors">
+  {{ getErrorMessages(servicioPresupuesto) }}
+</div>
+
+<div class="loading-overlay" *ngIf="isSubmitting">
+  <div class="loading-content">
+    <ion-spinner name="crescent"></ion-spinner>
+    <p>Publicando...</p>
+  </div>
+</div>

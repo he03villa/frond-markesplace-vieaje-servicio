@@ -1,0 +1,17 @@
+// ============================================
+// SCSS MIXIN (use in every component)
+// ============================================
+@mixin dark-mode {
+  body.dark &,
+  :root[data-theme="dark"] & {
+    @content;
+  }
+}
+
+// Usage example in any .scss file:
+// .my-card {
+//   background: var(--app-surface);
+//   @include dark-mode {
+//     box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+//   }
+// }s

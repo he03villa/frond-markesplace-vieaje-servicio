@@ -1,0 +1,107 @@
+<div class="images-section">
+  <div class="section-header">
+    <h3>
+      <ion-icon name="images-outline" class="section-icon"></ion-icon>
+      Imágenes del servicio
+    </h3>
+    <p class="section-subtitle">Máximo 5 imágenes, 2MB cada una</p>
+  </div>
+
+  <div class="images-container">
+    <!-- Imágenes subidas -->
+    @for (image of previewImages; track $index) {
+      <div 
+        class="image-card" 
+        [style.animation-delay]="($index * 0.1) + 's'"
+      >
+        <div class="image-wrapper">
+          <img 
+            [src]="image.url" 
+            [alt]="'Imagen ' + ($index + 1)"
+            class="uploaded-image"
+            (load)="onImageLoad($event, $index)"
+          >
+          <div class="image-overlay">
+            <ion-button 
+              fill="clear" 
+              class="remove-btn" 
+              (click)="onRemove($index, $event)"
+              color="danger"
+            >
+              <ion-icon name="trash-outline"></ion-icon>
+            </ion-button>
+            <div class="image-number">{{ $index + 1 }}</div>
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- Botón para subir nuevas imágenes -->
+    @if(previewImages.length < 5) {
+      <div 
+        class="image-card upload-card fade-in" 
+        (click)="triggerFileInput()"
+        [style.animation-delay]="(previewImages.length * 0.1) + 's'"
+      >
+        <div class="upload-wrapper">
+          <div class="upload-icon">
+            <ion-icon name="camera-outline"></ion-icon>
+          </div>
+          <div class="upload-text">
+            <span class="upload-title">Agregar imagen</span>
+            <span class="upload-subtitle">Toca para seleccionar</span>
+          </div>
+          <div class="upload-count">
+            {{ previewImages.length }}/5
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+
+  <!-- Input de archivo oculto -->
+  <input 
+    #fileInput
+    type="file" 
+    multiple 
+    accept="image/*" 
+    (change)="onFileSelected($event)"
+    style="display: none"
+  >
+
+  <!-- Indicador de progreso (opcional) -->
+  @if(previewImages.length > 0) {
+    <div class="upload-progress">
+      <div class="progress-bar">
+        <div 
+          class="progress-fill" 
+          [style.width]="(previewImages.length / 5 * 100) + '%'"
+        ></div>
+      </div>
+      <div class="progress-text">
+        <span>{{ previewImages.length }} de 5 imágenes</span>
+        <span class="progress-percent">
+          {{ (previewImages.length / 5 * 100) | number:'1.0-0' }}%
+        </span>
+      </div>
+    </div>
+  }
+
+  <!-- Consejos para imágenes -->
+  @if(previewImages.length === 0) {
+    <div class="image-tips">
+      <div class="tip-item">
+        <ion-icon name="checkmark-circle-outline" color="success"></ion-icon>
+        <span>Usa fotos claras y bien iluminadas</span>
+      </div>
+      <div class="tip-item">
+        <ion-icon name="checkmark-circle-outline" color="success"></ion-icon>
+        <span>Muestra diferentes ángulos del problema/servicio</span>
+      </div>
+      <div class="tip-item">
+        <ion-icon name="checkmark-circle-outline" color="success"></ion-icon>
+        <span>Incluye imágenes de referencia si es necesario</span>
+      </div>
+    </div>
+  }
+</div>

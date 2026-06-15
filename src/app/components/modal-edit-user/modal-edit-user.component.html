@@ -1,0 +1,138 @@
+<div class="edit-sheet">
+  <!-- Handle -->
+  <div class="sheet-handle-bar"></div>
+
+  <!-- Header -->
+  <div class="sheet-header">
+    <div class="sheet-title-group">
+      <h2>Editar perfil</h2>
+      <p>Personaliza tu información pública</p>
+    </div>
+    <button class="sheet-close-btn" (click)="salir()">
+      <ion-icon name="close-outline"></ion-icon>
+    </button>
+  </div>
+
+  <!-- Body con scroll -->
+  <div class="sheet-body">
+    <!-- Avatar Section -->
+    <div class="avatar-section">
+      <div class="avatar-main" (click)="fileInput.click()">
+        <img [src]="tempAvatar || data?.avatar" alt="Avatar" />
+        <div class="avatar-overlay">
+          <div class="avatar-overlay-content">
+            <ion-icon name="camera"></ion-icon>
+            <span>Cambiar foto</span>
+          </div>
+        </div>
+        <input type="file" #fileInput hidden accept="image/*" (change)="onFileSelected($event)" />
+      </div>
+
+      <!-- Badge de verificado -->
+      @if (data?.verified) {
+        <div class="avatar-verified-badge">
+          <ion-icon name="checkmark-circle"></ion-icon>
+          <span>Verificado</span>
+        </div>
+      }
+    </div>
+
+    <!-- Avatar Presets -->
+    <!-- <div class="presets-section">
+          <label class="section-label">Elige un avatar</label>
+          <div class="presets-scroll">
+            <div class="preset-add" (click)="fileInput.click()">
+              <ion-icon name="add-outline"></ion-icon>
+            </div>
+            @for(url of [
+            'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop',
+            'https://images.unsplash.com/photo-1494790108755-2616b786d4d7?w=200&h=200&fit=crop',
+            'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=200&h=200&fit=crop',
+            'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&h=200&fit=crop',
+            'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=200&h=200&fit=crop',
+            'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=200&h=200&fit=crop'
+            ]; track url) {
+            <div class="preset-item" [class.selected]="tempAvatar === url" (click)="selectPresetAvatar(url)">
+              <img [src]="url" alt="preset" loading="lazy" />
+            </div>
+            }
+          </div>
+        </div> -->
+
+    <!-- Formulario -->
+    <div class="form-section">
+      <div class="form-row">
+        <div class="form-group half">
+          <label class="form-label">
+            <ion-icon name="person-outline"></ion-icon>
+            Nombre completo
+          </label>
+          <input type="text" [(ngModel)]="editName" class="fancy-input" placeholder="¿Cómo te llaman?" maxlength="50" />
+          <span class="char-count">{{ editName.length }}/50</span>
+        </div>
+
+        <div class="form-group half">
+          <label class="form-label">
+            <ion-icon name="call-outline"></ion-icon>
+            Teléfono
+          </label>
+          <input type="tel" [(ngModel)]="editPhone" class="fancy-input" placeholder="+54 11 1234-5678" maxlength="20" />
+          <span class="char-count">{{ editPhone.length }}/20</span>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">
+          <ion-icon name="briefcase-outline"></ion-icon>
+          Título profesional
+        </label>
+        <input type="text" [(ngModel)]="editTitle" class="fancy-input" placeholder="Ej: Fontanero profesional"
+          maxlength="40" />
+        <span class="char-count">{{ editTitle.length }}/40</span>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group half">
+          <label class="form-label">
+            <ion-icon name="location-outline"></ion-icon>
+            Ubicación
+          </label>
+          <input type="text" [(ngModel)]="editLocation" class="fancy-input" placeholder="Ciudad, País"
+            maxlength="100" />
+          <span class="char-count">{{ editLocation.length }}/100</span>
+        </div>
+
+        <div class="form-group half">
+          <label class="form-label">
+            <ion-icon name="document-text-outline"></ion-icon>
+            Biografía
+          </label>
+          <textarea [(ngModel)]="editBio" class="fancy-input textarea" rows="3" placeholder="Cuéntanos sobre ti..."
+            maxlength="200"></textarea>
+          <span class="char-count">{{ editBio.length }}/200</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Preview card -->
+    <div class="preview-card">
+      <div class="preview-label">Vista previa</div>
+      <div class="preview-content">
+        <img [src]="tempAvatar || data?.avatar" class="preview-avatar" />
+        <div class="preview-info">
+          <strong>{{ editName || data?.name }}</strong>
+          <span>{{ editTitle || data?.title }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer sticky -->
+  <div class="sheet-footer">
+    <button class="btn btn-ghost" (click)="salir()">Cancelar</button>
+    <button class="btn btn-primary" (click)="saveProfile()" [disabled]="!editName.trim()">
+      <ion-icon name="checkmark-outline"></ion-icon>
+      Guardar cambios
+    </button>
+  </div>
+</div>

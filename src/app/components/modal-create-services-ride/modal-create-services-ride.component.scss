@@ -1,0 +1,860 @@
+@use '../../../theme/mixins' as app;
+
+// ==========================================
+// HEADER TRANSPARENTE CON GLASSMORPHISM
+// ==========================================
+ion-header {
+  background: var(--app-glass-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--app-glass-border);
+  box-shadow: var(--app-shadow-md);
+
+  ion-toolbar {
+    --background: transparent;
+    --border-width: 0;
+    --min-height: var(--header-height, 72px);
+    --padding-top: var(--space-sm);
+    --padding-bottom: var(--space-sm);
+
+    ion-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--app-text);
+      letter-spacing: -0.025em;
+    }
+
+    ion-button {
+      --color: var(--app-text-secondary);
+      --border-radius: 50%;
+      --padding-start: 0;
+      --padding-end: 0;
+      width: 40px;
+      height: 40px;
+      margin: 0 var(--space-sm);
+      transition: all var(--transition-fast);
+
+      &:hover {
+        --background: rgba(var(--app-primary-rgb), 0.1);
+        --color: var(--app-primary);
+        transform: scale(1.1);
+      }
+
+      ion-icon {
+        font-size: 24px;
+      }
+    }
+  }
+}
+
+// ==========================================
+// SEGMENTO TIPO PUBLICATION - PILL SWITCHER
+// ==========================================
+ion-segment {
+  --background: transparent;
+  margin: var(--space-lg) var(--space-md);
+  padding: var(--space-xs);
+  background: var(--app-bg);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--app-shadow-sm);
+  border: 1px solid var(--app-border);
+
+  ion-segment-button {
+    --background: transparent;
+    --background-checked: var(--app-gradient-primary);
+    --color: var(--app-text-muted);
+    --color-checked: white;
+    --indicator-color: transparent;
+    --border-radius: var(--radius-lg);
+
+    min-height: 48px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    letter-spacing: -0.01em;
+    text-transform: none;
+    transition: all var(--transition-normal) var(--smooth);
+    position: relative;
+    overflow: hidden;
+
+    &.segment-button-checked {
+      box-shadow: var(--app-shadow-sm), 0 0 20px rgba(var(--app-primary-rgb), 0.2);
+      transform: translateY(-2px);
+
+      &::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, transparent 100%);
+        border-radius: inherit;
+      }
+
+      ion-label {
+        transform: scale(1.05);
+        text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      }
+    }
+
+    &:hover:not(.segment-button-checked) {
+      --color: var(--app-primary);
+      transform: translateY(-1px);
+    }
+
+    ion-label {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      transition: transform var(--transition-fast);
+
+      &::before {
+        content: '';
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: currentColor;
+        opacity: 0.6;
+      }
+    }
+  }
+}
+
+// ==========================================
+// FORMULARIOS - SOFT UI / NEUMORPHISM
+// ==========================================
+form {
+  animation: slideUp var(--transition-slow) var(--smooth);
+  padding: 0 var(--space-md);
+}
+
+ion-list {
+  background: transparent;
+  padding: 0;
+}
+
+// Items con estilo Neumórfico suave
+ion-item {
+  --background: var(--app-bg);
+  --border-radius: var(--radius-lg);
+  --padding-start: var(--space-md);
+  --padding-end: var(--space-md);
+  --padding-top: var(--space-sm);
+  --padding-bottom: var(--space-sm);
+  --border-color: transparent;
+  --highlight-color-focused: var(--app-primary);
+
+  margin-bottom: var(--space-md);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--app-shadow-sm);
+  border: 1px solid var(--app-border);
+  transition: all var(--transition-normal) var(--smooth);
+
+  &:hover {
+    box-shadow: var(--app-shadow-md);
+    transform: translateX(4px);
+  }
+
+  &.item-has-focus {
+    box-shadow:
+      inset 2px 2px 6px rgba(0, 0, 0, 0.05),
+      inset -2px -2px 6px rgba(255, 255, 255, 0.8),
+      0 0 0 2px var(--app-primary-light);
+    --background: var(--app-surface);
+
+    @include app.dark-mode {
+      box-shadow:
+        inset 2px 2px 6px rgba(0, 0, 0, 0.3),
+        inset -2px -2px 6px rgba(255, 255, 255, 0.05),
+        0 0 0 2px var(--app-primary-light);
+    }
+  }
+
+  ion-label {
+    --color: var(--app-text-secondary);
+    font-weight: 600;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: var(--space-xs);
+
+    .required {
+      color: var(--app-danger);
+      margin-left: 2px;
+      font-weight: 700;
+    }
+  }
+
+  ion-input, ion-textarea, ion-select {
+    --color: var(--app-text);
+    --placeholder-color: var(--app-text-muted);
+    --placeholder-opacity: 0.7;
+    font-size: 1rem;
+    font-weight: 500;
+    --padding-start: 0;
+
+    &[type="number"] {
+      font-variant-numeric: tabular-nums;
+      font-weight: 600;
+      color: var(--app-primary);
+    }
+  }
+
+  // Iconos de moneda
+  ion-text[slot="start"] {
+    color: var(--app-primary);
+    font-weight: 700;
+    font-size: 1.1rem;
+    margin-right: var(--space-sm);
+  }
+}
+
+// Contador de caracteres
+.counter {
+  text-align: right;
+  font-size: 0.75rem;
+  color: var(--app-text-muted);
+  font-weight: 600;
+  margin-top: -12px;
+  margin-bottom: var(--space-md);
+  padding-right: var(--space-md);
+  opacity: 0.8;
+}
+
+// ==========================================
+// SECCIONES - HEADERS ESTILIZADOS
+// ==========================================
+.section-header {
+  margin: var(--space-xl) 0 var(--space-md);
+  padding-left: var(--space-md);
+  position: relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 4px;
+    height: 24px;
+    background: var(--app-gradient-primary);
+    border-radius: 0 4px 4px 0;
+    box-shadow: 0 0 10px rgba(var(--app-primary-rgb), 0.4);
+  }
+
+  h3 {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: var(--app-text);
+    margin: 0 0 var(--space-xs) 0;
+    letter-spacing: -0.025em;
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+  }
+
+  .subtitle {
+    font-size: 0.875rem;
+    color: var(--app-text-muted);
+    margin: 0;
+    font-weight: 400;
+    line-height: 1.4;
+  }
+}
+
+// ==========================================
+// MAPAS - CONTAINERS INMERSIVOS
+// ==========================================
+app-location-picker {
+  display: block;
+  margin: var(--space-md);
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  position: relative;
+  box-shadow: var(--app-shadow-lg), 0 0 20px rgba(var(--app-primary-rgb), 0.15);
+  border: 2px solid var(--app-glass-border);
+  background: var(--app-surface);
+
+  // Badge flotante
+  &::before {
+    content: 'Selecciona ubicación';
+    position: absolute;
+    top: var(--space-md);
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--app-glass-bg);
+    backdrop-filter: blur(10px);
+    color: var(--app-text);
+    padding: var(--space-sm) var(--space-md);
+    border-radius: var(--radius-xl);
+    font-size: 0.8rem;
+    font-weight: 700;
+    z-index: 10;
+    box-shadow: var(--app-shadow-sm);
+    border: 1px solid var(--app-glass-border);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  // Indicador de punto activo
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: var(--space-md);
+    right: var(--space-md);
+    width: 12px;
+    height: 12px;
+    background: var(--app-success);
+    border-radius: 50%;
+    box-shadow: 0 0 0 4px rgba(var(--app-success-rgb, 16, 185, 129), 0.3);
+    animation: pulse-ring 2s infinite;
+    z-index: 10;
+  }
+}
+
+// Dirección seleccionada - Estilo "chip"
+ion-item[item-subtle] {
+  --background: rgba(var(--app-primary-rgb), 0.05);
+  box-shadow: none;
+  border: 1px dashed var(--app-primary-light);
+  margin: 0 var(--space-md) var(--space-md);
+
+  ion-text {
+    color: var(--app-text-secondary);
+    font-size: 0.875rem;
+    line-height: 1.5;
+    font-style: italic;
+  }
+}
+
+// ==========================================
+// PRESUPUESTO - DUAL INPUT CONNECTED
+// ==========================================
+ion-grid {
+  padding: 0;
+
+  ion-row {
+    margin: 0 calc(-1 * var(--space-sm));
+  }
+
+  ion-col {
+    padding: 0 var(--space-sm);
+  }
+}
+
+.budget-container {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  margin: 0 var(--space-md) var(--space-md);
+
+  ion-item {
+    flex: 1;
+    margin: 0;
+  }
+
+  .budget-divider {
+    color: var(--app-text-muted);
+    font-weight: 700;
+    font-size: 1.25rem;
+    opacity: 0.5;
+  }
+}
+
+// Validación animada
+.budget-validation {
+  margin: 0 var(--space-md) var(--space-lg);
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  font-size: 0.875rem;
+  font-weight: 600;
+  animation: fadeScale var(--transition-normal) var(--bounce);
+
+  &.valid {
+    background: rgba(var(--app-success-rgb, 16, 185, 129), 0.08);
+    color: var(--app-success);
+    border: 1px solid var(--app-success);
+  }
+
+  &.invalid {
+    background: rgba(var(--app-danger-rgb, 239, 68, 68), 0.08);
+    color: var(--app-danger);
+    border: 1px solid var(--app-danger);
+  }
+
+  ion-icon {
+    font-size: 20px;
+  }
+}
+
+// ==========================================
+// RUTA - TIMELINE VISUAL
+// ==========================================
+.route-preview {
+  margin: var(--space-lg) var(--space-md);
+  padding: var(--space-lg);
+  background: var(--app-surface);
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--app-glass-border);
+  box-shadow: var(--app-shadow-sm);
+  position: relative;
+  overflow: hidden;
+
+  // Fondo decorativo mesh
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(var(--app-primary-rgb), 0.03) 0%, transparent 50%);
+    opacity: 0.5;
+    pointer-events: none;
+  }
+
+  .route-line {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--space-md);
+    position: relative;
+    z-index: 1;
+
+    // Línea punteada conectora
+    &::before {
+      content: '';
+      position: absolute;
+      left: 40px;
+      right: 40px;
+      top: 50%;
+      height: 2px;
+      background: repeating-linear-gradient(
+        90deg,
+        var(--app-border) 0px,
+        var(--app-border) 6px,
+        transparent 6px,
+        transparent 12px
+      );
+      z-index: 0;
+    }
+  }
+
+  .route-point {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--app-surface);
+    box-shadow: var(--app-shadow-sm);
+    position: relative;
+    z-index: 1;
+    font-size: 24px;
+    transition: all var(--transition-normal) var(--bounce);
+
+    &.origin {
+      color: var(--app-primary);
+      border: 3px solid var(--app-primary);
+      animation: float 3s ease-in-out infinite;
+    }
+
+    &.destination {
+      color: var(--app-success);
+      border: 3px solid var(--app-success);
+    }
+
+    &:hover {
+      transform: scale(1.15) rotate(5deg);
+      box-shadow: var(--app-shadow-md);
+    }
+  }
+
+  .route-info {
+    background: var(--app-glass-bg);
+    backdrop-filter: blur(10px);
+    padding: var(--space-md);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--app-glass-border);
+    position: relative;
+    z-index: 1;
+
+    strong {
+      color: var(--app-primary);
+      font-weight: 700;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    ion-text {
+      color: var(--app-text-secondary);
+      font-size: 0.875rem;
+      line-height: 1.4;
+      display: block;
+      margin-bottom: var(--space-xs);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+}
+
+// ==========================================
+// TOTAL ESTIMADO - CARD PREMIUM
+// ==========================================
+.total-estimate {
+  margin: var(--space-xl) var(--space-md);
+  padding: var(--space-xl);
+  background: var(--app-gradient-primary);
+  border-radius: var(--radius-xl);
+  color: white;
+  box-shadow: var(--app-shadow-lg), 0 0 20px rgba(var(--app-primary-rgb), 0.2);
+  position: relative;
+  overflow: hidden;
+  text-align: center;
+
+  // Patrón de fondo animado
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      radial-gradient(circle at 20% 50%, rgba(255,255,255,0.1) 0%, transparent 50%),
+      radial-gradient(circle at 80% 80%, rgba(255,255,255,0.1) 0%, transparent 50%);
+    animation: shimmer 10s infinite linear;
+  }
+
+  ion-icon {
+    font-size: 40px;
+    margin-bottom: var(--space-sm);
+    opacity: 0.9;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+    animation: float 3s ease-in-out infinite;
+  }
+
+  span {
+    position: relative;
+    z-index: 1;
+    font-size: 1rem;
+    font-weight: 600;
+    opacity: 0.9;
+
+    strong {
+      display: block;
+      font-size: 2.5rem;
+      font-weight: 800;
+      margin-top: var(--space-xs);
+      letter-spacing: -0.05em;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    }
+  }
+
+  .subtotal {
+    display: inline-block;
+    margin-top: var(--space-sm);
+    font-size: 0.8rem;
+    font-weight: 500;
+    opacity: 0.9;
+    background: rgba(255,255,255,0.2);
+    padding: var(--space-xs) var(--space-md);
+    border-radius: var(--radius-xl);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.3);
+  }
+}
+
+// ==========================================
+// UPLOAD DE IMÁGENES
+// ==========================================
+image-upload-section {
+  display: block;
+  margin: var(--space-lg) var(--space-md);
+
+  .upload-zone {
+    border: 3px dashed var(--app-border);
+    border-radius: var(--radius-xl);
+    padding: var(--space-2xl) var(--space-lg);
+    text-align: center;
+    background: var(--app-bg);
+    transition: all var(--transition-normal) var(--smooth);
+    cursor: pointer;
+    box-shadow: var(--app-shadow-sm);
+
+    &:hover {
+      border-color: var(--app-primary);
+      background: rgba(var(--app-primary-rgb), 0.02);
+      transform: translateY(-2px);
+      box-shadow: var(--app-shadow-md);
+
+      ion-icon {
+        color: var(--app-primary);
+        transform: scale(1.1) translateY(-2px);
+      }
+    }
+
+    ion-icon {
+      font-size: 48px;
+      color: var(--app-text-muted);
+      margin-bottom: var(--space-sm);
+      transition: all var(--transition-normal) var(--bounce);
+    }
+
+    p {
+      color: var(--app-text-secondary);
+      font-size: 1rem;
+      font-weight: 600;
+      margin: 0;
+    }
+
+    small {
+      color: var(--app-text-muted);
+      font-size: 0.75rem;
+      margin-top: var(--space-xs);
+      display: block;
+    }
+  }
+
+  .image-preview-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: var(--space-md);
+    margin-top: var(--space-md);
+
+    .preview-item {
+      aspect-ratio: 1;
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      position: relative;
+      box-shadow: var(--app-shadow-sm);
+      transition: all var(--transition-normal) var(--bounce);
+      border: 2px solid transparent;
+
+      &:hover {
+        transform: scale(1.05) rotate(2deg);
+        z-index: 2;
+        box-shadow: var(--app-shadow-md);
+        border-color: var(--app-primary-light);
+      }
+
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .remove-btn {
+        position: absolute;
+        top: var(--space-xs);
+        right: var(--space-xs);
+        background: var(--app-danger);
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 28px;
+        height: 28px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        opacity: 0;
+        transform: scale(0.8);
+        transition: all var(--transition-fast) var(--bounce);
+        box-shadow: var(--app-shadow-sm);
+
+        &:hover {
+          transform: scale(1.1);
+          filter: brightness(1.1);
+        }
+      }
+
+      &:hover .remove-btn {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+  }
+}
+
+// ==========================================
+// FOOTER FIJO CON GLASSMORPHISM
+// ==========================================
+ion-footer {
+  background: var(--app-glass-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-top: 1px solid var(--app-glass-border);
+  box-shadow: var(--app-shadow-md);
+  padding-bottom: var(--bottom-safe);
+
+  ion-toolbar {
+    --background: transparent;
+    --padding-top: var(--space-md);
+    --padding-bottom: var(--space-md);
+    --padding-start: var(--space-md);
+    --padding-end: var(--space-md);
+  }
+
+  ion-grid {
+    padding: 0;
+  }
+
+  ion-button {
+    --border-radius: var(--radius-xl);
+    --box-shadow: none;
+    height: 56px;
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    text-transform: none;
+    margin: 0;
+    transition: all var(--transition-normal) var(--smooth);
+
+    &[fill="outline"] {
+      --border-width: 2px;
+      --color: var(--app-text-secondary);
+      --border-color: var(--app-border);
+      --background: var(--app-bg);
+      box-shadow: var(--app-shadow-sm);
+
+      &:hover {
+        --border-color: var(--app-primary);
+        --color: var(--app-primary);
+        box-shadow: var(--app-shadow-md);
+        transform: translateY(-2px);
+      }
+    }
+
+    &[color="primary"] {
+      --background: var(--app-gradient-primary);
+      --box-shadow: 0 0 20px rgba(var(--app-primary-rgb), 0.2);
+      position: relative;
+      overflow: hidden;
+
+      &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(255,255,255,0.3),
+          transparent
+        );
+        transition: left 0.6s ease;
+      }
+
+      &:hover:not([disabled]) {
+        transform: translateY(-3px);
+        --box-shadow: 0 10px 30px rgba(var(--app-primary-rgb), 0.4);
+
+        &::before {
+          left: 100%;
+        }
+      }
+
+      &[disabled] {
+        opacity: 0.6;
+        --background: var(--app-text-muted);
+        box-shadow: none;
+      }
+
+      ion-icon {
+        font-size: 20px;
+        margin-right: var(--space-sm);
+      }
+    }
+  }
+}
+
+// ==========================================
+// ANIMACIONES KEYFRAMES
+// ==========================================
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeScale {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-10px); }
+}
+
+@keyframes pulse-ring {
+  0%   { transform: scale(1); opacity: 1; }
+  100% { transform: scale(2); opacity: 0; }
+}
+
+@keyframes shimmer {
+  0%   { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+// ==========================================
+// UTILIDADES Y ESTADOS
+// ==========================================
+.form-transition {
+  animation: slideUp var(--transition-slow) var(--smooth);
+}
+
+// Estados de validación
+ion-item.item-valid {
+  --border-color: var(--app-success);
+  box-shadow: 0 0 0 2px rgba(var(--app-success-rgb, 16, 185, 129), 0.2);
+}
+
+ion-item.item-invalid {
+  --border-color: var(--app-danger);
+  animation: shake 0.5s var(--bounce);
+  box-shadow: 0 0 0 2px rgba(var(--app-danger-rgb, 239, 68, 68), 0.2);
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25%      { transform: translateX(-5px); }
+  75%      { transform: translateX(5px); }
+}
+
+// Responsive tweaks
+@media (max-width: 360px) {
+  ion-segment-button {
+    font-size: 0.8rem;
+    min-height: 40px;
+  }
+
+  .route-preview {
+    padding: var(--space-md);
+  }
+
+  .total-estimate {
+    padding: var(--space-lg);
+
+    span strong {
+      font-size: 2rem;
+    }
+  }
+
+  ion-button {
+    font-size: 0.9rem;
+  }
+}

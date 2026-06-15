@@ -1,0 +1,60 @@
+<div class="report-sheet">
+  <div class="sheet-handle"></div>
+
+  @if(!reportSubmitted) {
+  <!-- Form -->
+  <div class="report-header">
+    <h2>Reportar reseña</h2>
+    <button class="close-btn" (click)="closeReportModal()">
+      <ion-icon name="close-outline"></ion-icon>
+    </button>
+  </div>
+
+  <div class="report-body">
+    <p class="report-desc">¿Qué problema hay con esta reseña? Tu reporte es anónimo.</p>
+
+    <div class="reasons-list">
+      @for(reason of reportReasons; track reason.id) {
+      <button class="reason-item" [class.selected]="selectedReportReason === reason.id"
+        (click)="selectReportReason(reason.id)">
+        <div class="reason-icon" [class.selected]="selectedReportReason === reason.id">
+          <ion-icon [name]="reason.icon"></ion-icon>
+        </div>
+        <span class="reason-label">{{ reason.label }}</span>
+        @if (selectedReportReason === reason.id) {
+          <div class="reason-check">
+            <ion-icon name="checkmark-circle"></ion-icon>
+          </div>
+        }
+      </button>
+      }
+    </div>
+
+    @if(selectedReportReason === 'other') {
+    <div class="detail-field">
+      <label>Cuéntanos más <span class="required">*</span></label>
+      <textarea [(ngModel)]="reportDetail" class="report-textarea" rows="4"
+        placeholder="Describe el problema con esta reseña..." maxlength="300"></textarea>
+      <span class="char-count">{{ reportDetail.length }}/300</span>
+    </div>
+    }
+  </div>
+
+  <div class="report-footer">
+    <button class="btn-cancel" (click)="closeReportModal()">Cancelar</button>
+    <button class="btn-submit-report" [class.disabled]="!canSubmitReport()" [disabled]="!canSubmitReport()"
+      (click)="submitReport()">
+      Enviar reporte
+    </button>
+  </div>
+  } @else {
+  <!-- Success -->
+  <div class="report-success">
+    <div class="success-icon">
+      <ion-icon name="checkmark-circle-outline"></ion-icon>
+    </div>
+    <h3>¡Gracias!</h3>
+    <p>Tu reporte ha sido recibido. Nuestro equipo lo revisará en las próximas 24 horas.</p>
+  </div>
+  }
+</div>

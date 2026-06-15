@@ -1,0 +1,38 @@
+<!-- conversation-item.component.html -->
+<div class="conversation-card" [class.unread]="conversation.unread_count > 0">
+  <div class="avatar-container">
+    <img [src]="conversation.contact.avatar || 'assets/default-avatar.svg'" 
+         [alt]="conversation.contact.name"
+         class="avatar">
+    @if (contactOnline) {
+      <div class="online-indicator"></div>
+    }
+  </div>
+
+  <div class="conversation-meta">
+    <div class="meta-header">
+      <h3 class="contact-name">{{ conversation.contact.name }}</h3>
+      <span class="timestamp" [class.recent]="isRecent(conversation.last_message_at)">
+        {{ formatTime(conversation.last_message_at) }}
+      </span>
+    </div>
+
+    <div class="meta-preview">
+      <p class="last-message" [class.unread-text]="conversation.unread_count > 0">
+        @if (lastMessageIsMine) {
+          <ion-icon name="checkmark-done-outline" class="read-icon"></ion-icon>
+        }
+        @if (conversation.last_message?.preview) {
+          <span>
+            {{ conversation.last_message.preview }}
+          </span>
+        }
+      </p>
+      @if (conversation.unread_count > 0) {
+        <div class="badge-container">
+          <span class="unread-badge">{{ conversation.unread_count }}</span>
+        </div>
+      }
+    </div>
+  </div>
+</div>

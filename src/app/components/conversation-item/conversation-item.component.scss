@@ -1,0 +1,180 @@
+@use '../../../theme/mixins' as app;
+
+:host {
+    display: block;
+    margin-bottom: var(--space-sm);
+}
+
+.conversation-card {
+    display: flex;
+    align-items: center;
+    padding: var(--space-md);
+    background: var(--app-glass-bg);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--app-glass-border);
+    border-radius: var(--radius-xl);
+    margin: 0 var(--space-md) var(--space-sm);
+    transition: all var(--transition-normal);
+    position: relative;
+    overflow: hidden;
+
+    &::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 4px;
+        background: var(--app-gradient-primary);
+        border-radius: var(--radius-xl) 0 0 var(--radius-xl);
+        opacity: 0;
+        transition: opacity var(--transition-normal);
+    }
+
+    &:active {
+        transform: scale(0.98);
+        background: var(--app-surface-elevated);
+    }
+
+    @media (hover: hover) {
+        &:hover {
+            background: var(--app-surface);
+            border-color: var(--app-border);
+            transform: translateY(-2px);
+            box-shadow: var(--app-shadow-md);
+        }
+    }
+
+    &.unread {
+        background: rgba(var(--app-primary-rgb), 0.05);
+        border-color: rgba(var(--app-primary-rgb), 0.15);
+
+        @include app.dark-mode {
+            background: rgba(var(--app-primary-rgb), 0.08);
+            border-color: rgba(var(--app-primary-rgb), 0.2);
+        }
+
+        &::before {
+            opacity: 1;
+        }
+
+        .contact-name {
+            color: var(--app-text);
+            font-weight: 700;
+        }
+    }
+}
+
+.avatar-container {
+    position: relative;
+    flex-shrink: 0;
+    margin-right: var(--space-md);
+
+    .avatar {
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 3px solid var(--app-surface);
+        box-shadow: var(--app-shadow-md);
+    }
+
+    .online-indicator {
+        position: absolute;
+        bottom: 2px;
+        right: 2px;
+        width: 14px;
+        height: 14px;
+        background: var(--app-success);
+        border: 3px solid var(--app-surface);
+        border-radius: 50%;
+        animation: pulse 2s infinite;
+        box-shadow: 0 0 0 2px var(--app-bg);
+    }
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50%      { transform: scale(1.2); opacity: 0.7; }
+}
+
+.conversation-meta {
+    flex: 1;
+    min-width: 0;
+}
+
+.meta-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: var(--space-xs);
+
+    .contact-name {
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--app-text);
+        margin: 0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 60%;
+    }
+
+    .timestamp {
+        font-size: 0.75rem;
+        color: var(--app-text-muted);
+        font-weight: 400;
+        flex-shrink: 0;
+
+        &.recent {
+            color: var(--app-primary);
+            font-weight: 600;
+        }
+    }
+}
+
+.meta-preview {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    .last-message {
+        font-size: 0.875rem;
+        color: var(--app-text-secondary);
+        margin: 0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 75%;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+
+        .read-icon {
+            font-size: 14px;
+            color: var(--app-success);
+            flex-shrink: 0;
+        }
+
+        &.unread-text {
+            color: var(--app-text);
+            font-weight: 500;
+        }
+    }
+}
+
+.unread-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 22px;
+    height: 22px;
+    padding: 0 8px;
+    background: var(--app-gradient-primary);
+    color: white;
+    font-size: 0.75rem;
+    font-weight: 700;
+    border-radius: 11px;
+    box-shadow: 0 2px 8px rgba(var(--app-primary-rgb), 0.4);
+}
