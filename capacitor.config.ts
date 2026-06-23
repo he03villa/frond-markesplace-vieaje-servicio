@@ -1,9 +1,16 @@
 import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'io.ionic.starter',
-  appName: 'front-marketplace-de-servicios-y-viajes-compartidos',
-  webDir: 'www'
+  appId: 'com.tuempresa.marketplace',
+  appName: 'Marketplace de Servicios',
+  webDir: 'www',
+  server: {
+    androidScheme: 'http',
+    cleartext: true
+  },
+  android: {
+    allowMixedContent: true
+  }
 };
 
 export default config;
