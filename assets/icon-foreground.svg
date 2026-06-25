@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="diamondGrad" x1="0" y1="0" x2="1024" y2="1024" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#4f46e5"/>
+      <stop offset="100%" stop-color="#10b981"/>
+    </linearGradient>
+    <linearGradient id="diamondInner" x1="0" y1="0" x2="1024" y2="1024" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#6366f1"/>
+      <stop offset="100%" stop-color="#059669"/>
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="4" stdDeviation="12" flood-color="#000000" flood-opacity="0.25"/>
+    </filter>
+  </defs>
+
+  <!-- Diamante con gradiente y sombra -->
+  <g filter="url(#shadow)">
+    <path d="M512 156 L868 512 L512 868 L156 512 Z"
+          fill="none" stroke="url(#diamondGrad)" stroke-width="72" stroke-linejoin="round"/>
+    <path d="M512 192 L832 512 L512 832 L192 512 Z"
+          fill="url(#diamondInner)"/>
+  </g>
+
+  <!-- Marca "S" entrelazada con ruta -->
+  <g fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round">
+    <!-- S superior - curva derecha -->
+    <path d="M380 370
+             C560 340, 610 410, 560 460
+             C490 520, 380 490, 400 570
+             C420 650, 570 640, 610 590"
+          stroke-width="48"/>
+
+    <!-- Entrelazado - segunda vuelta que cruza en el centro -->
+    <path d="M460 410
+             C540 405, 590 455, 520 505
+             C470 540, 430 520, 440 550"
+          stroke-width="40"/>
+
+    <!-- Línea de ruta -->
+    <path d="M610 590 C660 585, 690 610, 720 610"
+          stroke-width="14"/>
+
+    <!-- Línea punteada decorativa -->
+    <path d="M620 580 C650 570, 680 580, 700 595"
+          stroke-width="6" stroke-dasharray="8,8"/>
+
+    <!-- Pin de destino -->
+    <circle cx="738" cy="610" r="16" fill="#ffffff" stroke="none"/>
+    <circle cx="738" cy="610" r="6" fill="#0f172a" stroke="none"/>
+  </g>
+</svg>

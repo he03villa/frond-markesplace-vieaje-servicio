@@ -35,10 +35,12 @@
       <div class="profile-content">
         <div class="avatar-wrapper">
           <div class="avatar-ring">
-            <img [src]="userProfile.avatar" [alt]="userProfile.name" class="avatar-img" (click)="openEditModal()" />
-            <div class="verified-badge" *ngIf="userProfile.verified">
-              <ion-icon name="shield-checkmark-outline"></ion-icon>
-            </div>
+            <img [src]="userProfile.avatar" [alt]="userProfile.name" class="avatar-img" (click)="openEditModal()" (error)="_service.errorImage($event)" />
+            @if(userProfile.verified) {
+              <div class="verified-badge">
+                <ion-icon name="shield-checkmark-outline"></ion-icon>
+              </div>
+            }
           </div>
           <button class="edit-avatar-btn" (click)="openEditModal()">
             <ion-icon name="camera-outline"></ion-icon>

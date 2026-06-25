@@ -1,4 +1,5 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, inject, Input } from '@angular/core';
+import { ServiceService } from 'src/app/services/service.service';
 
 @Component({
   selector: 'app-typing-indicator',
@@ -6,13 +7,12 @@ import { Component, Input, OnInit } from '@angular/core';
   styleUrls: ['./typing-indicator.component.scss'],
   standalone: true
 })
-export class TypingIndicatorComponent  implements OnInit {
+export class TypingIndicatorComponent {
 
   @Input() contactName: string = '';
   @Input() contactAvatar: string = '';
+  _service: ServiceService = inject(ServiceService);
 
   constructor() { }
-
-  ngOnInit() {}
 
 }

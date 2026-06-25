@@ -207,18 +207,19 @@
         } -->
 
         <!-- Price Tag -->
-        <div class="price-tag"
-          *ngIf="item?.meta?.budget_range || (item.detail && 'budget_range' in item.detail && item.detail.budget_range)">
+        @if(item?.meta?.budget_range || (item.detail && 'budget_range' in item.detail && item.detail.budget_range)) {
+        <div class="price-tag">
           {{ item?.meta?.budget_range || (item.detail && 'budget_range' in item.detail ? item.detail.budget_range : '')
           }}
         </div>
+        }
       </div>
 
       <!-- User Header -->
       <div class="card-user-header">
         <div class="user-info">
           <div class="avatar-ring" [style.border-color]="getRatingColor(item.user.rating)">
-            <img [src]="item.user.avatar || 'assets/avatar-default.jpg'" alt="avatar" />
+            <img [src]="item.user.avatar || 'assets/avatar-default.jpg'" alt="avatar" (error)="_service.errorImage($event)" />
           </div>
           <div class="user-meta">
             <span class="user-name">{{ item.user.name }}</span>
@@ -250,10 +251,12 @@
       <!-- Footer Stats -->
       <div class="card-footer">
         <div class="stats-group">
-          <div class="stat" *ngIf="item.offers_count > 0">
+          @if(item.offers_count > 0) {
+          <div class="stat">
             <ion-icon name="people-outline"></ion-icon>
             <span>{{ item.offers_count }} ofertas</span>
           </div>
+          }
           <div class="stat">
             <ion-icon name="eye-outline"></ion-icon>
             <span>{{ item.views_count }}</span>
@@ -335,7 +338,7 @@
       <div class="ride-driver">
         <div class="driver-info">
           <div class="avatar-ring small" [style.border-color]="getRatingColor(item.user.rating)">
-            <img [src]="item.user.avatar || 'assets/avatar-default.jpg'" alt="driver" />
+            <img [src]="item.user.avatar || 'assets/avatar-default.jpg'" alt="driver" (error)="_service.errorImage($event)" />
           </div>
           <div>
             <span class="driver-name">{{ item.user.name }}</span>
@@ -380,12 +383,14 @@
         <div class="list-body">
           <div class="list-header-row">
             <h3 class="list-title">{{ item.title }}</h3>
-            <span class="list-price" *ngIf="item?.meta?.budget_range">{{ item.meta.budget_range }}</span>
+            @if(item?.meta?.budget_range) {
+            <span class="list-price">{{ item.meta.budget_range }}</span>
+            }
           </div>
           <p class="list-desc">{{ item.description }}</p>
           <div class="list-meta">
             <div class="list-user">
-              <img [src]="item.user.avatar || 'assets/avatar-default.jpg'" class="list-avatar" />
+              <img [src]="item.user.avatar || 'assets/avatar-default.jpg'" class="list-avatar" (error)="_service.errorImage($event)" />
               <span>{{ item.user.name }}</span>
               <ion-icon name="star" class="rating-icon"></ion-icon>
               <span class="rating-value">{{ item.user.rating }}</span>
@@ -410,11 +415,12 @@
             <span class="mini-dest">{{ item?.meta?.destination || (item.detail && 'destination' in item.detail ?
               item.detail.destination : '?') }}</span>
           </div>
-          <div class="ride-list-time"
-            *ngIf="item.detail && 'departure_time' in item.detail && item.detail.departure_time">
+          @if(item.detail && 'departure_time' in item.detail && item.detail.departure_time) {
+          <div class="ride-list-time">
             <ion-icon name="time-outline"></ion-icon>
             {{ item.detail.departure_time | date:'shortTime' }}
           </div>
+          }
         </div>
         <div class="ride-list-body">
           <h3>{{ item.title }}</h3>
@@ -424,18 +430,22 @@
               <ion-icon name="people-outline"></ion-icon>
               {{ item.detail && 'seats_available' in item.detail ? item.detail.seats_available : 0 }} asientos
             </span>
-            <span class="vehicle-tag" *ngIf="item.detail && 'vehicle' in item.detail">{{ item.detail.vehicle }}</span>
+            @if(item.detail && 'vehicle' in item.detail) {
+            <span class="vehicle-tag">{{ item.detail.vehicle }}</span>
+            }
           </div>
           <div class="ride-list-footer">
             <div class="driver-mini">
-              <img [src]="item.user.avatar || 'assets/avatar-default.jpg'" />
+              <img [src]="item.user.avatar || 'assets/avatar-default.jpg'" (error)="_service.errorImage($event)" />
               <span>{{ item.user.name }}</span>
               <ion-icon name="star"></ion-icon>
               {{ item.user.rating }}
             </div>
-            <span class="list-price-ride" *ngIf="item.detail && 'price_per_seat' in item.detail">
+            @if(item.detail && 'price_per_seat' in item.detail) {
+            <span class="list-price-ride">
               {{ formatPrice(item.detail.price_per_seat) }}
             </span>
+            }
           </div>
         </div>
       </div>
@@ -490,7 +500,7 @@
 </ion-content>
 
 <!-- Filter Modal -->
-<ion-modal #modal [breakpoints]="[0, 0.5, 0.85]" [initialBreakpoint]="0.85" [backdropBreakpoint]="0.5">
+<ion-modal [isOpen]="showFilterModal" (didDismiss)="showFilterModal = false" [breakpoints]="[0, 0.5, 0.85]" [initialBreakpoint]="0.85" [backdropBreakpoint]="0.5">
   <ng-template>
     <div class="filter-modal-content">
       <!-- <div class="modal-handle-bar"></div> -->

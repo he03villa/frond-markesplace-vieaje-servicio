@@ -1,4 +1,4 @@
-import { Component, ElementRef, EventEmitter, inject, OnInit, Output, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, inject, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
 import { addIcons } from 'ionicons';
 import { add, addCircle, cameraOutline, checkmarkCircle, checkmarkCircleOutline, closeCircle, documentOutline, documentTextOutline, happyOutline, imageOutline, mic, micOutline, musicalNotesOutline, send, stop, trashOutline } from 'ionicons/icons';
 import { IonIcon, IonButton } from "@ionic/angular/standalone";
@@ -18,7 +18,7 @@ import { VoiceRecorder, RecordingData } from 'capacitor-voice-recorder';
   standalone: true,
   imports: [IonIcon, FormsModule]
 })
-export class MessageInputComponent implements OnInit {
+export class MessageInputComponent implements OnInit, OnDestroy {
 
   @ViewChild('messageInput', { static: false }) messageInput!: ElementRef<HTMLTextAreaElement>;
   @ViewChild('fileInputRef', { static: false }) fileInputRef!: ElementRef<HTMLInputElement>;

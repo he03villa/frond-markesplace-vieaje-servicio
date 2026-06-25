@@ -10,7 +10,7 @@
 
       <div class="header-contact" slot="start">
         <div class="contact-avatar">
-          <img [src]="contact?.avatar || 'assets/default-avatar.svg'">
+          <img [src]="contact?.avatar || 'assets/default-avatar.svg'" (error)="_service.errorImage($event)">
           @if (contact?.online) {
             <div class="online-dot"></div>
           }

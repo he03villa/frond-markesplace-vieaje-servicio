@@ -1,9 +1,10 @@
-import { Component, inject, OnInit, ViewChild } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import {
   IonContent, IonHeader, IonTitle, IonToolbar, IonIcon, IonButton,
-  IonButtons, IonRefresher, IonRefresherContent, IonModal, IonSkeletonText, IonFab, IonFabButton
+  IonButtons, IonRefresher, IonRefresherContent, IonSkeletonText, IonFab, IonFabButton,
+  IonModal
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { addOutline, alertCircleOutline, arrowBackOutline, arrowDown, arrowUpOutline, briefcaseOutline, calendarOutline, cashOutline, checkmarkCircleOutline, chevronForwardOutline, closeOutline, createOutline, documentTextOutline, eyeOutline, filterOutline, imageOutline, locationOutline, optionsOutline, pauseCircleOutline, peopleOutline, playOutline, searchOutline, star, starOutline, timeOutline, trashOutline, trendingUpOutline } from 'ionicons/icons';
@@ -21,15 +22,14 @@ import { ServiceItem, ServiceStats } from 'src/app/interface/my-services';
     CommonModule, FormsModule,
     IonContent, IonHeader, IonTitle, IonToolbar, IonIcon, IonButton,
     IonButtons, IonRefresher, IonRefresherContent,
-    IonModal, IonSkeletonText, IonFab, IonFabButton
+    IonSkeletonText, IonFab, IonFabButton,
+    IonModal
   ]
 })
 export class MyServicesPage implements OnInit {
   private _services: ServiceService = inject(ServiceService);
   private actionSheetCtrl = inject(ActionSheetController);
   private _ServiceRequest = inject(ServiceRequestsService);
-
-  @ViewChild('filterModal') filterModal!: IonModal;
 
   // Header
   headerSolid = false;

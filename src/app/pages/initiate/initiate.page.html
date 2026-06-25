@@ -37,7 +37,7 @@
       <div class="profile-content">
         <div class="avatar-wrapper">
           <div class="avatar-ring">
-            <img [src]="currentUser?.avatar_url" [alt]="currentUser?.name" class="avatar-img">
+            <img [src]="currentUser?.avatar_url" [alt]="currentUser?.name" class="avatar-img" (error)="_service.errorImage($event)">
           </div>
           <div class="status-dot active"></div>
           <button class="mood-btn" aria-label="Cambiar estado">
@@ -45,8 +45,8 @@
           </button>
         </div>
         
-        <div class="profile-text">
-          <h2 class="greeting">¡Hey, {{ currentUser?.name }}! <span class="wave">👋</span></h2>
+          <div class="profile-text">
+          <h2 class="greeting">¡Hey, {{ currentUser?.name }}! <span class="wave" aria-hidden="true">👋</span></h2>
           <p class="context">¿Qué necesitas hoy?</p>
           <div class="reputation-badge">
             <div class="stars">
@@ -57,7 +57,7 @@
           </div>
         </div>
         
-        <button class="settings-gear">
+        <button class="settings-gear" aria-label="Configuración">
           <ion-icon name="settings-outline"></ion-icon>
         </button>
       </div>
@@ -66,22 +66,22 @@
       <div class="search-container">
         <div class="search-bar glass">
           <ion-icon name="search" class="search-icon"></ion-icon>
-          <input type="text" placeholder="Buscar servicios, viajes, personas..." class="search-input">
+          <input type="text" placeholder="Buscar servicios, viajes, personas..." class="search-input" aria-label="Buscar servicios, viajes, personas">
           <div class="search-actions">
-            <button class="voice-search">
+            <button class="voice-search" aria-label="Búsqueda por voz">
               <ion-icon name="mic"></ion-icon>
             </button>
-            <button class="filter-toggle">
+            <button class="filter-toggle" aria-label="Filtros de búsqueda">
               <ion-icon name="options"></ion-icon>
             </button>
           </div>
         </div>
         <!-- Chips de búsqueda rápida -->
-        <div class="quick-chips">
-          <button class="chip glass">🚗 Viajes</button>
-          <button class="chip glass">💻 Tecnología</button>
-          <button class="chip glass">🏠 Hogar</button>
-          <button class="chip glass">📚 Clases</button>
+        <div class="quick-chips" role="group" aria-label="Búsqueda rápida">
+          <button class="chip glass" aria-label="Viajes">🚗 Viajes</button>
+          <button class="chip glass" aria-label="Tecnología">💻 Tecnología</button>
+          <button class="chip glass" aria-label="Hogar">🏠 Hogar</button>
+          <button class="chip glass" aria-label="Clases">📚 Clases</button>
         </div>
       </div>
     </div>
@@ -198,9 +198,11 @@
         <div class="tab-orbit">
           <ion-icon name="person"></ion-icon>
           <!-- Badge de asignaciones activas -->
-          <span class="orbit-badge" *ngIf="activeAssignmentsCount > 0">
+          @if(activeAssignmentsCount > 0) {
+          <span class="orbit-badge">
             {{activeAssignmentsCount}}
           </span>
+          }
         </div>
         <span class="tab-label">Mis Servicios</span>
       </button>
@@ -311,7 +313,7 @@
               <div class="ticket-body">
                 <div class="driver-profile">
                   <div class="driver-avatar">
-                    <img [src]="ride.driver.avatar" [alt]="ride.driver.name">
+                    <img [src]="ride.driver.avatar" [alt]="ride.driver.name" (error)="_service.errorImage($event)">
                     <div class="driver-rating">{{ ride.driver.rating }}</div>
                   </div>
                   <div class="driver-info">
@@ -360,7 +362,9 @@
                 (click)="(myServicesSubTab = 'publications');cargarPublications()">
           <ion-icon name="document-text"></ion-icon>
           <span>Publicaciones</span>
-          <div class="sub-indicator" *ngIf="myServicesSubTab === 'publications'"></div>
+          @if(myServicesSubTab === 'publications') {
+          <div class="sub-indicator"></div>
+          }
         </button>
         
         <button class="sub-orbit-btn" 
@@ -368,13 +372,18 @@
                 (click)="(myServicesSubTab = 'assignments');cargarAssignments()">
           <ion-icon name="checkmark-circle"></ion-icon>
           <span>Asignados</span>
-          <span class="sub-badge" *ngIf="activeAssignmentsCount > 0">{{activeAssignmentsCount}}</span>
-          <div class="sub-indicator" *ngIf="myServicesSubTab === 'assignments'"></div>
+          @if(activeAssignmentsCount > 0) {
+          <span class="sub-badge">{{activeAssignmentsCount}}</span>
+          }
+          @if(myServicesSubTab === 'assignments') {
+          <div class="sub-indicator"></div>
+          }
         </button>
       </div>
 
       <!-- SUB-CONTENIDO: Publicaciones -->
-      <div class="sub-panel" *ngIf="myServicesSubTab === 'publications'">
+      @if(myServicesSubTab === 'publications') {
+      <div class="sub-panel">
         <!-- Tus publicaciones existentes -->
         <div class="my-publications">
           <div class="pub-filters">
@@ -432,7 +441,8 @@
           </div>
           
           <!-- Empty state si no hay publicaciones -->
-          <div class="empty-state-artistic" *ngIf="publications.length === 0">
+          @if(publications.length === 0) {
+          <div class="empty-state-artistic">
             <div class="empty-canvas">
               <div class="orbit-ring ring-1"></div>
               <div class="orbit-ring ring-2"></div>
@@ -445,14 +455,18 @@
               <ion-icon name="add"></ion-icon>
             </button>
           </div>
+          }
         </div>
       </div>
+      }
 
       <!-- SUB-CONTENIDO: Asignados (SERVICIOS DONDE ESTOY ASIGNADO) -->
-      <div class="sub-panel" *ngIf="myServicesSubTab === 'assignments'">
+      @if(myServicesSubTab === 'assignments') {
+      <div class="sub-panel">
         
         <!-- Resumen visual -->
-        <div class="assignments-summary" *ngIf="assignments.length > 0">
+        @if(assignments.length > 0) {
+        <div class="assignments-summary">
           <div class="summary-card glass">
             <div class="summary-stat">
               <div class="stat-icon service-icon">
@@ -475,6 +489,7 @@
             </div>
           </div>
         </div>
+        }
 
         <!-- Filtros de tipo -->
         <div class="filter-bar">
@@ -482,15 +497,15 @@
             <ion-icon name="apps"></ion-icon>
             <span class="filter-label">Todos</span>
           </button>
-          <button class="filter-chip" [class.active]="assignmentFilter == 'services'" (click)="(assignmentFilter = 'services');cargarAssignmentsService()">
+          <button class="filter-chip" [class.active]="assignmentFilter === 'services'" (click)="(assignmentFilter = 'services');cargarAssignmentsService()">
             <ion-icon name="briefcase"></ion-icon>
             <span class="filter-label">Servicios</span>
           </button>
-          <button class="filter-chip" [class.active]="assignmentFilter == 'driver'" (click)="(assignmentFilter = 'driver');cargarAssignmentsDriver()">
+          <button class="filter-chip" [class.active]="assignmentFilter === 'driver'" (click)="(assignmentFilter = 'driver');cargarAssignmentsDriver()">
             <ion-icon name="car"></ion-icon>
             <span class="filter-label">Conductor</span>
           </button>
-          <button class="filter-chip" [class.active]="assignmentFilter == 'passenger'" (click)="(assignmentFilter = 'passenger');cargarAssignmentsPassenger()">
+          <button class="filter-chip" [class.active]="assignmentFilter === 'passenger'" (click)="(assignmentFilter = 'passenger');cargarAssignmentsPassenger()">
             <ion-icon name="person"></ion-icon>
             <span class="filter-label">Pasajero</span>
           </button>
@@ -499,9 +514,9 @@
         <!-- Lista de asignaciones -->
         <div class="assignments-list">
           
+          @for (assignment of filteredAssignments; track $index) {
           <!-- Card de asignación tipo Servicio -->
           <div class="assignment-card service-card" 
-              *ngFor="let assignment of filteredAssignments"
               [class.pending]="assignment.status === 'pending'"
               [class.active]="assignment.status === 'active'"
               (click)="openAssignmentDetail(assignment)">
@@ -523,55 +538,72 @@
               <p class="assign-desc">{{assignment.description}}</p>
               
               <div class="assign-details">
-                <div class="detail-row" *ngIf="assignment.type === 'service'">
+                @if(assignment.type === 'service') {
+                <div class="detail-row">
                   <ion-icon name="location"></ion-icon>
                   <span>{{assignment.address}}</span>
                 </div>
-                <div class="detail-row" *ngIf="assignment.type === 'service'">
+                }
+                @if(assignment.type === 'service') {
+                <div class="detail-row">
                   <ion-icon name="time"></ion-icon>
                   <span>Vence: {{assignment.deadline | date:'short'}}</span>
                 </div>
+                }
                 
-                <div class="detail-row" *ngIf="assignment.type === 'trip'">
+                @if(assignment.type === 'trip') {
+                <div class="detail-row">
                   <ion-icon name="navigate"></ion-icon>
                   <span>{{assignment.origin}} → {{assignment.destination}}</span>
                 </div>
-                <div class="detail-row" *ngIf="assignment.type === 'trip' && assignment.role === 'driver'">
+                }
+                @if(assignment.type === 'trip' && assignment.role === 'driver') {
+                <div class="detail-row">
                   <ion-icon name="people"></ion-icon>
                   <span>{{assignment.passengersCount}} pasajeros</span>
                 </div>
-                <div class="detail-row" *ngIf="assignment.type === 'trip' && assignment.role === 'passenger'">
+                }
+                @if(assignment.type === 'trip' && assignment.role === 'passenger') {
+                <div class="detail-row">
                   <ion-icon name="person-circle"></ion-icon>
                   <span>Conductor: {{assignment.driverName}}</span>
                 </div>
+                }
               </div>
               
               <div class="assign-footer">
-                <div class="assign-price" *ngIf="assignment.price">
+                @if(assignment.price) {
+                <div class="assign-price">
                   <span class="currency">$</span>
                   <span class="amount">{{assignment.price | number:'1.0-0'}}</span>
                 </div>
+                }
                 
                 <div class="assign-actions">
-                  <button class="action-btn chat" *ngIf="assignment.status === 'active'">
+                  @if(assignment.status === 'active') {
+                  <button class="action-btn chat">
                     <ion-icon name="chatbubble"></ion-icon>
                     <span>Chat</span>
                   </button>
-                  <button class="action-btn accept" *ngIf="assignment.status === 'pending'">
+                  }
+                  @if(assignment.status === 'pending') {
+                  <button class="action-btn accept">
                     <ion-icon name="checkmark"></ion-icon>
                     <span>Aceptar</span>
                   </button>
-                  <button class="action-btn review" *ngIf="assignment.status === 'completed'">
+                  }
+                  @if(assignment.status === 'completed') {
+                  <button class="action-btn review">
                     <ion-icon name="star"></ion-icon>
                     <span>Calificar</span>
                   </button>
+                  }
                 </div>
               </div>
             </div>
           </div>
-
-          <!-- Empty state -->
-          <div class="assignments-empty" *ngIf="filteredAssignments.length === 0">
+          } @empty {
+          <div class="assignments-empty">
             <div class="empty-illustration">
               <ion-icon name="clipboard-outline"></ion-icon>
               <div class="empty-ripple"></div>
@@ -582,9 +614,11 @@
               Explorar servicios
             </button>
           </div>
+          }
           
         </div>
       </div>
+      }
 
     </div>
   </div>
@@ -592,7 +626,7 @@
 
 <!-- FAB Principal: Morphing Button -->
 <div class="fab-container">
-  <button class="morph-fab" id="main-fab">
+  <button class="morph-fab" id="main-fab" aria-label="Crear nuevo">
     <div class="fab-bg"></div>
     <div class="fab-icons">
       <ion-icon name="add" class="icon-default"></ion-icon>

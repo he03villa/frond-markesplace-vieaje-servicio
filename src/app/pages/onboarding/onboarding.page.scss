@@ -66,12 +66,41 @@ ion-content {
   }
 }
 
+.skip-link {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  z-index: 20;
+  background: transparent;
+  border: none;
+  color: var(--app-text-inverse);
+  font-size: 14px;
+  opacity: 0.8;
+  cursor: pointer;
+  padding: 8px 12px;
+}
+
+.skip-link:hover {
+  opacity: 1;
+}
+
 .button-container {
   padding: 20px;
   position: absolute;
   bottom: 0;
   width: 100%;
   z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.slide-counter {
+  color: var(--app-text-inverse);
+  font-size: 13px;
+  opacity: 0.7;
+  font-weight: 500;
 }
 
 .start-button {

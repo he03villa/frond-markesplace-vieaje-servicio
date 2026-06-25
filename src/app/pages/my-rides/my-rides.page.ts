@@ -1,6 +1,5 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
 import { IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonButton, IonIcon, IonRefresher, IonRefresherContent, IonSkeletonText, IonFab, IonFabButton } from '@ionic/angular/standalone';
 import { ServiceService } from 'src/app/services/service.service';
 import { ActionSheetController } from '@ionic/angular';
@@ -14,7 +13,7 @@ import { RidesService } from 'src/app/services/rides.service';
   templateUrl: './my-rides.page.html',
   styleUrls: ['./my-rides.page.scss'],
   standalone: true,
-  imports: [IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule, IonButtons, IonButton, IonIcon, IonRefresher, IonRefresherContent, IonSkeletonText, IonFab, IonFabButton]
+  imports: [IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, IonButtons, IonButton, IonIcon, IonRefresher, IonRefresherContent, IonSkeletonText, IonFab, IonFabButton]
 })
 export class MyRidesPage implements OnInit {
   private actionSheetCtrl = inject(ActionSheetController);
@@ -62,7 +61,7 @@ export class MyRidesPage implements OnInit {
   }
 
   back() {
-    history.back();
+    this._services.url('/home');
   }
 
   async loadRides(reset = false) {

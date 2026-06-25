@@ -1,6 +1,5 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
 import { IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonButton, IonIcon, IonRefresher, IonRefresherContent, IonToggle } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { arrowBackOutline, arrowDown, arrowUpOutline, calendarOutline, cameraOutline, chevronForwardOutline, colorPaletteOutline, documentTextOutline, eyeOffOutline, eyeOutline, fingerPrintOutline, globeOutline, helpCircleOutline, informationCircleOutline, lockClosedOutline, logOutOutline, mailOutline, moonOutline, notificationsOutline, personOutline, phonePortraitOutline, shieldCheckmarkOutline, shieldOutline, trashOutline, volumeHighOutline } from 'ionicons/icons';
@@ -36,11 +35,11 @@ interface SettingItem {
   templateUrl: './settings.page.html',
   styleUrls: ['./settings.page.scss'],
   standalone: true,
-  imports: [IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule, IonButtons, IonButton, IonIcon, IonRefresher, IonRefresherContent, IonToggle]
+  imports: [IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, IonButtons, IonButton, IonIcon, IonRefresher, IonRefresherContent, IonToggle]
 })
 export class SettingsPage implements OnInit {
 
-  private _service = inject(ServiceService);
+  _service = inject(ServiceService);
   private authService = inject(AuthService);
   private themeService = inject(ThemeService);
   private appVersionService = inject(AppVersionService);
@@ -159,7 +158,7 @@ export class SettingsPage implements OnInit {
   }
 
   back() {
-    history.back();
+    this._service.url('/home');
   }
 
   async simulateLoad() {

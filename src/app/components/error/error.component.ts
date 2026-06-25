@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input } from '@angular/core';
 
 @Component({
   selector: 'app-error',
@@ -8,15 +8,13 @@ import { Component, Input, OnInit } from '@angular/core';
   standalone: true,
   imports: [CommonModule]
 })
-export class ErrorComponent  implements OnInit {
+export class ErrorComponent {
 
   @Input() message: string = '';
   @Input() clase: string = '';
   @Input() validation: string = '';
-  @Input() control: any;
+  @Input() control: any = { hasError: () => false, dirty: false, touched: false };
 
   constructor() { }
-
-  ngOnInit() {}
 
 }

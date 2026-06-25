@@ -1,4 +1,4 @@
-import { Component, inject, Input, OnInit } from '@angular/core';
+import { Component, inject, Input } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ModalController, IonContent, IonIcon } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
@@ -12,7 +12,7 @@ import { DeliveriesServices } from 'src/app/services/deliveries.service';
   standalone: true,
   imports: [IonContent, IonIcon, FormsModule]
 })
-export class ApproveDeliveryModalComponent  implements OnInit {
+export class ApproveDeliveryModalComponent {
 
   @Input() deliveryId!: number;
   @Input() workerName!: string;
@@ -45,8 +45,6 @@ export class ApproveDeliveryModalComponent  implements OnInit {
   constructor() { 
     addIcons({ close, checkmark, checkmarkCircle, star, starOutline, time, documentText, lockClosed });
   }
-
-  ngOnInit() {}
 
   getRatingLabel(): string {
     return this.ratingLabels[this.rating] || 'Selecciona una calificacion';

@@ -19,7 +19,8 @@
   </ion-segment>
 
   <!-- Formulario Servicio -->
-  <form *ngIf="tipoPublicacion === 'servicio'" [formGroup]="servicioForm">
+  @if(tipoPublicacion === 'servicio') {
+  <form [formGroup]="servicioForm">
     <ion-list>
       <ion-item>
         <ion-label position="stacked">Título del Servicio *</ion-label>
@@ -69,9 +70,11 @@
       Publicar Servicio
     </ion-button>
   </form>
+  }
 
   <!-- Formulario Viaje -->
-  <form *ngIf="tipoPublicacion === 'viaje'" [formGroup]="viajeForm">
+  @if(tipoPublicacion === 'viaje') {
+  <form [formGroup]="viajeForm">
     <ion-list>
       <ion-item>
         <ion-label position="stacked">Origen *</ion-label>
@@ -115,28 +118,14 @@
       Publicar Viaje
     </ion-button>
   </form>
-</ion-content>
-<ion-item>
-  <ion-label position="stacked">Título del Servicio *</ion-label>
-  <ion-input formControlName="titulo" placeholder="Ej: Necesito estucar una pared"></ion-input>
-</ion-item>
-<div class="error-message" *ngIf="servicioTitulo?.touched && servicioTitulo?.errors">
-  {{ getErrorMessages(servicioTitulo) }}
-</div>
+  }
 
-<!-- Ejemplo para presupuesto -->
-<ion-item>
-  <ion-label position="stacked">Presupuesto Estimado</ion-label>
-  <ion-input type="number" formControlName="presupuesto" 
-    placeholder="Presupuesto aproximado"></ion-input>
-</ion-item>
-<div class="error-message" *ngIf="servicioPresupuesto?.touched && servicioPresupuesto?.errors">
-  {{ getErrorMessages(servicioPresupuesto) }}
-</div>
-
-<div class="loading-overlay" *ngIf="isSubmitting">
-  <div class="loading-content">
-    <ion-spinner name="crescent"></ion-spinner>
-    <p>Publicando...</p>
+  @if(isSubmitting) {
+  <div class="loading-overlay">
+    <div class="loading-content">
+      <ion-spinner name="crescent"></ion-spinner>
+      <p>Publicando...</p>
+    </div>
   </div>
-</div>
+  }
+</ion-content>

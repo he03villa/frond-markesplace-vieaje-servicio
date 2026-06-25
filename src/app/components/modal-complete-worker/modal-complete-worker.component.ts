@@ -1,4 +1,4 @@
-import { Component, inject, Input, OnInit } from '@angular/core';
+import { Component, inject, Input } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { IonIcon } from "@ionic/angular/standalone";
 import { ServiceService } from 'src/app/services/service.service';
@@ -14,7 +14,7 @@ import { add, camera, close, documentAttach, documents } from 'ionicons/icons';
   standalone: true,
   imports: [IonIcon, FormsModule],
 })
-export class ModalCompleteWorkerComponent implements OnInit {
+export class ModalCompleteWorkerComponent {
 
   @Input() service: any;
   @Input() acceptedOffer: any;
@@ -36,8 +36,6 @@ export class ModalCompleteWorkerComponent implements OnInit {
   constructor() { 
     addIcons({ close, camera, add, documentAttach, documents });
   }
-
-  ngOnInit() { }
 
   get canSubmitCompletion(): boolean {
     return !!this.completionNotes.trim() && this.evidenceImages.length > 0;

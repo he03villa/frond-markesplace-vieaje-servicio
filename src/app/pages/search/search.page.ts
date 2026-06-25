@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, ViewChild } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import {
@@ -41,9 +41,9 @@ import * as L from 'leaflet';
     IonInfiniteScrollContent, IonSkeletonText,
   ]
 })
-export class SearchPage implements OnInit {
-  @ViewChild('modal') modal!: IonModal;
+export class SearchPage {
 
+  showFilterModal = false;
   _service: ServiceService = inject(ServiceService);
   private _publications: PublicationsService = inject(PublicationsService);
   private _locationService: LocationService = inject(LocationService);
@@ -102,10 +102,6 @@ export class SearchPage implements OnInit {
     });
   }
 
-  ngOnInit() {
-
-  }
-
   ionViewWillEnter() {
     const searchType = sessionStorage.getItem('searchType');
     console.log(searchType);
@@ -130,7 +126,7 @@ export class SearchPage implements OnInit {
   }
 
   back(): void {
-    history.back();
+    this._service.url('/home');
   }
 
   // ==================== CARGA DE DATOS ====================
@@ -254,17 +250,17 @@ export class SearchPage implements OnInit {
   openFilterModal() {
     this.tempFilters = { ...this.filters };
     this.tempFilters.sort = 'distance';
-    this.modal.present();
+    this.showFilterModal = true;
   }
 
   closeFilterModal() {
-    this.modal.dismiss();
+    this.showFilterModal = false;
   }
 
   async applyFilters() {
     this.filters = { ...this.tempFilters, page: 1 };
     this.loadPublications(true);
-    this.modal.dismiss();
+    this.showFilterModal = false;
   }
 
   clearAllFilters() {

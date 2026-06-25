@@ -1,4 +1,4 @@
-import { Component, inject, Input, OnInit } from '@angular/core';
+import { Component, inject, Input } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ModalController, IonContent, IonIcon } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
@@ -12,7 +12,7 @@ import { DeliveriesServices } from 'src/app/services/deliveries.service';
   standalone: true,
   imports: [IonContent, FormsModule, IonIcon]
 })
-export class RevisionModalComponent  implements OnInit {
+export class RevisionModalComponent {
 
   @Input() deliveryId!: number;
   @Input() workerName!: string;
@@ -35,8 +35,6 @@ export class RevisionModalComponent  implements OnInit {
   constructor() { 
     addIcons({ close, closeCircle, refreshCircle, flash, informationCircle, create });
   }
-
-  ngOnInit() {}
 
   selectReason(reason: string): void {
     this.feedback = reason;

@@ -54,11 +54,7 @@ export class LoginPage implements OnInit {
         const response = await this._authService.login(data);
         console.log(response);
         if (response.success) {
-          const token = response.data.access_token;
-          const dataUser = response.data.user;
-          localStorage.setItem('token', token);
-          localStorage.setItem('dataUser', JSON.stringify(dataUser));
-          this._authService.emitUser(dataUser);
+          this._authService.saveSession(response.data);
           this.isLoading = false;
           this._service.url('/home');
         }

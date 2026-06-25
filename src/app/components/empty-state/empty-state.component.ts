@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
 import { addIcons } from 'ionicons';
 import { IonIcon, IonButton } from "@ionic/angular/standalone";
 import { chatbubblesOutline, mailOutline, notificationsOutline, searchOutline } from 'ionicons/icons';
@@ -10,7 +10,7 @@ import { chatbubblesOutline, mailOutline, notificationsOutline, searchOutline } 
   standalone: true,
   imports: [IonIcon, IonButton]
 })
-export class EmptyStateComponent  implements OnInit {
+export class EmptyStateComponent implements OnChanges {
 
   @Input() icon: string = 'chatbubbles-outline';
   @Input() title: string = '';
@@ -28,8 +28,6 @@ export class EmptyStateComponent  implements OnInit {
 
   constructor() {
   }
-
-  ngOnInit() {}
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes['icon']?.currentValue) {

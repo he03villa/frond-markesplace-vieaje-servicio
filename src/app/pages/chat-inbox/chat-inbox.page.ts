@@ -1,6 +1,4 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
 import { IonContent, IonButton, IonIcon, IonList } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { checkmarkDoneOutline, createOutline, searchOutline } from 'ionicons/icons';
@@ -14,7 +12,7 @@ import { ServiceService } from 'src/app/services/service.service';
   templateUrl: './chat-inbox.page.html',
   styleUrls: ['./chat-inbox.page.scss'],
   standalone: true,
-  imports: [IonContent, CommonModule, FormsModule, IonButton, IonIcon, IonList, ConversationItemComponent, EmptyStateComponent]
+  imports: [IonContent, IonButton, IonIcon, IonList, ConversationItemComponent, EmptyStateComponent]
 })
 export class ChatInboxPage implements OnInit {
 

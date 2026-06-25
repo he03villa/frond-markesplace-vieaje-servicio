@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-attachment-preview',
@@ -6,10 +6,8 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./attachment-preview.component.scss'],
   standalone: true
 })
-export class AttachmentPreviewComponent  implements OnInit {
+export class AttachmentPreviewComponent {
 
   constructor() { }
-
-  ngOnInit() {}
 
 }

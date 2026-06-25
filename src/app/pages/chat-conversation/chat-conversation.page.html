@@ -1,5 +1,5 @@
 <!-- chat-conversation.page.html -->
-<ion-content [fullscreen]="true" class="chat-conversation" #content>
+<ion-content [fullscreen]="true" class="chat-conversation" #content (ionScroll)="onScroll($event)">
 
   <!-- Background decorativo -->
   <div class="chat-background">
@@ -32,6 +32,13 @@
       <app-typing-indicator [contactName]="contactName" [contactAvatar]="conversation?.contact?.avatar"></app-typing-indicator>
     }
   </div>
+
+  <!-- Scroll to bottom button -->
+  @if (showScrollButton) {
+    <button class="scroll-bottom-btn" (click)="scrollToBottom()" aria-label="Ir al último mensaje">
+      <ion-icon name="arrow-down"></ion-icon>
+    </button>
+  }
 
 </ion-content>
 

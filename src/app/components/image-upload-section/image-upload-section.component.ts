@@ -1,17 +1,17 @@
 import { DecimalPipe } from '@angular/common';
-import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, Output, ViewChild } from '@angular/core';
 import { IonIcon, IonButton } from "@ionic/angular/standalone";
 import { addIcons } from 'ionicons';
 import { cameraOutline, checkmarkCircleOutline, imagesOutline, trashOutline } from 'ionicons/icons';
 
 @Component({
-  selector: 'image-upload-section',
+  selector: 'app-image-upload-section',
   templateUrl: './image-upload-section.component.html',
   styleUrls: ['./image-upload-section.component.scss'],
   standalone: true,
   imports: [IonIcon, IonButton, DecimalPipe],
 })
-export class ImageUploadSectionComponent  implements OnInit {
+export class ImageUploadSectionComponent {
 
   @Input() previewImages: any[] = [];
   @Output() imagesSelected = new EventEmitter<File[]>();
@@ -22,8 +22,6 @@ export class ImageUploadSectionComponent  implements OnInit {
   constructor() { 
     addIcons({ imagesOutline, cameraOutline, checkmarkCircleOutline, trashOutline });
   }
-
-  ngOnInit() {}
 
   onFileSelected(event: any): void {
     const files: File[] = Array.from(event.target.files);

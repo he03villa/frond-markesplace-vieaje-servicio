@@ -1,7 +1,8 @@
 <div class="location-picker-container">
 
   <!-- MODO PICKER -->
-  <div *ngIf="mode === 'picker'" class="header-container">
+  @if(mode === 'picker') {
+  <div class="header-container">
     <ion-searchbar 
       [value]="searchQuery" 
       (ionInput)="onSearchInput($event)" 
@@ -11,19 +12,24 @@
       animated="true">
     </ion-searchbar>
 
-    <div class="search-results" *ngIf="searchResults.length > 0">
+    @if(searchResults.length > 0) {
+    <div class="search-results">
       <ion-item *ngFor="let result of searchResults" button (click)="selectSearchResult(result)">
         <ion-icon name="location-outline" slot="start"></ion-icon>
         <ion-label>{{ result.display_name }}</ion-label>
       </ion-item>
     </div>
+    }
 
-    <div *ngIf="isSearching" class="search-loading">
+    @if(isSearching) {
+    <div class="search-loading">
       <ion-spinner name="crescent"></ion-spinner>
       <p>Buscando ubicación...</p>
     </div>
+    }
 
-    <div class="manual-address-container" *ngIf="manualAddress">
+    @if(manualAddress) {
+    <div class="manual-address-container">
       <ion-item>
         <ion-label position="stacked">Dirección detectada (editable)</ion-label>
         <ion-input 
@@ -34,10 +40,13 @@
         </ion-input>
       </ion-item>
     </div>
+    }
   </div>
+  }
 
   <!-- MODO VIEWER -->
-  <div *ngIf="mode === 'viewer'" class="header-container viewer-header">
+  @if(mode === 'viewer') {
+  <div class="header-container viewer-header">
     <div class="location-info">
       <div class="location-icon">
         <ion-icon name="location-outline"></ion-icon>
@@ -48,7 +57,8 @@
       </div>
     </div>
 
-    <div class="route-info-panel" *ngIf="routeInfo">
+    @if(routeInfo) {
+    <div class="route-info-panel">
       <div class="route-stat">
         <span class="stat-label">Distancia</span>
         <span class="stat-value">
@@ -65,10 +75,13 @@
         </span>
       </div>
     </div>
+    }
   </div>
+  }
 
   <!-- ═══ MODO ROUTE (NUEVO) ═══ -->
-  <div *ngIf="mode === 'route'" class="header-container route-header">
+  @if(mode === 'route') {
+  <div class="header-container route-header">
     <div class="route-pill">
       <div class="route-stop">
         <span class="dot origin"></span>
@@ -83,20 +96,24 @@
       </div>
     </div>
   </div>
+  }
 
   <!-- Mapa -->
   <div [id]="mapId" style="height: 400px; width: 100%;"></div>
 
   <!-- Controles flotantes -->
-  <div class="floating-controls right" *ngIf="mode !== 'route'">
+  @if(mode !== 'route') {
+  <div class="floating-controls right">
     <ion-button (click)="getCurrentLocation()" color="primary" size="small">
       <ion-icon slot="icon-only" name="locate-outline"></ion-icon>
     </ion-button>
   </div>
+  }
 
-  <div class="left-controls" *ngIf="mode === 'viewer'">
+  @if(mode === 'viewer') {
+  <div class="left-controls">
+    @if(!routeInfo) {
     <ion-button 
-      *ngIf="!routeInfo"
       (click)="calculateRoute()" 
       [disabled]="isCalculatingRoute"
       color="success" 
@@ -104,15 +121,18 @@
       <ion-icon slot="start" name="navigate-outline"></ion-icon>
       {{ isCalculatingRoute ? 'Calculando...' : 'Cómo llegar' }}
     </ion-button>
+    }
     
+    @if(routeInfo) {
     <ion-button 
-      *ngIf="routeInfo"
       (click)="clearRoute()" 
       fill="outline" 
       color="medium" 
       size="small">
       <ion-icon slot="icon-only" name="close-outline"></ion-icon>
     </ion-button>
+    }
   </div>
+  }
 
 </div>

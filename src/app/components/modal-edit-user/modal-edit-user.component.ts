@@ -1,6 +1,7 @@
 import { Component, inject, Input, OnInit } from '@angular/core';
 import { AuthService } from 'src/app/services/auth.service';
 import { ModalController, IonIcon } from '@ionic/angular/standalone';
+import { ServiceService } from 'src/app/services/service.service';
 import { addIcons } from 'ionicons';
 import { briefcaseOutline, callOutline, camera, checkmarkCircle, checkmarkOutline, closeOutline, documentTextOutline, locationOutline, personOutline } from 'ionicons/icons';
 import { FormsModule } from '@angular/forms';
@@ -16,6 +17,7 @@ export class ModalEditUserComponent  implements OnInit {
 
   @Input() data: any;
 
+  _service: ServiceService = inject(ServiceService);
   private authService = inject(AuthService);
   private modalCtr: ModalController = inject(ModalController);
 

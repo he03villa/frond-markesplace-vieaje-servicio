@@ -1,4 +1,4 @@
-import { Injectable, NgZone } from '@angular/core';
+import { Injectable, NgZone, inject } from '@angular/core';
 import { AnimationController, Platform } from '@ionic/angular';
 import { Haptics, ImpactStyle } from '@capacitor/haptics';
 import { Subject } from 'rxjs';
@@ -16,17 +16,16 @@ export class UiEffectsService {
   private scrollListeners: Map<string, () => void> = new Map();
   private intersectionObservers: Map<string, IntersectionObserver> = new Map();
 
-  private animationCtrl: AnimationController | undefined
-  private platform: Platform | undefined
-  private ngZone: NgZone | undefined
+  private animationCtrl = inject(AnimationController);
+  private platform = inject(Platform);
+  private ngZone = inject(NgZone);
 
   constructor() { 
     this.init();
   }
 
   private async init() {
-    // Verificar disponibilidad de haptics
-    if (this.platform?.is('capacitor') || this.platform?.is('mobile')) {
+    if (this.platform.is('capacitor') || this.platform.is('mobile')) {
       try {
         await Haptics.selectionStart();
         this.hapticAvailable = true;
@@ -91,7 +90,7 @@ export class UiEffectsService {
       
       if (!parentRect) return;
       
-      this.ngZone?.runOutsideAngular(() => {
+      this.ngZone.runOutsideAngular(() => {
         (indicator as HTMLElement).style.width = `${rect.width}px`;
         (indicator as HTMLElement).style.left = `${rect.left - parentRect.left}px`;
       });
@@ -120,7 +119,7 @@ export class UiEffectsService {
         this.tabChange$.next({ tab: tabId, index });
         
         if (onTabChange) {
-          this.ngZone?.run(() => onTabChange({ tab: tabId, index }));
+          this.ngZone.run(() => onTabChange({ tab: tabId, index }));
         }
 
         // Animar contenido del panel
@@ -145,7 +144,7 @@ export class UiEffectsService {
     const panel = document.getElementById(`${tabId}-panel`);
     if (!panel) return;
 
-    await this.animationCtrl?.create()
+    await this.animationCtrl.create()
       .addElement(panel)
       .duration(300)
       .easing('cubic-bezier(0.4, 0, 0.2, 1)')
@@ -294,14 +293,14 @@ export class UiEffectsService {
         
         // Callback
         if (onAction) {
-          this.ngZone?.run(() => onAction(action));
+          this.ngZone.run(() => onAction(action));
         }
       });
     });
   }
 
   private async animateOptionSelection(element: HTMLElement): Promise<void> {
-    await this.animationCtrl?.create()
+    await this.animationCtrl.create()
       .addElement(element)
       .duration(200)
       .keyframes([
@@ -336,7 +335,7 @@ export class UiEffectsService {
       this.triggerHaptic('light');
       
       if (onToggle) {
-        this.ngZone?.run(() => onToggle(isOpen));
+        this.ngZone.run(() => onToggle(isOpen));
       }
     });
   }
@@ -496,7 +495,7 @@ export class UiEffectsService {
         'translateY(0) scale(1)'
       );
 
-    await animation?.play();
+    await animation.play();
   }
 
   /**
@@ -506,7 +505,7 @@ export class UiEffectsService {
     const element = document.querySelector(selector);
     if (!element) return;
 
-    await this.animationCtrl?.create()
+    await this.animationCtrl.create()
       .addElement(element)
       .duration(300)
       .keyframes([

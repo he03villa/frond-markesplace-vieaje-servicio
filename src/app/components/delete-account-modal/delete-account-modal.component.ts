@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ModalController, IonIcon } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
@@ -13,7 +13,7 @@ import { ServiceService } from 'src/app/services/service.service';
   standalone: true,
   imports: [IonIcon, FormsModule],
 })
-export class DeleteAccountModalComponent implements OnInit {
+export class DeleteAccountModalComponent {
 
   private _service = inject(ServiceService);
   private authService = inject(AuthService);
@@ -36,8 +36,6 @@ export class DeleteAccountModalComponent implements OnInit {
       checkmarkCircle, closeCircle, alertCircle, checkmark
     });
   }
-
-  ngOnInit() { }
 
   get canDelete(): boolean {
     return this.password.length > 0 &&

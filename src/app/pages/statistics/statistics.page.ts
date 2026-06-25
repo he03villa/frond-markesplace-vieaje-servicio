@@ -1,10 +1,9 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
 import { IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonButton, IonIcon, IonRefresher, IonRefresherContent } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { arrowBackOutline, arrowDown, arrowUpOutline, barChartOutline, calendarOutline, cashOutline, flashOutline, peopleOutline, pulseOutline, starOutline, timeOutline, trendingDownOutline, trendingUpOutline, trophyOutline } from 'ionicons/icons';
 import { RidesService } from 'src/app/services/rides.service';
+import { ServiceService } from 'src/app/services/service.service';
 import { ChartBar, InsightItem, StatPeriod } from 'src/app/interface/statistics';
 
 @Component({
@@ -12,11 +11,12 @@ import { ChartBar, InsightItem, StatPeriod } from 'src/app/interface/statistics'
   templateUrl: './statistics.page.html',
   styleUrls: ['./statistics.page.scss'],
   standalone: true,
-  imports: [IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule, IonButtons, IonButton, IonIcon, IonRefresher, IonRefresherContent]
+  imports: [IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonButton, IonIcon, IonRefresher, IonRefresherContent]
 })
 export class StatisticsPage implements OnInit {
 
   private _ridesService: RidesService = inject(RidesService);
+  private _service: ServiceService = inject(ServiceService);
 
   headerSolid = false;
   activePeriod: 'week' | 'month' | 'year' = 'month';
@@ -86,7 +86,7 @@ export class StatisticsPage implements OnInit {
   }
 
   back() {
-    history.back();
+    this._service.url('/home');
   }
 
   async loadRidesStatistics(refresh = false) {

@@ -1,6 +1,4 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
 import { IonContent, IonIcon } from '@ionic/angular/standalone';
 import { ServiceService } from 'src/app/services/service.service';
 import { ActivatedRoute } from '@angular/router';
@@ -13,7 +11,7 @@ import { arrowForwardOutline, checkmarkCircleOutline, closeCircleOutline, homeOu
   templateUrl: './email-verify.page.html',
   styleUrls: ['./email-verify.page.scss'],
   standalone: true,
-  imports: [IonContent, CommonModule, FormsModule, IonIcon]
+  imports: [IonContent, IonIcon]
 })
 export class EmailVerifyPage implements OnInit {
 

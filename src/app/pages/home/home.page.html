@@ -1,27 +1,27 @@
 <!-- Añade la clase personalizada -->
 <ion-tabs class="servishare-tabs">
   <ion-tab-bar slot="bottom">
-    <ion-tab-button tab="home">
+    <ion-tab-button tab="home" aria-label="Inicio">
       <ion-icon name="home"></ion-icon>
       <ion-label>Inicio</ion-label>
     </ion-tab-button>
     
-    <ion-tab-button tab="search">
+    <ion-tab-button tab="search" aria-label="Explorar">
       <ion-icon name="search"></ion-icon>
       <ion-label>Explorar</ion-label>
     </ion-tab-button>
     
     <!-- Botón central destacado -->
-    <ion-tab-button (click)="abrirModalPublication()">
+    <ion-tab-button (click)="abrirModalPublication()" aria-label="Crear publicación">
       <ion-icon name="add-circle" class="btn-add"></ion-icon>
     </ion-tab-button>
 
-    <ion-tab-button tab="chat-inbox">
+    <ion-tab-button tab="chat-inbox" aria-label="Mensajes">
       <ion-icon name="chatbubbles"></ion-icon>
       <ion-label>Mensajes</ion-label>
     </ion-tab-button>
 
-    <ion-tab-button tab="profile">
+    <ion-tab-button tab="profile" aria-label="Perfil">
       <ion-icon name="person"></ion-icon>
       <ion-label>Perfil</ion-label>
     </ion-tab-button>

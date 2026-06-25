@@ -18,7 +18,7 @@
     <!-- Avatar Section -->
     <div class="avatar-section">
       <div class="avatar-main" (click)="fileInput.click()">
-        <img [src]="tempAvatar || data?.avatar" alt="Avatar" />
+        <img [src]="tempAvatar || data?.avatar" alt="Avatar" (error)="_service.errorImage($event)" />
         <div class="avatar-overlay">
           <div class="avatar-overlay-content">
             <ion-icon name="camera"></ion-icon>
@@ -118,7 +118,7 @@
     <div class="preview-card">
       <div class="preview-label">Vista previa</div>
       <div class="preview-content">
-        <img [src]="tempAvatar || data?.avatar" class="preview-avatar" />
+        <img [src]="tempAvatar || data?.avatar" class="preview-avatar" (error)="_service.errorImage($event)" />
         <div class="preview-info">
           <strong>{{ editName || data?.name }}</strong>
           <span>{{ editTitle || data?.title }}</span>

@@ -1,7 +1,8 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, inject, Input, Output } from '@angular/core';
 import { addIcons } from 'ionicons';
 import { callOutline, chevronBack, ellipsisVertical, videocamOutline } from 'ionicons/icons';
 import { IonHeader, IonToolbar, IonButtons, IonButton, IonIcon } from "@ionic/angular/standalone";
+import { ServiceService } from 'src/app/services/service.service';
 
 @Component({
   selector: 'app-chat-header',
@@ -10,10 +11,11 @@ import { IonHeader, IonToolbar, IonButtons, IonButton, IonIcon } from "@ionic/an
   standalone: true,
   imports: [IonHeader, IonToolbar, IonButtons, IonButton, IonIcon]
 })
-export class ChatHeaderComponent implements OnInit {
+export class ChatHeaderComponent {
 
   @Input() contact: any;
   @Input() typing: boolean = false;
+  _service: ServiceService = inject(ServiceService);
 
   @Output() back = new EventEmitter<void>();
   @Output() profile = new EventEmitter<void>();
@@ -52,8 +54,6 @@ export class ChatHeaderComponent implements OnInit {
 
     return 'Últ. vez ' + date.toLocaleDateString('es', { day: 'numeric', month: 'short' });
   }
-
-  ngOnInit() { }
 
   onBack() {
     this.back.emit();

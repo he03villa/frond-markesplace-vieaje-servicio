@@ -119,15 +119,6 @@ body {
   }
 }
 
-:host {
-  --modal-bg: #f8fafc;
-  --card-bg: rgba(255, 255, 255, 0.9);
-  --glow-primary: 0 0 40px rgba(79, 70, 229, 0.15);
-  --glow-success: 0 0 40px rgba(16, 185, 129, 0.15);
-  --transition-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
-  --transition-smooth: cubic-bezier(0.4, 0, 0.2, 1);
-}
-
 .approve-delivery-modal,
 .revision-modal,
 .reject-modal,

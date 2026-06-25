@@ -54,11 +54,6 @@ export class ServiceRequestsService {
     return this._service.promise(this._data.metodoGet(url));
   }
 
-  markAsDelivered(id: number, data: any) {
-    /* const url = `${this.apiUser}/${id}/${environment.api.serviceRequests.services.markAsDelivered}`;
-    return this._service.promise(this._data.metodoPost(url, data)); */
-  }
-
   saveDeliverRequest(id: number, data:any) {
     const url = `${this.apiUser}/${id}/${environment.api.serviceRequests.services.deliver}`;
     return this._service.promise(this._data.metodoPost(url, data));

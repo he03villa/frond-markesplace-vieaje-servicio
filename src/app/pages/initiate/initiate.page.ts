@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule, DecimalPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonIcon } from '@ionic/angular/standalone';
@@ -31,9 +31,9 @@ import { ModalCreateServicesRideComponent } from 'src/app/components/modal-creat
   standalone: true,
   imports: [CommonModule, FormsModule, IonIcon, DecimalPipe]
 })
-export class InitiatePage implements OnInit {
+export class InitiatePage implements OnInit, OnDestroy {
 
-  private _service: ServiceService = inject(ServiceService);
+  _service: ServiceService = inject(ServiceService);
   private _serviceRequests: ServiceRequestsService = inject(ServiceRequestsService);
   private _riderService: RidesService = inject(RidesService);
   private _locationService: LocationService = inject(LocationService);

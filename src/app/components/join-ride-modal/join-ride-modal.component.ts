@@ -1,5 +1,5 @@
 import { DecimalPipe } from '@angular/common';
-import { Component, inject, Input, OnInit } from '@angular/core';
+import { Component, inject, Input } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { IonButton, IonContent, IonTextarea, IonIcon, IonSpinner } from "@ionic/angular/standalone";
 import { ModalController } from '@ionic/angular/standalone';
@@ -13,7 +13,7 @@ import { carSport, chatbubbleOutline, checkmarkCircle, closeOutline, information
   standalone: true,
   imports: [FormsModule, DecimalPipe, IonButton, IonContent, IonTextarea, IonIcon, IonSpinner]
 })
-export class JoinRideModalComponent  implements OnInit {
+export class JoinRideModalComponent {
 
   @Input() rideId!: string;
   @Input() maxSeats: number = 1;
@@ -38,8 +38,6 @@ export class JoinRideModalComponent  implements OnInit {
       shieldCheckmarkOutline, lockClosedOutline
     });
   }
-
-  ngOnInit() {}
 
   get availableSeatsArray(): number[] {
     return Array.from({ length: this.maxSeats }, (_, i) => i + 1);

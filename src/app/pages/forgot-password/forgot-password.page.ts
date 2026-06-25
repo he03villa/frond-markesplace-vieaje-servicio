@@ -1,5 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { IonContent, IonHeader, IonTitle, IonToolbar, IonIcon } from '@ionic/angular/standalone';
 import { ServiceService } from 'src/app/services/service.service';
@@ -12,9 +11,9 @@ import { AuthService } from 'src/app/services/auth.service';
   templateUrl: './forgot-password.page.html',
   styleUrls: ['./forgot-password.page.scss'],
   standalone: true,
-  imports: [CommonModule, FormsModule, IonIcon]
+  imports: [FormsModule, IonIcon]
 })
-export class ForgotPasswordPage implements OnInit {
+export class ForgotPasswordPage {
 
   private _service: ServiceService = inject(ServiceService);
   private _authService: AuthService = inject(AuthService);
@@ -48,9 +47,6 @@ export class ForgotPasswordPage implements OnInit {
       timeOutline, refreshOutline, warning, shieldCheckmark, refresh, eye, eyeOff,
       key, checkmark, logIn
     });
-  }
-
-  ngOnInit() {
   }
 
   // ==================== PASO 1: ENVIAR EMAIL ====================

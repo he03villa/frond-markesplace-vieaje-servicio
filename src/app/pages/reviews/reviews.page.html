@@ -113,7 +113,7 @@
           <div class="review-header">
             <div class="reviewer-info">
               <div class="reviewer-avatar">
-                <img [src]="review.reviewer.avatar" [alt]="review.reviewer.name" />
+                <img [src]="review.reviewer.avatar" [alt]="review.reviewer.name" (error)="_service.errorImage($event)" />
                 @if(review.reviewer.verified) {
                   <div class="verified-badge">
                     <ion-icon name="checkmark-circle"></ion-icon>
@@ -202,7 +202,7 @@
               <div class="reply-line"></div>
               <div class="reply-content">
                 <div class="reply-header">
-                  <img [src]="review.reply.avatar" class="reply-avatar" />
+                  <img [src]="review.reply.avatar" class="reply-avatar" (error)="_service.errorImage($event)" />
                   <div>
                     <span class="reply-author">{{ review.reply.author }}</span>
                     <span class="reply-label">Respuesta del proveedor</span>

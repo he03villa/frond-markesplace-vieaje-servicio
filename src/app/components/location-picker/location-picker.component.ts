@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, CUSTOM_ELEMENTS_SCHEMA, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, CUSTOM_ELEMENTS_SCHEMA, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { IonButton, IonIcon, IonSearchbar, IonItem, IonLabel, IonSpinner } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
@@ -16,7 +16,7 @@ import { SearchResult } from 'src/app/interface/search-result';
   imports: [CommonModule, FormsModule, IonButton, IonIcon, IonSearchbar, IonItem, IonLabel, IonSpinner],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
-export class LocationPickerComponent implements OnInit {
+export class LocationPickerComponent implements OnInit, OnDestroy {
 
   // ─── MODOS ───
   // 'picker'  = seleccionar ubicación (draggable)

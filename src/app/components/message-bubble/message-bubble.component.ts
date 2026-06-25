@@ -1,4 +1,4 @@
-import { Component, inject, Input, OnInit } from '@angular/core';
+import { Component, inject, Input, OnDestroy } from '@angular/core';
 import { addIcons } from 'ionicons';
 import { checkmark, checkmarkDone, documentOutline, pauseCircle, playCircle } from 'ionicons/icons';
 import { IonIcon } from "@ionic/angular/standalone";
@@ -12,13 +12,13 @@ import { ImageViewerComponent } from '../image-viewer/image-viewer.component';
   standalone: true,
   imports: [IonIcon]
 })
-export class MessageBubbleComponent implements OnInit {
+export class MessageBubbleComponent implements OnDestroy {
 
   @Input() message: any;
   @Input() isFirstInGroup: boolean = false;
   @Input() isLastInGroup: boolean = false;
 
-  private _service: ServiceService = inject(ServiceService);
+  _service: ServiceService = inject(ServiceService);
 
   audioPlayers = new Map<string, HTMLAudioElement>();
   audioStates = new Map<string, { playing: boolean; progress: number; currentTime: number; duration: number }>();
@@ -28,8 +28,6 @@ export class MessageBubbleComponent implements OnInit {
       playCircle, documentOutline, checkmark, checkmarkDone, pauseCircle
     });
   }
-
-  ngOnInit() { }
 
   ngOnDestroy() {
     // Limpiar todos los audios al destruir

@@ -34,20 +34,24 @@
               placeholder="usuario@ejemplo.com" 
               required 
               formControlName="email"
+              [attr.aria-invalid]="form.get('email')?.invalid && form.get('email')?.touched ? 'true' : null"
+              aria-describedby="email-errors"
             >
           </div>
-          <app-error 
-            [clase]="'error-message'" 
-            [control]="form.get('email')" 
-            [validation]="'email'"
-            [message]="'El correo electrónico es inválido'"
-          ></app-error>
-          <app-error 
-            [clase]="'error-message'" 
-            [control]="form.get('email')" 
-            [validation]="'required'"
-            [message]="'El correo electrónico es requerido'"
-          ></app-error>
+          <div id="email-errors">
+            <app-error 
+              [clase]="'error-message'" 
+              [control]="form.get('email')" 
+              [validation]="'email'"
+              [message]="'El correo electrónico es inválido'"
+            ></app-error>
+            <app-error 
+              [clase]="'error-message'" 
+              [control]="form.get('email')" 
+              [validation]="'required'"
+              [message]="'El correo electrónico es requerido'"
+            ></app-error>
+          </div>
         </div>
 
         <!-- Password -->
@@ -64,6 +68,8 @@
               placeholder="••••••••" 
               required
               formControlName="password"
+              [attr.aria-invalid]="form.get('password')?.invalid && form.get('password')?.touched ? 'true' : null"
+              aria-describedby="password-errors"
             >
             <button 
               type="button" 
@@ -74,18 +80,20 @@
               <i [class]="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
             </button>
           </div>
-          <app-error 
-            [clase]="'error-message'" 
-            [control]="form.get('password')" 
-            [validation]="'required'"
-            [message]="'La contraseña es requerida'"
-          ></app-error>
-          <app-error 
-            [clase]="'error-message'" 
-            [control]="form.get('password')" 
-            [validation]="'minlength'"
-            [message]="'Mínimo 8 caracteres'"
-          ></app-error>
+          <div id="password-errors">
+            <app-error 
+              [clase]="'error-message'" 
+              [control]="form.get('password')" 
+              [validation]="'required'"
+              [message]="'La contraseña es requerida'"
+            ></app-error>
+            <app-error 
+              [clase]="'error-message'" 
+              [control]="form.get('password')" 
+              [validation]="'minlength'"
+              [message]="'Mínimo 8 caracteres'"
+            ></app-error>
+          </div>
         </div>
 
         <!-- Actions -->

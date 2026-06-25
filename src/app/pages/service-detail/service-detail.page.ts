@@ -76,7 +76,7 @@ export class ServiceDetailPage implements OnInit, OnDestroy {
 
   // Inyecciones
   private route: ActivatedRoute = inject(ActivatedRoute);
-  private _service: ServiceService = inject(ServiceService);
+  _service: ServiceService = inject(ServiceService);
   private _serviceRequests: ServiceRequestsService = inject(ServiceRequestsService);
   private authService: AuthService = inject(AuthService);
   private websocketService: WebsocketService = inject(WebsocketService);
@@ -131,7 +131,7 @@ export class ServiceDetailPage implements OnInit, OnDestroy {
 
   goBack() {
     this._ui.triggerHaptic('light');
-    history.back();
+    this._service.url('/home');
   }
 
   // ==========================================

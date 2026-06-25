@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { IonApp, IonRouterOutlet } from '@ionic/angular/standalone';
 import { distinctUntilChanged, filter, map, Subscription } from 'rxjs';
@@ -8,7 +8,7 @@ import { distinctUntilChanged, filter, map, Subscription } from 'rxjs';
   templateUrl: 'app.component.html',
   imports: [IonApp, IonRouterOutlet],
 })
-export class AppComponent {
+export class AppComponent implements OnInit, OnDestroy {
   private _router: Router = inject(Router);
   private readonly HIDDEN_TAB_ROUTES = [
     'chat-conversation-users',

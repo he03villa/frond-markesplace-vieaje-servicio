@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule, DatePipe, DecimalPipe, UpperCasePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonContent, IonButton, IonIcon } from '@ionic/angular/standalone';
@@ -20,10 +20,10 @@ import { WebsocketService } from 'src/app/services/websocket.service';
   standalone: true,
   imports: [DecimalPipe, DatePipe, UpperCasePipe, LocationPickerComponent, IonContent, FormsModule, IonButton, IonIcon]
 })
-export class RideDetailPage implements OnInit {
+export class RideDetailPage implements OnInit, OnDestroy {
 
   private route: ActivatedRoute = inject(ActivatedRoute);
-  private _service: ServiceService = inject(ServiceService);
+  _service: ServiceService = inject(ServiceService);
   private authService: AuthService = inject(AuthService);
   private _rideService: RidesService = inject(RidesService);
   private websocketService: WebsocketService = inject(WebsocketService);
@@ -131,7 +131,7 @@ export class RideDetailPage implements OnInit {
   }
 
   goBack() {
-    history.back();
+    this._service.url('/home');
   }
   shareRide() {
     // Implementar con Share API o modal

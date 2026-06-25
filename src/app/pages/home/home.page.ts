@@ -27,10 +27,6 @@ export class HomePage {
     addIcons({ addCircle, home, chatbubbles, person, search });
   }
 
-  ngOnInit() {
-    
-  }
-
   async onTabChange(event: any) {
     const selectedTab = event.tab;
     

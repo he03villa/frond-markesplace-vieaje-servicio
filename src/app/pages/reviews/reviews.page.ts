@@ -1,6 +1,4 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
 import { IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonButton, IonIcon, IonRefresher, IonRefresherContent, IonSkeletonText, IonInfiniteScroll, IonInfiniteScrollContent } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { alertCircleOutline, arrowBackOutline, arrowDown, arrowUpOutline, cameraOutline, caretBack, chatbubbleOutline, checkmarkCircle, chevronDownOutline, closeOutline, filterOutline, flagOutline, heart, heartOutline, imageOutline, optionsOutline, personOutline, searchOutline, shareOutline, star, starHalf, starOutline, thumbsUpOutline, timeOutline, trophyOutline } from 'ionicons/icons';
@@ -17,11 +15,11 @@ import { ModalReporteReviweComponent } from 'src/app/components/modal-reporte-re
   templateUrl: './reviews.page.html',
   styleUrls: ['./reviews.page.scss'],
   standalone: true,
-  imports: [IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule, IonButtons, IonButton, IonIcon, IonRefresher, IonRefresherContent, IonSkeletonText, IonInfiniteScroll, IonInfiniteScrollContent]
+  imports: [IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonButton, IonIcon, IonRefresher, IonRefresherContent, IonSkeletonText, IonInfiniteScroll, IonInfiniteScrollContent]
 })
 export class ReviewsPage implements OnInit {
 
-  private _service: ServiceService = inject(ServiceService);
+  _service: ServiceService = inject(ServiceService);
   private _authService: AuthService = inject(AuthService);
   private _reviewsService: ReviewsService = inject(ReviewsService);
 
@@ -88,7 +86,7 @@ export class ReviewsPage implements OnInit {
   }
 
   back(): void {
-    history.back();
+    this._service.url('/home');
   }
 
   // ============ CARGA ============

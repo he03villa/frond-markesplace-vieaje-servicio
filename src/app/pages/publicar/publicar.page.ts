@@ -1,8 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonButton, IonSegment, IonSegmentButton, IonLabel, IonItem, IonList, IonSelectOption, IonSpinner } from '@ionic/angular/standalone';
-import { Router } from '@angular/router';
+import { IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonButton, IonSegment, IonSegmentButton, IonLabel, IonItem, IonList, IonSelectOption, IonSpinner, IonInput, IonTextarea, IonSelect, IonDatetime, IonRange } from '@ionic/angular/standalone';
 import { AlertController, NavController } from '@ionic/angular';
 
 @Component({
@@ -10,7 +9,7 @@ import { AlertController, NavController } from '@ionic/angular';
   templateUrl: './publicar.page.html',
   styleUrls: ['./publicar.page.scss'],
   standalone: true,
-  imports: [IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule, IonButtons, IonButton, IonButton, ReactiveFormsModule, IonSegment, IonSegmentButton, IonLabel, IonItem, IonList, IonSelectOption, IonSpinner]
+  imports: [IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule, IonButtons, IonButton, IonButton, ReactiveFormsModule, IonSegment, IonSegmentButton, IonLabel, IonItem, IonList, IonSelectOption, IonSpinner, IonInput, IonTextarea, IonSelect, IonDatetime, IonRange]
 })
 export class PublicarPage implements OnInit {
 
@@ -26,12 +25,9 @@ export class PublicarPage implements OnInit {
     { value: 'otros', label: 'Otros' }
   ];
 
-  constructor(
-    private fb: FormBuilder,
-    private router: Router,
-    private navCtrl: NavController,
-    private alertController: AlertController
-  ) {}
+  private fb = inject(FormBuilder);
+  private navCtrl = inject(NavController);
+  private alertController = inject(AlertController);
 
   ngOnInit() {
     this.inicializarFormularios();
@@ -62,7 +58,6 @@ export class PublicarPage implements OnInit {
 
   tipoPublicacionChange(event: any) {
     this.tipoPublicacion = event.detail.value;
-    console.log('Tipo de publicación cambiado a:', this.tipoPublicacion);
   }
 
   async publicarServicio() {
@@ -83,8 +78,6 @@ export class PublicarPage implements OnInit {
         user: this.obtenerUsuarioActual()
       };
 
-      console.log('Publicando servicio:', servicioData);
-
       // Aquí iría la llamada a tu servicio/api
       // await this.serviciosService.crearServicio(servicioData);
 
@@ -95,7 +88,6 @@ export class PublicarPage implements OnInit {
       this.navCtrl.navigateBack('/home');
 
     } catch (error) {
-      console.error('Error al publicar servicio:', error);
       await this.mostrarError('Error al publicar el servicio. Intenta nuevamente.');
     } finally {
       this.isSubmitting = false;
@@ -123,8 +115,6 @@ export class PublicarPage implements OnInit {
         conductor: this.obtenerUsuarioActual()
       };
 
-      console.log('Publicando viaje:', viajeData);
-
       // Aquí iría la llamada a tu servicio/api
       // await this.viajesService.crearViaje(viajeData);
 
@@ -135,7 +125,6 @@ export class PublicarPage implements OnInit {
       this.navCtrl.navigateBack('/home');
 
     } catch (error) {
-      console.error('Error al publicar viaje:', error);
       await this.mostrarError('Error al publicar el viaje. Intenta nuevamente.');
     } finally {
       this.isSubmitting = false;

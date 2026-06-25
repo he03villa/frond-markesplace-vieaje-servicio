@@ -20,7 +20,8 @@
   </ion-segment>
 
   <!-- Formulario para SERVICIO -->
-  <form id="serviceForm" *ngIf="publicationType === 'service'">
+  @if(publicationType === 'service') {
+  <form id="serviceForm">
     <ion-list lines="none">
       <!-- Título -->
       <ion-item>
@@ -91,12 +92,14 @@
       </div>
 
       <!-- Dirección seleccionada -->
-      <ion-item *ngIf="serviceForm.address">
+      @if(serviceForm.address) {
+      <ion-item>
         <ion-label position="stacked">Dirección seleccionada:</ion-label>
         <ion-text style="white-space: normal; padding: 8px 0;">
           <small>{{ serviceForm.address }}</small>
         </ion-text>
       </ion-item>
+      }
 
       <!-- Presupuesto -->
       <div class="section-header">
@@ -138,18 +141,24 @@
       </ion-grid>
 
       <!-- Validación presupuesto -->
-      <div class="budget-validation" *ngIf="serviceForm.budget_min && serviceForm.budget_max">
+      @if(serviceForm.budget_min && serviceForm.budget_max) {
+      <div class="budget-validation">
         <ion-icon 
           [name]="serviceForm.budget_max >= serviceForm.budget_min ? 'checkmark-circle' : 'alert-circle'" 
           [color]="serviceForm.budget_max >= serviceForm.budget_min ? 'success' : 'danger'">
         </ion-icon>
-        <span *ngIf="serviceForm.budget_max >= serviceForm.budget_min">
+        @if(serviceForm.budget_max >= serviceForm.budget_min) {
+        <span>
           Rango válido: ${{serviceForm.budget_min}} - ${{serviceForm.budget_max}}
         </span>
-        <span *ngIf="serviceForm.budget_max < serviceForm.budget_min" class="error">
+        }
+        @if(serviceForm.budget_max < serviceForm.budget_min) {
+        <span class="error">
           El máximo debe ser mayor o igual al mínimo
         </span>
+        }
       </div>
+      }
 
       <!-- Fecha límite -->
       <ion-item>
@@ -166,16 +175,18 @@
       </ion-item>
 
       <!-- Imágenes -->
-      <image-upload-section 
+      <app-image-upload-section 
         [previewImages]="serviceImages"
         (imagesSelected)="onServiceImagesSelected($event)"
         (imageRemoved)="removeServiceImage($event)">
-      </image-upload-section>
+      </app-image-upload-section>
     </ion-list>
   </form>
+  }
 
   <!-- Formulario para VIAJE -->
-  <form id="rideForm" *ngIf="publicationType === 'ride'">
+  @if(publicationType === 'ride') {
+  <form id="rideForm">
     <ion-list lines="none">
       <!-- Origen -->
       <div class="section-header">
@@ -192,12 +203,14 @@
         </app-location-picker>
       </div>
 
-      <ion-item *ngIf="rideForm.origin_address">
+      @if(rideForm.origin_address) {
+      <ion-item>
         <ion-label position="stacked">Origen seleccionado:</ion-label>
         <ion-text style="white-space: normal; padding: 8px 0;">
           <small>{{ rideForm.origin_address }}</small>
         </ion-text>
       </ion-item>
+      }
 
       <!-- Destino -->
       <div class="section-header">
@@ -214,15 +227,18 @@
         </app-location-picker>
       </div>
 
-      <ion-item *ngIf="rideForm.destination_address">
+      @if(rideForm.destination_address) {
+      <ion-item>
         <ion-label position="stacked">Destino seleccionado:</ion-label>
         <ion-text style="white-space: normal; padding: 8px 0;">
           <small>{{ rideForm.destination_address }}</small>
         </ion-text>
       </ion-item>
+      }
 
       <!-- Resumen de ruta -->
-      <div class="route-preview" *ngIf="rideForm.origin_address && rideForm.destination_address">
+      @if(rideForm.origin_address && rideForm.destination_address) {
+      <div class="route-preview">
         <div class="route-line">
           <div class="route-point origin">
             <ion-icon name="locate-outline"></ion-icon>
@@ -243,6 +259,7 @@
           </ion-text>
         </div>
       </div>
+      }
 
       <!-- Detalles del viaje -->
       <div class="section-header">
@@ -304,11 +321,13 @@
       </ion-item>
 
       <!-- Total estimado -->
-      <div class="total-estimate" *ngIf="rideForm.available_seats && rideForm.price_per_seat">
+      @if(rideForm.available_seats && rideForm.price_per_seat) {
+      <div class="total-estimate">
         <ion-icon name="calculator-outline"></ion-icon>
         <span>Total estimado: <strong>${{rideForm.available_seats * rideForm.price_per_seat}}</strong></span>
         <span class="subtotal">(${{rideForm.price_per_seat}} × {{rideForm.available_seats}} asientos)</span>
       </div>
+      }
 
       <!-- Notas adicionales -->
       <ion-item>
@@ -385,6 +404,7 @@
       </ion-grid>
     </ion-list>
   </form>
+  }
 </ion-content>
 
 <!-- Botones de acción -->

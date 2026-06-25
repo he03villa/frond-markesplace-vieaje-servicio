@@ -1,6 +1,6 @@
 <div class="typing-indicator">
   <div class="bubble-avatar">
-    <img [src]="contactAvatar || 'assets/default-avatar.svg'" alt="">
+    <img [src]="contactAvatar || 'assets/default-avatar.svg'" alt="" (error)="_service.errorImage($event)">
   </div>
   <div class="typing-content">
     <div class="dots">

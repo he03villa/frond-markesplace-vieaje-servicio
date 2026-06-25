@@ -1,35 +1,38 @@
-import { Component, inject, OnInit, ViewChild } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonContent, IonFooter } from '@ionic/angular/standalone';
+import { IonContent, IonFooter, IonIcon } from '@ionic/angular/standalone';
 import { ChatHeaderComponent } from 'src/app/components/chat-header/chat-header.component';
 import { MessageBubbleComponent } from 'src/app/components/message-bubble/message-bubble.component';
 import { TypingIndicatorComponent } from 'src/app/components/typing-indicator/typing-indicator.component';
 import { MessageInputComponent } from 'src/app/components/message-input/message-input.component';
 import { distinctUntilChanged, Subject, Subscription, takeUntil } from 'rxjs';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { ChatService } from 'src/app/services/chat.service';
 import { ChatSocketService } from 'src/app/services/chat-socket.service';
 import { AuthService } from 'src/app/services/auth.service';
+import { ServiceService } from 'src/app/services/service.service';
+import { addIcons } from 'ionicons';
+import { arrowDown } from 'ionicons/icons';
 
 @Component({
   selector: 'app-chat-conversation',
   templateUrl: './chat-conversation.page.html',
   styleUrls: ['./chat-conversation.page.scss'],
   standalone: true,
-  imports: [IonContent, CommonModule, FormsModule, ChatHeaderComponent, MessageBubbleComponent, TypingIndicatorComponent, MessageInputComponent, IonFooter]
+  imports: [IonContent, CommonModule, FormsModule, ChatHeaderComponent, MessageBubbleComponent, TypingIndicatorComponent, MessageInputComponent, IonFooter, IonIcon]
 })
-export class ChatConversationPage implements OnInit {
+export class ChatConversationPage implements OnInit, OnDestroy {
 
   @ViewChild('content', { static: false }) content!: IonContent;
   @ViewChild('messagesContainer', { static: false }) messagesContainer!: HTMLDivElement;
 
-  private router: Router = inject(Router);
   private route: ActivatedRoute = inject(ActivatedRoute);
   private chatService: ChatService = inject(ChatService);
   private webChatService: ChatSocketService = inject(ChatSocketService);
   private wsSubscriptions: Subscription[] = [];
   private authService: AuthService = inject(AuthService);
+  private _service: ServiceService = inject(ServiceService);
 
   private routeSub!: Subscription;
   private conversationId!: number;
@@ -41,10 +44,13 @@ export class ChatConversationPage implements OnInit {
   conversation: any = null;
   messages: any[] = [];
   isTyping: boolean = false;
+  showScrollButton: boolean = false;
   contactName: string = '';
   user: any = this.authService.getCurrentUser();
 
-  constructor() { }
+  constructor() {
+    addIcons({ arrowDown });
+  }
 
   ngOnInit() {
     this.routeSub = this.route.paramMap.subscribe(params => {
@@ -119,12 +125,12 @@ export class ChatConversationPage implements OnInit {
   }
 
   goBack(): void {
-    history.back();
+    this._service.url('/home/messages');
   }
 
   openProfile(): void {
     if (this.conversation?.contact?.id) {
-      this.router.navigate(['/chat/profile', this.conversation.contact.id]);
+      this._service.url('/chat/profile/' + this.conversation.contact.id);
     }
   }
 
@@ -203,9 +209,13 @@ export class ChatConversationPage implements OnInit {
   }
 
   scrollToBottom(): void {
-    setTimeout(() => {
-      this.content?.scrollToBottom(300);
-    }, 100);
+    this.content?.scrollToBottom(300);
+  }
+
+  onScroll(ev: CustomEvent): void {
+    const detail = ev.detail as { scrollTop: number; scrollHeight: number; clientHeight: number };
+    const distanceFromBottom = detail.scrollHeight - detail.scrollTop - detail.clientHeight;
+    this.showScrollButton = distanceFromBottom > 200;
   }
 
   connectToRealtimeUpdates(serviceId: number) {

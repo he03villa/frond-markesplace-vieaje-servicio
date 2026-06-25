@@ -3,7 +3,7 @@
   <div class="avatar-container">
     <img [src]="conversation.contact.avatar || 'assets/default-avatar.svg'" 
          [alt]="conversation.contact.name"
-         class="avatar">
+         class="avatar" (error)="_service.errorImage($event)">
     @if (contactOnline) {
       <div class="online-indicator"></div>
     }

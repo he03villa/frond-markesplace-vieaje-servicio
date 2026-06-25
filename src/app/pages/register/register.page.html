@@ -157,9 +157,11 @@
               [validation]="'required'"
               [message]="'La confirmación es requerida'"
             ></app-error>
-            <div class="error-message" *ngIf="showPasswordMismatchError">
-              Las contraseñas no coinciden
-            </div>
+            @if(showPasswordMismatchError) {
+              <div class="error-message">
+                Las contraseñas no coinciden
+              </div>
+            }
           </div>
         </div>
 

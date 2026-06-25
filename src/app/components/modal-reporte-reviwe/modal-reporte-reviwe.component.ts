@@ -1,4 +1,4 @@
-import { Component, inject, Input, OnInit } from '@angular/core';
+import { Component, inject, Input } from '@angular/core';
 import { Review } from 'src/app/interface/review';
 import { ReviewsService } from 'src/app/services/reviews.service';
 import { ModalController, IonIcon } from '@ionic/angular/standalone';
@@ -13,7 +13,7 @@ import { FormsModule } from '@angular/forms';
   standalone: true,
   imports: [IonIcon, FormsModule]
 })
-export class ModalReporteReviweComponent implements OnInit {
+export class ModalReporteReviweComponent {
 
   @Input() review: Review | undefined;
 
@@ -39,8 +39,6 @@ export class ModalReporteReviweComponent implements OnInit {
       checkmarkCircle, checkmarkCircleOutline
     });
   }
-
-  ngOnInit() { }
 
   closeReportModal(data: any | undefined = undefined) {
     this.modalCtr.dismiss(data);

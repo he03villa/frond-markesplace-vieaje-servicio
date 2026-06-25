@@ -22,6 +22,12 @@ export class AuthService {
     this.user.next(user);
   }
 
+  saveSession(data: { access_token: string; user: any }) {
+    localStorage.setItem('token', data.access_token);
+    localStorage.setItem('dataUser', JSON.stringify(data.user));
+    this.emitUser(data.user);
+  }
+
   login(data: any) {
     const url = `${this.apiUser}/${environment.api.user.services.login}`;
     return this._service.promise(this._data.metodoPost(url, data));

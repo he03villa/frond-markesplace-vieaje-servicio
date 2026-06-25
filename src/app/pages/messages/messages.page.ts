@@ -1,6 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { Component, inject } from '@angular/core';
 import { IonHeader, IonTitle, IonToolbar, IonButtons, IonButton, IonIcon, IonSearchbar, IonTextarea } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { add, arrowBack, attachOutline, briefcaseOutline, callOutline, chatbubblesOutline, createOutline, ellipsisVertical, imageOutline, send } from 'ionicons/icons';
@@ -47,9 +45,9 @@ interface ChatData {
   templateUrl: './messages.page.html',
   styleUrls: ['./messages.page.scss'],
   standalone: true,
-  imports: [IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule, IonButtons, IonButton, IonIcon, IonSearchbar, IonTextarea]
+  imports: [IonHeader, IonTitle, IonToolbar, IonButtons, IonButton, IonIcon, IonSearchbar, IonTextarea]
 })
-export class MessagesPage implements OnInit {
+export class MessagesPage {
 
   _service: ServiceService = inject(ServiceService);
 
@@ -178,9 +176,6 @@ export class MessagesPage implements OnInit {
   typingTimeout = null;
   constructor() {
     addIcons({ createOutline, chatbubblesOutline, add, arrowBack, callOutline, ellipsisVertical, imageOutline, briefcaseOutline, attachOutline, send });
-  }
-
-  ngOnInit() {
   }
 
   openChat(chatId: number) {

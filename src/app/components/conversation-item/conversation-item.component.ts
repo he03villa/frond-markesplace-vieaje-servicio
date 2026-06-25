@@ -1,5 +1,6 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, inject, Input } from '@angular/core';
 import { IonIcon } from "@ionic/angular/standalone";
+import { ServiceService } from 'src/app/services/service.service';
 
 @Component({
   selector: 'app-conversation-item',
@@ -8,10 +9,11 @@ import { IonIcon } from "@ionic/angular/standalone";
   standalone: true,
   imports: [IonIcon]
 })
-export class ConversationItemComponent  implements OnInit {
+export class ConversationItemComponent {
 
   @Input() conversation: any;
   @Input() index: number = 0;
+  _service: ServiceService = inject(ServiceService);
 
   constructor() { }
 
@@ -22,8 +24,6 @@ export class ConversationItemComponent  implements OnInit {
   get lastMessageIsMine(): boolean {
     return this.conversation?.last_message?.is_mine ?? false;
   }
-
-  ngOnInit() {}
 
   /**
    * Determina si un mensaje es reciente (menos de 24h)

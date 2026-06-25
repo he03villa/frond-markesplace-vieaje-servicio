@@ -4,7 +4,7 @@
   <!-- Avatar del otro usuario (solo en primer mensaje del grupo) -->
   @if (!message.is_mine && isFirstInGroup) {
   <div class="bubble-avatar">
-    <img [src]="message.sender.avatar || 'assets/default-avatar.svg'" alt="">
+    <img [src]="message.sender.avatar || 'assets/default-avatar.svg'" alt="" (error)="_service.errorImage($event)">
   </div>
   }
 

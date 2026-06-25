@@ -1,5 +1,6 @@
-<!-- onboarding.page.html -->
 <ion-content>
+  <button class="skip-link" (click)="skip()">Saltar</button>
+
   <div class="swiper-container" #swiperContainer>
     <div class="swiper-wrapper">
       <!-- Slide 1 -->
@@ -10,7 +11,7 @@
           <p>Publica tus necesidades y recibe ofertas de profesionales</p>
         </div>
       </div>
-      
+
       <!-- Slide 2 -->
       <div class="swiper-slide">
         <div class="slide-content">
@@ -30,17 +31,15 @@
       </div>
     </div>
 
-    <!-- Paginación -->
     <div class="swiper-pagination"></div>
-
-    <!-- Botones de navegación -->
     <div class="swiper-button-next"></div>
     <div class="swiper-button-prev"></div>
   </div>
 
   <div class="button-container">
-    <ion-button expand="block" (click)="goToLogin()" class="start-button">
-      Comenzar
+    <div class="slide-counter">{{ currentSlide + 1 }} / {{ totalSlides }}</div>
+    <ion-button expand="block" (click)="next()" class="start-button">
+      {{ currentSlide === totalSlides - 1 ? 'Comenzar' : 'Siguiente' }}
     </ion-button>
   </div>
 </ion-content>

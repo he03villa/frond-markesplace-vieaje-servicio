@@ -1,9 +1,7 @@
-import { Component, inject, OnInit, ViewChild } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { Component, inject, OnInit } from '@angular/core';
 import {
   IonContent, IonHeader, IonTitle, IonToolbar, IonIcon, IonButton,
-  IonButtons, IonModal, IonSkeletonText,
+  IonButtons, IonSkeletonText,
   IonRefresher, IonRefresherContent, IonBadge
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
@@ -31,28 +29,19 @@ import { ModalEditUserComponent } from 'src/app/components/modal-edit-user/modal
   styleUrls: ['./perfil.page.scss'],
   standalone: true,
   imports: [
-    CommonModule, FormsModule,
     IonContent, IonHeader, IonTitle, IonToolbar, IonIcon, IonButton,
-    IonButtons, IonModal, IonSkeletonText,
+    IonButtons, IonSkeletonText,
     IonRefresher, IonRefresherContent, IonBadge
   ]
 })
 export class PerfilPage implements OnInit {
-  @ViewChild('editModal') editModal!: IonModal;
 
-  private _service = inject(ServiceService);
+  _service = inject(ServiceService);
   private authService = inject(AuthService);
 
   // Estado UI
   isLoading = true;
   headerSolid = false;
-  editName = '';
-  editTitle = '';
-  editBio = '';
-  tempAvatar = '';
-  editLocation = '';
-  editPhone = '';
-  selectedFile: File | null = null;
 
   // Datos del perfil
   profile: UserProfile | null = null;
@@ -92,7 +81,7 @@ export class PerfilPage implements OnInit {
   }
 
   back(): void {
-    history.back();
+    this._service.url('/home');
   }
 
   // ============ CARGA DE DATOS ============
@@ -118,9 +107,7 @@ export class PerfilPage implements OnInit {
     } catch (error) {
       console.log(error);
     }
-    setTimeout(() => {
-      this.isLoading = false;
-    }, 800);
+    this.isLoading = false;
   }
 
   async handleRefresh(ev: any) {
@@ -131,14 +118,6 @@ export class PerfilPage implements OnInit {
   // ============ EDICIÓN ============
 
   async openEditModal() {
-    this.editName = this.profile?.name || '';
-    this.editTitle = this.profile?.title || '';
-    this.editBio = this.profile?.bio || '';
-    this.tempAvatar = this.profile?.avatar || '';
-    this.editLocation = this.profile?.location || '';
-    this.editPhone = this.profile?.phone || '';
-    this.editModal.present();
-
     const data = {
       editName: this.profile?.name || '',
       editTitle: this.profile?.title || '',
@@ -158,62 +137,6 @@ export class PerfilPage implements OnInit {
         this.profile.phone = result.data.editPhone;
       }
       await this.showToast('Perfil actualizado correctamente', 'success');
-    }
-  }
-
-  closeEditModal() {
-    this.editModal.dismiss();
-  }
-
-  async onFileSelected(event: Event) {
-    const input = event.target as HTMLInputElement;
-    if (input.files && input.files[0]) {
-      this.selectedFile = input.files[0];
-      const reader = new FileReader();
-      try {
-        const res = await this.authService.saveAvatar(this.selectedFile);
-        reader.onload = (e) => {
-          this.tempAvatar = e.target?.result as string;
-          if (this.profile) {
-            this.profile.avatar = this.tempAvatar;
-          }
-        };
-        reader.readAsDataURL(input.files[0]);
-      } catch (error) {
-
-      }
-    }
-  }
-
-  async selectPresetAvatar(url: string) {
-    this.tempAvatar = url;
-    this.selectedFile = null;
-  }
-
-  async saveProfile() {
-    try {
-      const payload: any = {};
-      if (this.profile) {
-        if (this.editName !== this.profile.name) payload.name = this.editName;
-        if (this.editTitle !== this.profile.title) payload.title = this.editTitle;
-        if (this.editBio !== this.profile.bio) payload.bio = this.editBio;
-        if (this.editLocation !== this.profile.location) payload.location = this.editLocation;
-        if (this.editPhone !== this.profile.phone) payload.phone = this.editPhone;
-      }
-      const res = await this.authService.updateProfile(payload);
-      if (res.success) {
-        if (this.profile) {
-          this.profile.name = this.editName;
-          this.profile.title = this.editTitle;
-          this.profile.bio = this.editBio;
-          this.profile.location = this.editLocation;
-          this.profile.phone = this.editPhone;
-        }
-        this.editModal.dismiss();
-        await this.showToast('Perfil actualizado correctamente', 'success');
-      }
-    } catch (error) {
-      console.log(error);
     }
   }
 

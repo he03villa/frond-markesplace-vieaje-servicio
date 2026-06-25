@@ -1,4 +1,4 @@
-import { Component, inject, Input, OnInit } from '@angular/core';
+import { Component, inject, Input } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ModalController, IonContent, IonIcon } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
@@ -11,7 +11,7 @@ import { DeliveriesServices } from 'src/app/services/deliveries.service';
   styleUrls: ['./reject-modal.component.scss'],
   imports: [IonContent, IonIcon, FormsModule],
 })
-export class RejectModalComponent implements OnInit {
+export class RejectModalComponent {
 
   @Input() deliveryId!: number;
   @Input() workerName!: string;
@@ -35,8 +35,6 @@ export class RejectModalComponent implements OnInit {
   constructor() {
     addIcons({ close, closeCircle, alertCircle, warning });
   }
-
-  ngOnInit() { }
 
   selectReason(r: string): void {
     this.reason = r;

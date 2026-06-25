@@ -107,9 +107,11 @@
               </div>
               <div class="bar-labels">
                 <span>Min: {{ service?.budget_min | currency:'USD':'symbol':'1.0-0' }}</span>
-                <span class="current" *ngIf="offerForm.get('price')?.value">
-                  Tu oferta: {{ offerForm.get('price')?.value | currency:'USD':'symbol':'1.0-0' }}
-                </span>
+                @if(offerForm.get('price')?.value) {
+                  <span class="current">
+                    Tu oferta: {{ offerForm.get('price')?.value | currency:'USD':'symbol':'1.0-0' }}
+                  </span>
+                }
                 <span>Max: {{ service?.budget_max | currency:'USD':'symbol':'1.0-0' }}</span>
               </div>
             </div>

@@ -15,11 +15,15 @@
       <div class="header-actions">
         <button class="action-icon" (click)="shareService()" [class.active]="showShareTooltip">
           <ion-icon name="share-social"></ion-icon>
-          <div class="tooltip" *ngIf="showShareTooltip">Compartir</div>
+          @if(showShareTooltip) {
+          <div class="tooltip">Compartir</div>
+          }
         </button>
         <button class="action-icon favorite" (click)="toggleFavorite()" [class.active]="isFavorite">
           <ion-icon [name]="isFavorite ? 'heart' : 'heart-outline'"></ion-icon>
-          <div class="heart-burst" *ngIf="isFavorite"></div>
+          @if(isFavorite) {
+          <div class="heart-burst"></div>
+          }
         </button>
         <button class="action-icon more" (click)="showMoreOptions()">
           <ion-icon name="ellipsis-vertical"></ion-icon>
@@ -29,26 +33,30 @@
   </div>
 
   <!-- Hero Section con Imagen Parallax -->
-  <div class="hero-section" *ngIf="service.images?.length > 0">
+  @if(service.images?.length > 0) {
+  <div class="hero-section">
     <div class="hero-image-container" [style.transform]="'translateY(' + parallaxOffset + 'px)'">
       <img [src]="service.images[0]" class="hero-image" alt="Servicio">
       <div class="hero-gradient"></div>
     </div>
     
     <!-- Galería Thumbnails -->
-    <div class="gallery-strip" *ngIf="service.images.length > 1">
-      <div 
+    @if(service.images.length > 1) {
+    <div class="gallery-strip">
+      <div *ngFor="let img of service.images.slice(0,4); let i = index" 
         class="thumb" 
-        *ngFor="let img of service.images.slice(0,4); let i = index"
         [class.active]="selectedImage === i"
         (click)="selectImage(i)"
       >
         <img [src]="img">
-        <div class="thumb-overlay" *ngIf="i === 3 && service.images.length > 4">
+        @if(i === 3 && service.images.length > 4) {
+        <div class="thumb-overlay">
           <span>+{{ service.images.length - 4 }}</span>
         </div>
+        }
       </div>
     </div>
+    }
     
     <!-- Badges flotantes -->
     <div class="floating-badges">
@@ -56,12 +64,17 @@
         <span class="pulse-dot"></span>
         {{ service.status === 'open' ? 'Disponible' : service.status }}
       </div>
-      <div class="badge urgency" [class]="service.urgency" *ngIf="service.urgency">
-        <ion-icon name="flame" *ngIf="service.urgency === 'high'"></ion-icon>
+      @if(service.urgency) {
+      <div class="badge urgency" [class]="service.urgency">
+        @if(service.urgency === 'high') {
+        <ion-icon name="flame"></ion-icon>
+        }
         {{ service.urgency === 'high' ? 'Urgente' : service.urgency === 'medium' ? 'Moderado' : 'Flexible' }}
       </div>
+      }
     </div>
   </div>
+  }
 
   <!-- Contenido Principal -->
   <div class="content-sheet">
@@ -99,12 +112,16 @@
           <span class="price-label">Presupuesto</span>
           <div class="price-display">
             <span class="currency">$</span>
-            <span class="amount" *ngIf="service.budget_type === 'fixed'">
+            @if(service.budget_type === 'fixed') {
+            <span class="amount">
               {{ service.budget_fixed | number:'1.0-0' }}
             </span>
-            <span class="amount range" *ngIf="service.budget_type === 'negotiable'">
+            }
+            @if(service.budget_type === 'negotiable') {
+            <span class="amount range">
               {{ service.budget_min | number:'1.0-0' }} - {{ service.budget_max | number:'1.0-0' }}
             </span>
+            }
           </div>
           <div class="price-type">
             <ion-icon [name]="service.budget_type === 'negotiable' ? 'swap-horizontal' : 'lock-closed'"></ion-icon>
@@ -112,9 +129,12 @@
           </div>
         </div>
         
-        <div class="price-divider" *ngIf="service.distance"></div>
+        @if(service.distance) {
+        <div class="price-divider"></div>
+        }
         
-        <div class="distance-widget" *ngIf="service.distance">
+        @if(service.distance) {
+        <div class="distance-widget">
           <div class="distance-map-preview">
             <div class="map-pin start"></div>
             <div class="map-line"></div>
@@ -125,6 +145,7 @@
             <span class="distance-label">de ti</span>
           </div>
         </div>
+        }
       </div>
     </div>
 
@@ -133,29 +154,39 @@
       <div class="user-glow" [style.background]="'radial-gradient(circle at 30% 30%, ' + userColor + ', transparent)'"></div>
       <div class="user-content">
         <div class="user-avatar-ring">
-          <img [src]="service.user?.avatar_url || 'assets/default-avatar.png'" [alt]="service.user?.name">
-          <div class="online-indicator" *ngIf="service.user?.is_online"></div>
-          <div class="user-rating-badge" *ngIf="service.user?.rating">
+          <img [src]="service.user?.avatar_url || 'assets/default-avatar.png'" [alt]="service.user?.name" (error)="_service.errorImage($event)">
+          @if(service.user?.is_online) {
+          <div class="online-indicator"></div>
+          }
+          @if(service.user?.rating) {
+          <div class="user-rating-badge">
             <ion-icon name="star"></ion-icon>
             <span>{{ service.user?.rating }}</span>
           </div>
+          }
         </div>
         
         <div class="user-details">
           <h3 class="user-name">{{ service.user?.name }}</h3>
           <div class="user-stats-row">
-            <span class="stat" *ngIf="service.user?.completed_jobs">
+            @if(service.user?.completed_jobs) {
+            <span class="stat">
               <ion-icon name="briefcase"></ion-icon>
               {{ service.user?.completed_jobs }} trabajos
             </span>
-            <span class="stat new" *ngIf="!service.user?.completed_jobs">
+            }
+            @if(!service.user?.completed_jobs) {
+            <span class="stat new">
               <ion-icon name="sparkles"></ion-icon>
               Nuevo usuario
             </span>
-            <span class="verified" *ngIf="service.user?.is_verified">
+            }
+            @if(service.user?.is_verified) {
+            <span class="verified">
               <ion-icon name="checkmark-circle"></ion-icon>
               Verificado
             </span>
+            }
           </div>
         </div>
         
@@ -181,7 +212,7 @@
 
         <div class="worker-profile">
           <div class="worker-avatar-ring">
-            <img [src]="service.worker?.avatar_url" [alt]="service.worker?.name">
+            <img [src]="service.worker?.avatar_url" [alt]="service.worker?.name" (error)="_service.errorImage($event)">
             <div class="worker-status online"></div>
           </div>
           
@@ -208,10 +239,12 @@
               <span class="label">Precio acordado</span>
               <span class="value price">${{ acceptedOffer.price | number:'1.0-0' }}</span>
             </div>
-            <div class="offer-row" *ngIf="acceptedOffer.estimated_time">
+            @if(acceptedOffer.estimated_time) {
+            <div class="offer-row">
               <span class="label">Tiempo estimado</span>
               <span class="value">{{ acceptedOffer.estimated_time }}</span>
             </div>
+            }
           </div>
         }
         @if(isCurrentUserWorker && service.status === 'in_progress') {
@@ -259,7 +292,7 @@
 
             <!-- Worker info -->
             <div class="delivery-worker">
-              <img [src]="service.worker?.avatar_url" [alt]="service.worker?.name">
+              <img [src]="service.worker?.avatar_url" [alt]="service.worker?.name" (error)="_service.errorImage($event)">
               <div class="worker-meta">
                 <h4>{{ service.worker?.name }}</h4>
                 <p>Ha completado el trabajo</p>
@@ -388,12 +421,16 @@
       </h2>
       <div class="description-content">
         <p class="description-text">{{ service.description }}</p>
-        <div class="desc-fade" *ngIf="!descExpanded && isLongDescription"></div>
+        @if(!descExpanded && isLongDescription) {
+      <div class="desc-fade"></div>
+      }
       </div>
-      <button class="expand-btn" *ngIf="isLongDescription" (click)="descExpanded = !descExpanded">
+      @if(isLongDescription) {
+      <button class="expand-btn" (click)="descExpanded = !descExpanded">
         <span>{{ descExpanded ? 'Ver menos' : 'Ver más' }}</span>
         <ion-icon [name]="descExpanded ? 'chevron-up' : 'chevron-down'"></ion-icon>
       </button>
+      }
     </div>
 
     <!-- Grid de Detalles Visual -->
@@ -406,7 +443,8 @@
       </h2>
       
       <div class="details-grid">
-        <div class="detail-tile" *ngIf="service.address">
+        @if(service.address) {
+        <div class="detail-tile">
           <div class="tile-icon">
             <ion-icon name="location"></ion-icon>
           </div>
@@ -415,8 +453,10 @@
             <span class="tile-value">{{ service.address }}</span>
           </div>
         </div>
+        }
         
-        <div class="detail-tile" *ngIf="service.estimated_hours">
+        @if(service.estimated_hours) {
+        <div class="detail-tile">
           <div class="tile-icon">
             <ion-icon name="time"></ion-icon>
           </div>
@@ -425,8 +465,10 @@
             <span class="tile-value">{{ service.estimated_hours }} horas</span>
           </div>
         </div>
+        }
         
-        <div class="detail-tile" *ngIf="service.deadline">
+        @if(service.deadline) {
+        <div class="detail-tile">
           <div class="tile-icon">
             <ion-icon name="calendar"></ion-icon>
           </div>
@@ -435,8 +477,10 @@
             <span class="tile-value">{{ service.deadline | date:'dd MMM' }}</span>
           </div>
         </div>
+        }
         
-        <div class="detail-tile" *ngIf="service.required_skills?.length">
+        @if(service.required_skills?.length) {
+        <div class="detail-tile">
           <div class="tile-icon">
             <ion-icon name="construct"></ion-icon>
           </div>
@@ -446,17 +490,21 @@
               <span class="skill-tag" *ngFor="let skill of service.required_skills.slice(0,2)">
                 {{ skill }}
               </span>
-              <span class="skill-tag more" *ngIf="service.required_skills.length > 2">
+              @if(service.required_skills.length > 2) {
+              <span class="skill-tag more">
                 +{{ service.required_skills.length - 2 }}
               </span>
+              }
             </div>
           </div>
         </div>
+        }
       </div>
     </div>
 
     <!-- Mapa Interactivo -->
-    <div class="map-section" *ngIf="service.latitude && service.longitude">
+    @if(service.latitude && service.longitude) {
+    <div class="map-section">
       <h2 class="section-title">
         <span class="title-icon">
           <ion-icon name="map"></ion-icon>
@@ -478,7 +526,8 @@
           </button>
         </div>
       </div>
-      <div class="route-info" *ngIf="routeInfo">
+      @if(routeInfo) {
+      <div class="route-info">
         <div class="route-stat">
           <ion-icon name="navigate"></ion-icon>
           <span>{{ routeInfo.distance }} km</span>
@@ -488,10 +537,13 @@
           <span>{{ routeInfo.duration }} min</span>
         </div>
       </div>
+      }
     </div>
+    }
 
     <!-- Documentos Adjuntos -->
-    <div class="documents-section" *ngIf="service.documents?.length">
+    @if(service.documents?.length) {
+    <div class="documents-section">
       <h2 class="section-title">
         <span class="title-icon">
           <ion-icon name="folder-open"></ion-icon>
@@ -511,9 +563,11 @@
         </div>
       </div>
     </div>
+    }
 
     <!-- Sección de Ofertas Premium -->
-    <div class="offers-section-premium" *ngIf="service.offers?.length > 0 && currentUser?.id === service.user_id">
+    @if(service.offers?.length > 0 && currentUser?.id === service.user_id) {
+    <div class="offers-section-premium">
       <div class="offers-header">
         <h2 class="section-title">
           <span class="title-icon">
@@ -533,38 +587,46 @@
       </div>
       
       <div class="offers-carousel">
-        <div 
+        <div *ngFor="let offer of sortedOffers; let i = index" 
           class="offer-card-premium" 
-          *ngFor="let offer of sortedOffers; let i = index"
           [class.accepted]="offer.status === 'accepted'"
           [class.rejected]="offer.status === 'rejected'"
           [class.best-value]="i === 0 && offerSort === 'price'"
         >
-          <div class="offer-glow" *ngIf="offer.status === 'pending'"></div>
+          @if(offer.status === 'pending') {
+          <div class="offer-glow"></div>
+          }
           
           <div class="offer-header">
             <div class="offerer-info">
-              <img [src]="offer.user?.avatar_url" class="offerer-avatar">
+              <img [src]="offer.user?.avatar_url" class="offerer-avatar" (error)="_service.errorImage($event)">
               <div class="offerer-details">
                 <span class="offerer-name">{{ offer.user?.name }}</span>
-                <div class="offerer-rating" *ngIf="offer.user?.rating">
+                @if(offer.user?.rating) {
+                <div class="offerer-rating">
                   <ion-icon name="star"></ion-icon>
                   <span>{{ offer.user?.rating }}</span>
                 </div>
+                }
               </div>
             </div>
             <div class="offer-price-tag">
               <span class="price-amount">${{ offer.price | number:'1.0-0' }}</span>
-              <span class="price-time" *ngIf="offer.estimated_time">
+              @if(offer.estimated_time) {
+              <span class="price-time">
                 <ion-icon name="time"></ion-icon>
                 {{ offer.estimated_time }}
               </span>
+              }
             </div>
           </div>
           
-          <p class="offer-message" *ngIf="offer.description">{{ offer.description }}</p>
+          @if(offer.description) {
+          <p class="offer-message">{{ offer.description }}</p>
+          }
           
-          <div class="offer-actions" *ngIf="offer.status === 'pending'">
+          @if(offer.status === 'pending') {
+          <div class="offer-actions">
             <button class="btn-reject" (click)="rejectOffer(offer)">
               <ion-icon name="close"></ion-icon>
             </button>
@@ -573,14 +635,18 @@
               <span>Aceptar</span>
             </button>
           </div>
+          }
           
-          <div class="offer-status" *ngIf="offer.status !== 'pending'">
+          @if(offer.status !== 'pending') {
+          <div class="offer-status">
             <ion-icon [name]="offer.status === 'accepted' ? 'checkmark-circle' : 'close-circle'"></ion-icon>
             <span>{{ offer.status === 'accepted' ? 'Aceptada' : 'Rechazada' }}</span>
           </div>
+          }
         </div>
       </div>
     </div>
+    }
 
     <!-- Espacio para footer fijo -->
     <div class="footer-spacer"></div>
@@ -592,10 +658,12 @@
   <div class="floating-footer">
     <div class="footer-glass">
       <div class="footer-content">
-        <div class="price-hint" *ngIf="service.budget_min">
+        @if(service.budget_min) {
+        <div class="price-hint">
           <span class="hint-label">Desde</span>
           <span class="hint-price">${{ service.budget_min | number:'1.0-0' }}</span>
         </div>
+        }
         
         <div class="footer-actions">
           <button class="btn-contact" (click)="contactUser()">
