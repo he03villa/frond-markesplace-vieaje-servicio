@@ -110,5 +110,13 @@ export const API_ENDPOINTS = {
             verify: 'verify',
             send: 'send',
         }
+    },
+    notifications: {
+        name: 'auth',
+        services: {
+            deviceToken: 'device-token',
+            subscribe: 'device-token/subscribe',
+            unsubscribe: 'device-token/unsubscribe',
+        }
     }
 }

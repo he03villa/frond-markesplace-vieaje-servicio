@@ -5,11 +5,12 @@
   "homepage": "https://ionicframework.com/",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
+    "start": "ionic serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "lint": "ng lint"
+    "lint": "ng lint",
+    "start:prod": "ionic serve --configuration production --aot"
   },
   "private": true,
   "dependencies": {
@@ -28,12 +29,14 @@
     "@capacitor/geolocation": "^8.1.0",
     "@capacitor/haptics": "^8.0.1",
     "@capacitor/keyboard": "^8.0.1",
+    "@capacitor/push-notifications": "^8.1.1",
     "@capacitor/splash-screen": "^8.0.1",
     "@capacitor/status-bar": "^8.0.1",
     "@capawesome/capacitor-file-picker": "^8.0.2",
     "@ionic/angular": "^8.0.0",
     "@types/leaflet": "^1.9.21",
     "capacitor-voice-recorder": "^7.0.6",
+    "firebase": "^12.15.0",
     "ionicons": "^7.0.0",
     "laravel-echo": "^2.3.0",
     "leaflet": "^1.9.4",

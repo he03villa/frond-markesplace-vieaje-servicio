@@ -33,6 +33,11 @@
                 "glob": "**/*",
                 "input": "src/assets",
                 "output": "assets"
+              },
+              {
+                "glob": "firebase-messaging-sw.js",
+                "input": "src",
+                "output": "."
               }
             ],
             "styles": ["src/global.scss", "src/theme/variables.scss", "src/theme/person.scss", "node_modules/leaflet/dist/leaflet.css", "node_modules/swiper/swiper.css", "node_modules/swiper/modules/navigation.css", "node_modules/swiper/modules/pagination.css", "src/theme/chat-animations.scss", "src/theme/chat-responsive.scss"],

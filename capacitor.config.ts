@@ -1,7 +1,7 @@
 import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'com.servishare.app',
+  appId: 'com.appmarket.app',
   appName: 'ServiShare',
   webDir: 'www',
   backgroundColor: '#0f172a',
@@ -18,6 +18,9 @@ const config: CapacitorConfig = {
       backgroundColor: '#0f172a',
       androidScaleType: 'CENTER_CROP',
       showSpinner: false
+    },
+    PushNotifications: {
+      presentationOptions: ['badge', 'sound', 'alert']
     }
   }
 };
