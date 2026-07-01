@@ -86,7 +86,7 @@ export class StatisticsPage implements OnInit {
   }
 
   back() {
-    this._service.url('/home');
+    this._service.url('/home/profile');
   }
 
   async loadRidesStatistics(refresh = false) {

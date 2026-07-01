@@ -92,6 +92,7 @@ export class InitiatePage implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    console.log('📱 VIEWPORT DEBUG — innerWidth:', window.innerWidth, 'DPR:', window.devicePixelRatio, 'screen.width:', window.screen.width);
     this.currentUser = this.authService.getCurrentUser();
     this.cargarUser();
     this.cargarsummary();

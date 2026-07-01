@@ -86,7 +86,7 @@ export class ReviewsPage implements OnInit {
   }
 
   back(): void {
-    this._service.url('/home');
+    this._service.url('/home/profile');
   }
 
   // ============ CARGA ============

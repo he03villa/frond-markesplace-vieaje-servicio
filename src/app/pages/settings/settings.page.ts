@@ -158,7 +158,7 @@ export class SettingsPage implements OnInit {
   }
 
   back() {
-    this._service.url('/home');
+    this._service.url('/home/profile');
   }
 
   async simulateLoad() {

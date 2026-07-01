@@ -61,7 +61,7 @@ export class MyRidesPage implements OnInit {
   }
 
   back() {
-    this._services.url('/home');
+    this._services.url('/home/profile');
   }
 
   async loadRides(reset = false) {

@@ -1,14 +1,14 @@
 <!-- Modal o página para crear publicación -->
-<ion-content>
-  <ion-header class="ion-no-border">
-    <ion-toolbar>
-      <ion-buttons slot="start">
-        <ion-button (click)="salir()"><ion-icon name="close-outline"></ion-icon></ion-button>
-      </ion-buttons>
-      <ion-title>Crear Nueva Publicación</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="salir()"><ion-icon name="close-outline"></ion-icon></ion-button>
+    </ion-buttons>
+    <ion-title>Crear Nueva Publicación</ion-title>
+  </ion-toolbar>
+</ion-header>
 
+<ion-content>
   <!-- Tabs para seleccionar tipo de publicación -->
   <ion-segment [(ngModel)]="publicationType" (ionChange)="onTypeChange()" value="service">
     <ion-segment-button value="service">
@@ -82,7 +82,7 @@
       </div>
       
       <!-- AQUÍ VA EL MAPA PARA SERVICIOS -->
-      <div style="padding: 16px;">
+      <div>
         <app-location-picker
           [mapId]="'map-service'"
           [latitude]="serviceForm.latitude || 11.2408"
@@ -194,7 +194,7 @@
       </div>
       
       <!-- MAPA PARA ORIGEN -->
-      <div style="padding: 16px;">
+      <div>
         <app-location-picker
           mapId="map-origin"
           [latitude]="rideForm.origin_lat || 11.2408"
@@ -218,7 +218,7 @@
       </div>
       
       <!-- MAPA PARA DESTINO -->
-      <div style="padding: 16px;">
+      <div>
         <app-location-picker
           mapId="map-destination"
           [latitude]="rideForm.destination_lat || 11.2408"
