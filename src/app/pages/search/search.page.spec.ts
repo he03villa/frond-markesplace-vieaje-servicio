@@ -128,22 +128,22 @@ describe('SearchPage', () => {
 
   it('should handle search with debounce', fakeAsync(() => {
     spyOn(component, 'loadPublications');
-    const event = { target: { value: 'test' } } as any;
-    component.handleSearch(event);
+    component.onSearchQueryChange('test');
     expect(component.searchQuery).toBe('test');
     tick(500);
     expect(component.loadPublications).toHaveBeenCalledWith(true);
   }));
 
-  it('should clear search', () => {
+  it('should clear search', fakeAsync(() => {
     spyOn(component, 'loadPublications');
     component.searchQuery = 'test';
     component.filters.search = 'test';
-    component.clearSearch();
+    component.onSearchQueryChange('');
     expect(component.searchQuery).toBe('');
     expect(component.filters.search).toBe('');
+    tick(500);
     expect(component.loadPublications).toHaveBeenCalledWith(true);
-  });
+  }));
 
   it('should remove filter category and select all', () => {
     spyOn(component, 'selectCategory');

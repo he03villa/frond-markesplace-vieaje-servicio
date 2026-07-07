@@ -1,17 +1,19 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, Location } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import {
-  IonContent, IonHeader, IonTitle, IonToolbar, IonIcon, IonButton,
+  IonContent, IonIcon, IonButton,
   IonButtons, IonRefresher, IonRefresherContent, IonSkeletonText, IonFab, IonFabButton,
   IonModal
 } from '@ionic/angular/standalone';
+import { PageHeaderComponent } from 'src/app/components/page-header/page-header.component';
 import { addIcons } from 'ionicons';
 import { addOutline, alertCircleOutline, arrowBackOutline, arrowDown, arrowUpOutline, briefcaseOutline, calendarOutline, cashOutline, checkmarkCircleOutline, chevronForwardOutline, closeOutline, createOutline, documentTextOutline, eyeOutline, filterOutline, imageOutline, locationOutline, optionsOutline, pauseCircleOutline, peopleOutline, playOutline, searchOutline, star, starOutline, timeOutline, trashOutline, trendingUpOutline } from 'ionicons/icons';
 import { ServiceService } from 'src/app/services/service.service';
 import { ActionSheetController } from '@ionic/angular';
 import { ServiceRequestsService } from 'src/app/services/service-requests.service';
 import { ServiceItem, ServiceStats } from 'src/app/interface/my-services';
+import { ModalCreateServicesRideComponent } from 'src/app/components/modal-create-services-ride/modal-create-services-ride.component';
 
 @Component({
   selector: 'app-my-services',
@@ -20,16 +22,17 @@ import { ServiceItem, ServiceStats } from 'src/app/interface/my-services';
   standalone: true,
   imports: [
     CommonModule, FormsModule,
-    IonContent, IonHeader, IonTitle, IonToolbar, IonIcon, IonButton,
+    IonContent, IonIcon, IonButton,
     IonButtons, IonRefresher, IonRefresherContent,
     IonSkeletonText, IonFab, IonFabButton,
-    IonModal
+    IonModal, PageHeaderComponent
   ]
 })
 export class MyServicesPage implements OnInit {
-  private _services: ServiceService = inject(ServiceService);
+  _services: ServiceService = inject(ServiceService);
   private actionSheetCtrl = inject(ActionSheetController);
   private _ServiceRequest = inject(ServiceRequestsService);
+  private _location: Location = inject(Location);
 
   // Header
   headerSolid = false;
@@ -43,6 +46,7 @@ export class MyServicesPage implements OnInit {
 
   // Data
   isLoading = true;
+  hasError = false;
   services: ServiceItem[] = [];
   filteredServices: ServiceItem[] = [];
 
@@ -89,7 +93,7 @@ export class MyServicesPage implements OnInit {
   }
 
   back() {
-    this._services.url('/home/profile');
+    this._location.back();
   }
 
   // ============ LOAD ============
@@ -116,7 +120,7 @@ export class MyServicesPage implements OnInit {
         console.log(this.services);
       }
     } catch (error) {
-      
+      this.hasError = true;
     }
     this.isLoading = false;
 
@@ -140,17 +144,6 @@ export class MyServicesPage implements OnInit {
 
   applyFilters() {
     this.loadServices(true);
-  }
-
-  onSearch(ev: Event) {
-    const target = ev.target as HTMLInputElement;
-    this.searchQuery = target.value;
-    this.applyFilters();
-  }
-
-  clearSearch() {
-    this.searchQuery = '';
-    this.applyFilters();
   }
 
   // ============ ACTIONS ============
@@ -218,7 +211,9 @@ export class MyServicesPage implements OnInit {
   }
 
   createService() {
-    this._services.url('/create-service');
+    //this._services.url('/create-service');
+    const type = 'service';
+    this._services.openModal(ModalCreateServicesRideComponent, { type }, {});
   }
 
   // ============ HELPERS ============

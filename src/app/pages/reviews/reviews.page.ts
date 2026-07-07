@@ -1,5 +1,6 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonButton, IonIcon, IonRefresher, IonRefresherContent, IonSkeletonText, IonInfiniteScroll, IonInfiniteScrollContent } from '@ionic/angular/standalone';
+import { IonContent, IonButtons, IonButton, IonIcon, IonRefresher, IonRefresherContent, IonSkeletonText, IonInfiniteScroll, IonInfiniteScrollContent } from '@ionic/angular/standalone';
+import { PageHeaderComponent } from 'src/app/components/page-header/page-header.component';
 import { addIcons } from 'ionicons';
 import { alertCircleOutline, arrowBackOutline, arrowDown, arrowUpOutline, cameraOutline, caretBack, chatbubbleOutline, checkmarkCircle, chevronDownOutline, closeOutline, filterOutline, flagOutline, heart, heartOutline, imageOutline, optionsOutline, personOutline, searchOutline, shareOutline, star, starHalf, starOutline, thumbsUpOutline, timeOutline, trophyOutline } from 'ionicons/icons';
 import { ServiceService } from 'src/app/services/service.service';
@@ -15,7 +16,7 @@ import { ModalReporteReviweComponent } from 'src/app/components/modal-reporte-re
   templateUrl: './reviews.page.html',
   styleUrls: ['./reviews.page.scss'],
   standalone: true,
-  imports: [IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonButton, IonIcon, IonRefresher, IonRefresherContent, IonSkeletonText, IonInfiniteScroll, IonInfiniteScrollContent]
+  imports: [IonContent, IonButtons, IonButton, IonIcon, IonRefresher, IonRefresherContent, IonSkeletonText, IonInfiniteScroll, IonInfiniteScrollContent, PageHeaderComponent]
 })
 export class ReviewsPage implements OnInit {
 

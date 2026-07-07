@@ -4,6 +4,7 @@ import { ModalController, IonContent, IonIcon } from '@ionic/angular/standalone'
 import { addIcons } from 'ionicons';
 import { checkmark, checkmarkCircle, close, documentText, lockClosed, star, starOutline, time } from 'ionicons/icons';
 import { DeliveriesServices } from 'src/app/services/deliveries.service';
+import { ServiceService } from 'src/app/services/service.service';
 
 @Component({
   selector: 'app-approve-delivery-modal',
@@ -13,6 +14,8 @@ import { DeliveriesServices } from 'src/app/services/deliveries.service';
   imports: [IonContent, IonIcon, FormsModule]
 })
 export class ApproveDeliveryModalComponent {
+
+  _service: ServiceService = inject(ServiceService);
 
   @Input() deliveryId!: number;
   @Input() workerName!: string;

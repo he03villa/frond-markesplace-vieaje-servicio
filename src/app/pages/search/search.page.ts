@@ -2,11 +2,12 @@ import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import {
-  IonContent, IonHeader, IonTitle, IonToolbar, IonButtons,
+  IonContent, IonButtons,
   IonButton, IonIcon,
   IonModal, IonRefresher, IonRefresherContent, IonInfiniteScroll,
   IonInfiniteScrollContent, IonSkeletonText
 } from '@ionic/angular/standalone';
+import { PageHeaderComponent } from 'src/app/components/page-header/page-header.component';
 import {
   mapOutline, filterOutline, searchOutline, gridOutline, listOutline,
   waterOutline, flashOutline, carOutline, schoolOutline, colorPaletteOutline,
@@ -35,10 +36,11 @@ import * as L from 'leaflet';
   standalone: true,
   imports: [
     CommonModule, FormsModule,
-    IonContent, IonHeader, IonTitle, IonToolbar, IonButtons,
+    IonContent, IonButtons,
     IonButton, IonIcon,
     IonModal, IonRefresher, IonRefresherContent, IonInfiniteScroll,
     IonInfiniteScrollContent, IonSkeletonText,
+    PageHeaderComponent,
   ]
 })
 export class SearchPage {
@@ -190,17 +192,10 @@ export class SearchPage {
 
   // ==================== BÚSQUEDA ====================
 
-  handleSearch(event: Event) {
-    const target = event.target as HTMLInputElement;
-    this.searchQuery = target.value;
-    this.filters.search = this.searchQuery;
+  onSearchQueryChange(value: string) {
+    this.searchQuery = value;
+    this.filters.search = value;
     this.debounceLoad();
-  }
-
-  clearSearch() {
-    this.searchQuery = '';
-    this.filters.search = '';
-    this.loadPublications(true);
   }
 
   private searchTimeout: any;

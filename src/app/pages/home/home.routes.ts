@@ -16,7 +16,8 @@ export const routes: Routes = [
       },
       {
         path: 'messages',
-        loadComponent: () => import('../messages/messages.page').then(m => m.MessagesPage)
+        redirectTo: '/home/chat-inbox',
+        pathMatch: 'full'
       },
       {
         path: 'profile',
@@ -44,7 +45,8 @@ export const routes: Routes = [
       },
       {
         path: 'chat-profile',
-        loadComponent: () => import('../chat-profile/chat-profile.page').then(m => m.ChatProfilePage)
+        redirectTo: '/home/profile',
+        pathMatch: 'full'
       },
       {
         path: 'reviews',
@@ -66,6 +68,10 @@ export const routes: Routes = [
       {
         path: 'settings',
         loadComponent: () => import('../settings/settings.page').then(m => m.SettingsPage)
+      },
+      {
+        path: 'notifications',
+        loadComponent: () => import('../notifications/notifications.page').then(m => m.NotificationsPage)
       },
       {
         path: '',

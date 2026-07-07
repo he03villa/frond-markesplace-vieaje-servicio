@@ -7,68 +7,6 @@
 }
 
 // ============================================
-// HEADER
-// ============================================
-.settings-header {
-    --background: transparent;
-    --border-width: 0;
-    --color: white;
-    position: absolute;
-    top: 0;
-    z-index: 100;
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-
-    ion-toolbar {
-        --background: transparent;
-        --min-height: 56px;
-        padding-top: env(safe-area-inset-top);
-    }
-
-    .back-btn,
-    .header-action {
-        --color: white;
-        --background: rgba(255, 255, 255, 0.2);
-        --border-radius: 12px;
-        width: 38px;
-        height: 38px;
-        backdrop-filter: blur(12px);
-    }
-
-    .header-title {
-        opacity: 0;
-        transform: translateY(-8px);
-        transition: all 0.4s ease;
-        font-weight: 700;
-        font-size: 18px;
-        letter-spacing: -0.3px;
-    }
-
-    &.header-solid {
-        --background: var(--app-glass-bg);
-        --color: var(--app-text);
-        backdrop-filter: blur(24px) saturate(1.8);
-        box-shadow: var(--app-shadow-sm);
-        position: fixed;
-
-        @include app.dark-mode {
-            --background: rgba(30, 41, 59, 0.85);
-            box-shadow: 0 1px 24px rgba(0, 0, 0, 0.3);
-        }
-
-        .header-title {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        .back-btn,
-        .header-action {
-            --color: var(--app-primary);
-            --background: rgba(var(--app-primary-rgb), 0.1);
-        }
-    }
-}
-
-// ============================================
 // CONTENT
 // ============================================
 .settings-content {
@@ -110,7 +48,7 @@
             &.shape-1 {
                 width: 200px;
                 height: 200px;
-                background: white;
+                background: var(--ion-color-light, white);
                 top: -60px;
                 right: -40px;
             }
@@ -167,7 +105,7 @@
             align-items: center;
             justify-content: center;
             border: 2px solid white;
-            color: white;
+            color: var(--app-text-inverse);
             font-size: 14px;
         }
     }
@@ -179,7 +117,7 @@
         width: 32px;
         height: 32px;
         border-radius: 50%;
-        background: white;
+        background: var(--ion-background-color, white);
         border: none;
         color: #4f46e5;
         display: flex;
@@ -200,7 +138,7 @@
     .profile-name {
         font-size: 22px;
         font-weight: 800;
-        color: white;
+        color: var(--app-text-inverse);
         margin: 0 0 4px;
         letter-spacing: -0.5px;
         text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
@@ -229,7 +167,7 @@
             border-radius: 20px;
             font-size: 11px;
             font-weight: 600;
-            color: white;
+            color: var(--app-text-inverse);
             border: 1px solid rgba(255, 255, 255, 0.15);
 
             &.outline {
@@ -261,7 +199,7 @@
             display: block;
             font-size: 20px;
             font-weight: 800;
-            color: white;
+            color: var(--app-text-inverse);
             letter-spacing: -0.5px;
         }
 

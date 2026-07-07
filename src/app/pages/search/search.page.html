@@ -1,41 +1,19 @@
-<!-- Header Glassmorphism -->
-<ion-header [class.header-scrolled]="showHeaderShadow" class="custom-header">
-  <ion-toolbar class="main-toolbar">
-    <ion-buttons slot="start">
-      <ion-button class="header-action back-btn" (click)="back()">
-        <ion-icon slot="icon-only" name="arrow-back-outline"></ion-icon>
-      </ion-button>
-    </ion-buttons>
-    <ion-title class="page-title">Explorar</ion-title>
-    <ion-buttons slot="end">
-      <ion-button (click)="toggleMapView()" class="map-toggle-btn" [class.active]="isMapView">
-        <ion-icon slot="icon-only" [name]="!isMapView ? 'map-outline' : 'list-outline'"></ion-icon>
-      </ion-button>
-    </ion-buttons>
-  </ion-toolbar>
-
-  <!-- Search Toolbar -->
-  <ion-toolbar class="search-toolbar">
-    <div class="search-container">
-      <div class="search-input-wrapper">
-        <ion-icon name="search-outline" class="search-icon"></ion-icon>
-        <input type="text" class="custom-searchbar" placeholder="Buscar servicios, viajes..." [value]="searchQuery"
-          (input)="handleSearch($event)" />
-        @if(searchQuery) {
-        <button class="clear-search-btn" (click)="clearSearch()">
-          <ion-icon name="close-outline"></ion-icon>
-        </button>
-        }
-      </div>
-      <button class="filter-btn" [class.active]="activeFiltersCount > 0" (click)="openFilterModal()">
-        <ion-icon name="options-outline"></ion-icon>
-        @if(activeFiltersCount > 0) {
-        <span class="filter-badge">{{ activeFiltersCount }}</span>
-        }
-      </button>
-    </div>
-  </ion-toolbar>
-</ion-header>
+<app-page-header title="Explorar" [solid]="showHeaderShadow" [showSearch]="true"
+  [searchQuery]="searchQuery" (searchQueryChange)="onSearchQueryChange($event)" (back)="back()">
+  <ion-buttons slot="end">
+    <ion-button (click)="toggleMapView()" class="map-toggle-btn" [class.active]="isMapView">
+      <ion-icon slot="icon-only" [name]="!isMapView ? 'map-outline' : 'list-outline'" />
+    </ion-button>
+  </ion-buttons>
+  <ion-buttons slot="search-suffix">
+    <button class="filter-btn" [class.active]="activeFiltersCount > 0" (click)="openFilterModal()">
+      <ion-icon name="options-outline" />
+      @if(activeFiltersCount > 0) {
+      <span class="filter-badge">{{ activeFiltersCount }}</span>
+      }
+    </button>
+  </ion-buttons>
+</app-page-header>
 
 <ion-content class="explore-content" scroll-y="true" [fullscreen]="true" (ionScroll)="onScroll($event)"
   [scrollEvents]="true">
@@ -371,7 +349,7 @@
     <div class="list-item" [style.animation-delay]="(i * 0.03) + 's'">
 
       @if(item.type === 'service') {
-      <div class="list-item-service" (click)="viewService(item.id)">
+      <div class="list-item-service" role="button" tabindex="0" (click)="viewService(item.id)" (keydown.enter)="viewService(item.id); $event.preventDefault()" (keydown.space)="viewService(item.id); $event.preventDefault()">
         <div class="list-thumb">
           <img
             [src]="item.detail && 'images' in item.detail && item?.detail?.images?.[0] ? item.detail.images[0] : 'assets/placeholder-service.jpg'"
@@ -406,7 +384,7 @@
       }
 
       @if(item.type === 'ride') {
-      <div class="list-item-ride" (click)="viewRide(item.id)">
+      <div class="list-item-ride" role="button" tabindex="0" (click)="viewRide(item.id)" (keydown.enter)="viewRide(item.id); $event.preventDefault()" (keydown.space)="viewRide(item.id); $event.preventDefault()">
         <div class="ride-list-route">
           <div class="route-mini">
             <span class="mini-origin">{{ item?.meta?.origin || (item.detail && 'origin' in item.detail ?

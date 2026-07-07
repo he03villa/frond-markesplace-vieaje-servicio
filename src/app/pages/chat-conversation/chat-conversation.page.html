@@ -1,5 +1,8 @@
 <!-- chat-conversation.page.html -->
 <ion-content [fullscreen]="true" class="chat-conversation" #content (ionScroll)="onScroll($event)">
+  <ion-refresher slot="fixed" (ionRefresh)="handleRefresh($event)">
+    <ion-refresher-content pullingIcon="arrow-down" pullingText="Tirar para actualizar" refreshingSpinner="crescent" refreshingText="Actualizando..."></ion-refresher-content>
+  </ion-refresher>
 
   <!-- Background decorativo -->
   <div class="chat-background">
@@ -9,29 +12,61 @@
   <!-- Header dinámico que se contrae -->
   <app-chat-header [contact]="conversation?.contact" [typing]="isTyping" (back)="goBack()" (profile)="openProfile()"></app-chat-header>
 
-  <!-- Fecha flotante (sticky date) -->
-  @if (messages.length > 0) {
-    <div class="date-divider" #dateDivider>
-      {{ formatDateDivider(messages[0].created_at) }}
+  @if (isLoading) {
+    <div class="skeleton-messages">
+      @for (i of [1,2,3,4,5,6]; track $index) {
+        <div class="skeleton-row" [class.mine]="i % 2 === 0">
+          <ion-skeleton-text animated class="skeleton-avatar" [class.hidden]="i % 2 === 0"></ion-skeleton-text>
+          <div class="skeleton-bubble">
+            <ion-skeleton-text animated class="skeleton-line"></ion-skeleton-text>
+            <ion-skeleton-text animated class="skeleton-line short"></ion-skeleton-text>
+          </div>
+        </div>
+      }
     </div>
   }
 
+  @if (!isLoading && hasError) {
+    <div class="state-container">
+      <ion-icon name="cloud-offline-outline" class="state-icon"></ion-icon>
+      <p>No pudimos cargar los mensajes</p>
+      <ion-button fill="outline" (click)="loadConversation()">Reintentar</ion-button>
+    </div>
+  }
+
+  @if (!isLoading && !hasError) {
+    @if (messages.length > 0) {
+  <!-- Fecha flotante (sticky date) -->
+      <div class="date-divider" #dateDivider>
+        {{ formatDateDivider(messages[0].created_at) }}
+      </div>
+
   <!-- Lista de mensajes con reverse scroll -->
-  <div class="messages-container" #messagesContainer>
-    @for (msg of messages; track $index) {
-      <div class="message-wrapper" [class.mine]="msg.is_mine"
-        [class.first]="isFirstInGroup(msg, $index)" [class.last]="isLastInGroup(msg, $index)">
-  
-        <app-message-bubble [message]="msg" [isFirstInGroup]="isFirstInGroup(msg, $index)" [isLastInGroup]="isLastInGroup(msg, $index)"></app-message-bubble>
-  
+      <div class="messages-container" #messagesContainer>
+        @for (msg of messages; track $index) {
+          <div class="message-wrapper" [class.mine]="msg.is_mine"
+            [class.first]="isFirstInGroup(msg, $index)" [class.last]="isLastInGroup(msg, $index)">
+    
+            <app-message-bubble [message]="msg" [isFirstInGroup]="isFirstInGroup(msg, $index)" [isLastInGroup]="isLastInGroup(msg, $index)"></app-message-bubble>
+    
+          </div>
+        }
+
+        <!-- Typing indicator -->
+        @if (isTyping) {
+          <app-typing-indicator [contactName]="contactName" [contactAvatar]="conversation?.contact?.avatar"></app-typing-indicator>
+        }
       </div>
     }
 
-    <!-- Typing indicator -->
-    @if (isTyping) {
-      <app-typing-indicator [contactName]="contactName" [contactAvatar]="conversation?.contact?.avatar"></app-typing-indicator>
+    @if (messages.length === 0) {
+      <div class="empty-state">
+        <ion-icon name="chatbubbles-outline" class="empty-state-icon"></ion-icon>
+        <h3>No hay mensajes</h3>
+        <p>Envía un mensaje para iniciar la conversación.</p>
+      </div>
     }
-  </div>
+  }
 
   <!-- Scroll to bottom button -->
   @if (showScrollButton) {

@@ -12,9 +12,9 @@ export class RidesService {
   private _data: DataService = inject(DataService);
   private _service: ServiceService = inject(ServiceService);
 
-  getMyRides(data: any = undefined) {
+  getMyRides(data: any = {}) {
     let params = new HttpParams();
-    params = params.set('page', data.page);
+    params = params.set('page', data.page || 1);
     if (data.status !== 'all' && data.status) {
       params = params.set('status', data.status);
     }
@@ -22,7 +22,7 @@ export class RidesService {
     return this._service.promise(this._data.metodoGet(url));
   }
 
-  getAllRides(data: any = undefined) {
+  getAllRides(data: any = {}) {
     let params = new HttpParams();
     if (data.lat) {
       params = params.set('lat', data.lat);

@@ -1,6 +1,7 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonButton, IonIcon, IonRefresher, IonRefresherContent, IonToggle } from '@ionic/angular/standalone';
+import { CommonModule, Location } from '@angular/common';
+import { IonContent, IonButtons, IonButton, IonIcon, IonRefresher, IonRefresherContent, IonToggle } from '@ionic/angular/standalone';
+import { PageHeaderComponent } from 'src/app/components/page-header/page-header.component';
 import { addIcons } from 'ionicons';
 import { arrowBackOutline, arrowDown, arrowUpOutline, calendarOutline, cameraOutline, chevronForwardOutline, colorPaletteOutline, documentTextOutline, eyeOffOutline, eyeOutline, fingerPrintOutline, globeOutline, helpCircleOutline, informationCircleOutline, lockClosedOutline, logOutOutline, mailOutline, moonOutline, notificationsOutline, personOutline, phonePortraitOutline, shieldCheckmarkOutline, shieldOutline, trashOutline, volumeHighOutline } from 'ionicons/icons';
 import { AuthService } from 'src/app/services/auth.service';
@@ -35,11 +36,12 @@ interface SettingItem {
   templateUrl: './settings.page.html',
   styleUrls: ['./settings.page.scss'],
   standalone: true,
-  imports: [IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, IonButtons, IonButton, IonIcon, IonRefresher, IonRefresherContent, IonToggle]
+  imports: [IonContent, CommonModule, IonButtons, IonButton, IonIcon, IonRefresher, IonRefresherContent, IonToggle, PageHeaderComponent]
 })
 export class SettingsPage implements OnInit {
 
   _service = inject(ServiceService);
+  private _location: Location = inject(Location);
   private authService = inject(AuthService);
   private themeService = inject(ThemeService);
   private appVersionService = inject(AppVersionService);
@@ -158,7 +160,7 @@ export class SettingsPage implements OnInit {
   }
 
   back() {
-    this._service.url('/home/profile');
+    this._location.back();
   }
 
   async simulateLoad() {
@@ -194,6 +196,7 @@ export class SettingsPage implements OnInit {
       }
     } catch (error) {
       console.log(error);
+      this._service.presentToast('Error al cargar perfil', 'danger');
     }
     this.isLoading = false;
   }
@@ -223,6 +226,7 @@ export class SettingsPage implements OnInit {
       }
     } catch (error) {
       console.log(error);
+      this._service.presentToast('Error al actualizar notificaciones', 'danger');
     }
   }
 
@@ -254,6 +258,7 @@ export class SettingsPage implements OnInit {
       }
     } catch (error) {
       console.log(error);
+      this._service.presentToast('Error al cerrar sesión', 'danger');
       loading.dismiss();
     }
   }
@@ -313,6 +318,7 @@ export class SettingsPage implements OnInit {
       }
     } catch (error) {
       console.log(error);
+      this._service.presentToast('Error al enviar correo de verificación', 'danger');
       loading.dismiss();
     }
   }

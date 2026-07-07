@@ -1,5 +1,6 @@
 import { Component, inject } from '@angular/core';
-import { IonHeader, IonTitle, IonToolbar, IonButtons, IonButton, IonIcon, IonSearchbar, IonTextarea } from '@ionic/angular/standalone';
+import { IonButtons, IonButton, IonIcon, IonSearchbar, IonTextarea } from '@ionic/angular/standalone';
+import { PageHeaderComponent } from 'src/app/components/page-header/page-header.component';
 import { addIcons } from 'ionicons';
 import { add, arrowBack, attachOutline, briefcaseOutline, callOutline, chatbubblesOutline, createOutline, ellipsisVertical, imageOutline, send } from 'ionicons/icons';
 import { ServiceService } from 'src/app/services/service.service';
@@ -45,7 +46,7 @@ interface ChatData {
   templateUrl: './messages.page.html',
   styleUrls: ['./messages.page.scss'],
   standalone: true,
-  imports: [IonHeader, IonTitle, IonToolbar, IonButtons, IonButton, IonIcon, IonSearchbar, IonTextarea]
+  imports: [IonButtons, IonButton, IonIcon, IonSearchbar, IonTextarea, PageHeaderComponent]
 })
 export class MessagesPage {
 

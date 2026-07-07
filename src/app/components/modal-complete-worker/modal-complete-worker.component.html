@@ -31,7 +31,7 @@
       <!-- Subir imágenes -->
       <div class="form-group">
         <label>Fotos de evidencia *</label>
-        <div class="upload-zone" (click)="fileInput.click()" [class.has-files]="evidenceImages.length > 0">
+        <div class="upload-zone" role="button" tabindex="0" (click)="fileInput.click()" (keydown.enter)="fileInput.click(); $event.preventDefault()" (keydown.space)="fileInput.click(); $event.preventDefault()" [class.has-files]="evidenceImages.length > 0">
           <input 
             #fileInput 
             type="file" 
@@ -52,14 +52,14 @@
             <div class="upload-preview">
               @for (img of evidenceImages; track $index) {
                 <div class="preview-item">
-                  <img [src]="img.preview" alt="Evidencia">
+                  <img [src]="img.preview" alt="Evidencia" (error)="_service.errorImage($event)">
                   <button class="btn-remove" (click)="removeEvidenceImage($index); $event.stopPropagation()">
                     <ion-icon name="close"></ion-icon>
                   </button>
                 </div>
               }
               @if (evidenceImages.length < 5) {
-                <div class="add-more" (click)="fileInput.click(); $event.stopPropagation()">
+                <div class="add-more" role="button" tabindex="0" (click)="fileInput.click(); $event.stopPropagation()" (keydown.enter)="fileInput.click(); $event.stopPropagation()" (keydown.space)="fileInput.click(); $event.stopPropagation()">
                   <ion-icon name="add"></ion-icon>
                 </div>
               }
@@ -71,7 +71,7 @@
       <!-- Subir documentos (opcional) -->
       <div class="form-group">
         <label>Documentos adicionales (opcional)</label>
-        <div class="doc-upload" (click)="docInput.click()">
+        <div class="doc-upload" role="button" tabindex="0" (click)="docInput.click()" (keydown.enter)="docInput.click(); $event.preventDefault()" (keydown.space)="docInput.click(); $event.preventDefault()">
           <input #docInput type="file" multiple hidden (change)="onEvidenceDocsSelected($event)">
           <ion-icon name="document-attach"></ion-icon>
           <span>Adjuntar documentos</span>

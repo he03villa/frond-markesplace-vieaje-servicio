@@ -1,17 +1,13 @@
 <!-- Vista principal - Lista de chats -->
 @if(!currentChatId) {
   <div id="chatsView" class="main-container">
-    <!-- Header -->
-    <ion-header class="custom-header ion-no-border">
-      <ion-toolbar>
-        <ion-title>Mensajes</ion-title>
-        <ion-buttons slot="end">
-          <ion-button onclick="composeMessage()">
-            <ion-icon slot="icon-only" name="create-outline"></ion-icon>
-          </ion-button>
-        </ion-buttons>
-      </ion-toolbar>
-    </ion-header>
+    <app-page-header title="Mensajes" [showBack]="false">
+      <ion-buttons slot="end">
+        <ion-button onclick="composeMessage()">
+          <ion-icon slot="icon-only" name="create-outline" />
+        </ion-button>
+      </ion-buttons>
+    </app-page-header>
     <!-- Barra de búsqueda -->
     <div class="chat-search">
       <ion-searchbar placeholder="Buscar conversaciones..." animated debounce="300" onIonInput="searchChats(event)">
@@ -49,7 +45,7 @@
     </div>
     @if(chatData.chats.length === 0) {
       <!-- Estado vacío -->
-      <div class="empty-state" id="emptyState" style="display: none;">
+      <div class="empty-state" id="emptyState">
         <ion-icon name="chatbubbles-outline" class="empty-state-icon"></ion-icon>
         <h3 class="empty-state-title">No hay mensajes</h3>
         <p class="empty-state-description">

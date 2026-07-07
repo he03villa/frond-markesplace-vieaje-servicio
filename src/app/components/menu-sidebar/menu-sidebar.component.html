@@ -1,0 +1,44 @@
+<div class="menu-overlay" [class.visible]="show" role="button" tabindex="0" (click)="onBackdropClick()" (keydown.enter)="onBackdropClick(); $event.preventDefault()" (keydown.space)="onBackdropClick(); $event.preventDefault()">
+  <div class="menu-panel" [class.open]="show" role="button" tabindex="0" (click)="$event.stopPropagation()" (keydown.enter)="$event.stopPropagation()" (keydown.space)="$event.stopPropagation()">
+    <div class="menu-header">
+      <div class="user-avatar">
+        @if (user?.avatar_url) {
+          <img [src]="user.avatar_url" [alt]="user.name" class="avatar-img" (error)="onAvatarError($event)">
+        } @else {
+          <div class="avatar-placeholder">
+            <span>{{ user?.name?.charAt(0)?.toUpperCase() || 'U' }}</span>
+          </div>
+        }
+        <div class="status-dot"></div>
+      </div>
+      <div class="user-info">
+        <h3 class="user-name">{{ user?.name || 'Usuario' }}</h3>
+        <span class="user-email">{{ user?.email || '' }}</span>
+      </div>
+      <button class="close-btn" (click)="close.emit()">
+        <ion-icon name="close"></ion-icon>
+      </button>
+    </div>
+
+    <div class="menu-body">
+      @for (item of menuItems; track item.route) {
+        <button class="menu-item" (click)="navigate(item.route)">
+          <div class="item-icon-wrapper">
+            <ion-icon [name]="item.icon" class="item-icon"></ion-icon>
+          </div>
+          <span class="item-label">{{ item.label }}</span>
+          <ion-icon name="chevron-forward" class="item-arrow"></ion-icon>
+        </button>
+      }
+    </div>
+
+    <div class="menu-footer">
+      <button class="logout-btn" (click)="logout()">
+        <div class="logout-icon-wrapper">
+          <ion-icon name="log-out-outline"></ion-icon>
+        </div>
+        <span class="logout-label">Cerrar sesión</span>
+      </button>
+    </div>
+  </div>
+</div>

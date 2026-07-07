@@ -1,6 +1,7 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 import { IonContent, IonSegmentButton, IonCard, IonCardContent, IonSegment, IonItem, IonLabel, IonInput, IonButton } from '@ionic/angular/standalone';
 import { ErrorComponent } from 'src/app/components/error/error.component';
 import { ServiceService } from 'src/app/services/service.service';
@@ -19,6 +20,7 @@ export class LoginPage implements OnInit {
   _service: ServiceService = inject(ServiceService);
   private fb: FormBuilder = inject(FormBuilder);
   private _authService: AuthService = inject(AuthService);
+  private route: ActivatedRoute = inject(ActivatedRoute);
 
   form : FormGroup = new FormGroup({});
   showPassword: boolean = false;
@@ -28,6 +30,11 @@ export class LoginPage implements OnInit {
 
   ngOnInit() {
     this.iniciarForm();
+    this.route.queryParams.subscribe(params => {
+      if (params['sessionExpired'] === 'true') {
+        this._service.presentToast('Tu sesión ha expirado. Inicia sesión nuevamente.', 'warning');
+      }
+    });
   }
 
   iniciarForm() {

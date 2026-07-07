@@ -21,7 +21,7 @@
         <div class="worker-glow"></div>
         <div class="worker-content">
           <div class="avatar-premium">
-            <img [src]="workerAvatar" [alt]="workerName">
+            <img [src]="workerAvatar" [alt]="workerName" (error)="_service.errorImage($event)">
             <div class="avatar-ring danger"></div>
           </div>
           <div class="worker-info">

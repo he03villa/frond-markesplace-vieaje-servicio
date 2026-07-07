@@ -1,0 +1,88 @@
+<app-page-header title="Notificaciones" (back)="back()">
+  <ion-buttons slot="end">
+    @if (unreadCount > 0) {
+      <ion-button class="header-action" (click)="markAllAsRead()">
+        <ion-icon name="checkmark-done" />
+      </ion-button>
+    }
+  </ion-buttons>
+</app-page-header>
+
+<ion-content [fullscreen]="true" scrollEvents="true" (ionScroll)="onScroll($event)" class="notif-content">
+  <div class="ambient-glow"></div>
+
+  <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  @if (loading && notifications.length === 0) {
+    <div class="loading-container">
+      <div class="loading-spinner">
+        <div class="spinner-ring"></div>
+      </div>
+      <p class="loading-text">Cargando notificaciones...</p>
+    </div>
+  } @else if (hasError) {
+    <div class="state-container">
+      <ion-icon name="cloud-offline-outline" class="state-icon"></ion-icon>
+      <p>No pudimos cargar las notificaciones</p>
+      <ion-button fill="outline" (click)="loadNotifications()">Reintentar</ion-button>
+    </div>
+  } @else if (notifications.length === 0) {
+    <div class="empty-state">
+      <div class="empty-art">
+        <div class="empty-ring ring-1"></div>
+        <div class="empty-ring ring-2"></div>
+        <div class="empty-ring ring-3"></div>
+        <div class="empty-bell">
+          <ion-icon name="notifications-outline"></ion-icon>
+        </div>
+      </div>
+      <h3 class="empty-title">Todo al día</h3>
+      <p class="empty-desc">Cuando recibas notificaciones, aparecerán aquí</p>
+    </div>
+  } @else {
+    <div class="notif-list" #notificationList>
+      @for (group of groupedNotifications; track group.label) {
+        <div class="notif-group" style="--stagger: {{ $index }}">
+          <div class="group-header">
+            <span class="group-label">{{ group.label }}</span>
+            <div class="group-line"></div>
+          </div>
+          @for (notif of group.items; track notif.id) {
+            <div class="notif-card" [class.unread]="!notif.read_at" [style.--card-index]="$index" role="button" tabindex="0" (click)="markAsRead(notif)" (keydown.enter)="markAsRead(notif); $event.preventDefault()" (keydown.space)="markAsRead(notif); $event.preventDefault()">
+              <div class="card-accent" [style.background]="getAccentColor(notif.type)"></div>
+              <div class="card-icon-wrapper" [style.background]="getIconBg(notif.type)">
+                <ion-icon [name]="getNotificationIcon(notif.type)" class="card-icon"></ion-icon>
+              </div>
+              <div class="card-body">
+                <h4 class="card-title">{{ notif.title }}</h4>
+                <p class="card-text">{{ notif.body }}</p>
+                <span class="card-time">
+                  <ion-icon name="time-outline"></ion-icon>
+                  {{ getTimeAgo(notif.created_at) }}
+                </span>
+              </div>
+              <div class="card-right">
+                @if (!notif.read_at) {
+                  <div class="unread-dot"></div>
+                }
+                <ion-icon name="chevron-forward" class="card-arrow"></ion-icon>
+              </div>
+            </div>
+          }
+        </div>
+      }
+    </div>
+
+    <ion-infinite-scroll threshold="100px" (ionInfinite)="loadMore($event)">
+      <ion-infinite-scroll-content loadingText="Cargando más notificaciones..."></ion-infinite-scroll-content>
+    </ion-infinite-scroll>
+  }
+
+  <ion-fab slot="fixed" vertical="bottom" horizontal="end" class="scroll-top-fab" [class.visible]="showScrollTop">
+    <ion-fab-button (click)="scrollToTop()" size="small" color="light">
+      <ion-icon name="arrow-up"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+</ion-content>

@@ -1,0 +1,58 @@
+<div class="sidebar-overlay" [class.visible]="show" role="button" tabindex="0" (click)="onBackdropClick()" (keydown.enter)="onBackdropClick(); $event.preventDefault()" (keydown.space)="onBackdropClick(); $event.preventDefault()">
+  <div class="sidebar-panel" [class.open]="show" role="button" tabindex="0" (click)="$event.stopPropagation()" (keydown.enter)="$event.stopPropagation()" (keydown.space)="$event.stopPropagation()">
+    <div class="sidebar-header">
+      <h2 class="sidebar-title">
+        <ion-icon name="notifications-outline"></ion-icon>
+        Notificaciones
+      </h2>
+      <button class="close-btn" (click)="close.emit()">
+        <ion-icon name="close"></ion-icon>
+      </button>
+    </div>
+
+    <div class="sidebar-body">
+      @if (loading) {
+        <div class="loading-state">
+          <div class="spinner"></div>
+          <span>Cargando...</span>
+        </div>
+      } @else if (notifications.length === 0) {
+        <div class="empty-state">
+          <div class="empty-icon">
+            <ion-icon name="notifications-outline"></ion-icon>
+          </div>
+          <h3>No hay notificaciones</h3>
+          <p>Las notificaciones aparecerán aquí</p>
+        </div>
+      } @else {
+        <div class="notifications-list">
+          @for (notif of notifications; track notif.id) {
+            <div class="notif-item" [class.unread]="!notif.read_at">
+              <div class="notif-icon">
+                <ion-icon [name]="getNotificationIcon(notif.type)"></ion-icon>
+              </div>
+              <div class="notif-content">
+                <p class="notif-title">{{ notif.title }}</p>
+                <p class="notif-body">{{ notif.body }}</p>
+                <span class="notif-time">
+                  <ion-icon name="time-outline"></ion-icon>
+                  {{ getTimeAgo(notif.created_at) }}
+                </span>
+              </div>
+              @if (!notif.read_at) {
+                <div class="notif-dot"></div>
+              }
+            </div>
+          }
+        </div>
+      }
+    </div>
+
+    <div class="sidebar-footer">
+      <button class="view-all-btn" (click)="onViewAll()">
+        <span>Ver todas las notificaciones</span>
+        <ion-icon name="arrow-forward"></ion-icon>
+      </button>
+    </div>
+  </div>
+</div>

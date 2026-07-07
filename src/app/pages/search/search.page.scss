@@ -16,132 +16,19 @@
     --radius-sm: 10px;
 }
 
-// ============================================
-// HEADER GLASSMORPHISM
-// ============================================
-.custom-header {
-    background: var(--app-gradient-primary);
-    position: relative;
+.map-toggle-btn {
+    --color: var(--app-text-secondary);
+    --background: var(--app-surface-elevated);
+    --border-radius: 12px;
+    --padding-start: 8px;
+    --padding-end: 8px;
+    margin: 0;
+    height: 40px;
+    width: 40px;
 
-    &::before {
-        content: '';
-        position: absolute;
-        inset: 0;
-        background: linear-gradient(180deg, rgba(var(--app-text-inverse-rgb), 0.1) 0%, transparent 100%);
-        pointer-events: none;
-    }
-
-    &.header-scrolled {
-        box-shadow: var(--app-shadow-lg);
-
-        .main-toolbar {
-            --background: rgba(var(--app-primary-rgb), 0.95);
-            backdrop-filter: blur(20px) saturate(180%);
-        }
-    }
-}
-
-.main-toolbar {
-    --background: transparent;
-    --color: var(--app-text-inverse);
-    --border-width: 0;
-    --min-height: 56px;
-
-    .page-title {
-        font-weight: 700;
-        font-size: 20px;
-        letter-spacing: -0.5px;
-    }
-
-    .back-button {
+    &.active {
+        --background: var(--app-primary);
         --color: var(--app-text-inverse);
-        --icon-font-size: 24px;
-    }
-
-    .map-toggle-btn {
-        --color: var(--app-text-inverse);
-        --background: rgba(var(--app-text-inverse-rgb), 0.15);
-        --border-radius: 12px;
-        --padding-start: 8px;
-        --padding-end: 8px;
-        margin: 0;
-        height: 40px;
-        width: 40px;
-
-        &.active {
-            --background: var(--app-surface);
-            --color: var(--app-primary);
-        }
-    }
-}
-
-// ============================================
-// SEARCH BAR
-// ============================================
-.search-toolbar {
-    --background: transparent;
-    --border-width: 0;
-    --padding-top: 0;
-    --padding-bottom: 12px;
-    --padding-start: 16px;
-    --padding-end: 16px;
-}
-
-.search-container {
-    display: flex;
-    gap: 10px;
-    align-items: center;
-}
-
-.search-input-wrapper {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    background: rgba(var(--app-text-inverse-rgb), 0.95);
-    border-radius: var(--radius-md);
-    padding: 0 14px;
-    height: 48px;
-    box-shadow: 0 2px 12px rgba(var(--app-text-inverse-rgb), 0.08);
-    transition: all 0.2s ease;
-
-    &:focus-within {
-        box-shadow: 0 4px 20px rgba(var(--app-text-inverse-rgb), 0.12);
-        transform: translateY(-1px);
-    }
-
-    .search-icon {
-        color: var(--app-text-muted);
-        font-size: 20px;
-        margin-right: 10px;
-    }
-
-    .custom-searchbar {
-        flex: 1;
-        border: none;
-        background: transparent;
-        font-size: 15px;
-        color: var(--app-text);
-        outline: none;
-        height: 100%;
-
-        &::placeholder {
-            color: var(--app-text-muted);
-        }
-    }
-
-    .clear-search-btn {
-        background: transparent;
-        border: none;
-        color: var(--app-text-muted);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 4px;
-        cursor: pointer;
-
-        ion-icon {
-            font-size: 18px;
-        }
     }
 }
 

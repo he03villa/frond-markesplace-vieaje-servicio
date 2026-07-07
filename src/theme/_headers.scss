@@ -1,0 +1,19 @@
+// ============================================
+// SHARED HEADER PATTERNS
+// Imported via global.scss — available everywhere.
+// The new unified header is used via <app-page-header> component.
+// ============================================
+
+@use 'mixins' as app;
+
+// === Unified Page Header (glass + solid-on-scroll) ===
+// Applied by <app-page-header> component automatically.
+// Customize via CSS variables:
+//   --page-header-btn-color
+//   --page-header-btn-bg
+//   --page-header-title-color
+//   --page-header-solid-bg
+//   --page-header-bg
+
+// The .app-page-header class is now defined in page-header.component.scss
+// This file is kept for backwards compatibility.

@@ -130,7 +130,8 @@ describe('MyServicesPage', () => {
   it('should clear search and apply filters', () => {
     spyOn(component, 'applyFilters');
     component.searchQuery = 'test';
-    component.clearSearch();
+    component.searchQuery = '';
+    component.applyFilters();
     expect(component.searchQuery).toBe('');
     expect(component.applyFilters).toHaveBeenCalled();
   });

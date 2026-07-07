@@ -108,7 +108,7 @@
   
         <!-- Checkboxes -->
         <div class="checkboxes-section">
-          <div class="checkbox-item" (click)="toggleCheckbox('data')">
+          <div class="checkbox-item" role="button" tabindex="0" (click)="toggleCheckbox('data')" (keydown.enter)="toggleCheckbox('data'); $event.preventDefault()" (keydown.space)="toggleCheckbox('data'); $event.preventDefault()">
             <div class="checkbox-custom" [class.checked]="checkboxes.data">
               <ion-icon name="checkmark"></ion-icon>
             </div>
@@ -116,7 +116,7 @@
               Entiendo que <strong>todos mis datos serán eliminados permanentemente</strong> y no podrán ser recuperados
             </span>
           </div>
-          <div class="checkbox-item" (click)="toggleCheckbox('services')">
+          <div class="checkbox-item" role="button" tabindex="0" (click)="toggleCheckbox('services')" (keydown.enter)="toggleCheckbox('services'); $event.preventDefault()" (keydown.space)="toggleCheckbox('services'); $event.preventDefault()">
             <div class="checkbox-custom" [class.checked]="checkboxes.services">
               <ion-icon name="checkmark"></ion-icon>
             </div>

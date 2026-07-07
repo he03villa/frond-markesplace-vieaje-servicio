@@ -1,7 +1,8 @@
 import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule, DatePipe, DecimalPipe, UpperCasePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonContent, IonButton, IonIcon } from '@ionic/angular/standalone';
+import { IonContent, IonButton, IonIcon, IonButtons, IonRefresher, IonRefresherContent } from '@ionic/angular/standalone';
+import { PageHeaderComponent } from 'src/app/components/page-header/page-header.component';
 import { ActivatedRoute } from '@angular/router';
 import { ServiceService } from 'src/app/services/service.service';
 import { AuthService } from 'src/app/services/auth.service';
@@ -18,7 +19,7 @@ import { WebsocketService } from 'src/app/services/websocket.service';
   templateUrl: './ride-detail.page.html',
   styleUrls: ['./ride-detail.page.scss'],
   standalone: true,
-  imports: [DecimalPipe, DatePipe, UpperCasePipe, LocationPickerComponent, IonContent, FormsModule, IonButton, IonIcon]
+  imports: [DecimalPipe, DatePipe, UpperCasePipe, LocationPickerComponent, IonContent, FormsModule, IonButton, IonIcon, IonButtons, IonRefresher, IonRefresherContent, PageHeaderComponent]
 })
 export class RideDetailPage implements OnInit, OnDestroy {
 
@@ -68,6 +69,7 @@ export class RideDetailPage implements OnInit, OnDestroy {
       this.connectToRealtimeUpdates(this.rideId);
     } catch (error) {
       console.error(error);
+      this._service.presentToast('Error al cargar detalle del viaje', 'danger');
     }
   }
 
@@ -130,6 +132,11 @@ export class RideDetailPage implements OnInit, OnDestroy {
     return 'default';
   }
 
+  async handleRefresh(event: any) {
+    await this.loadRide();
+    event.target.complete();
+  }
+
   goBack() {
     this._service.url('/home');
   }
@@ -158,6 +165,7 @@ export class RideDetailPage implements OnInit, OnDestroy {
         await this.reloadRide();
       } catch (error) {
         console.log(error);
+        this._service.presentToast('Error al solicitar viaje', 'danger');
       }
     }
   }
@@ -178,6 +186,7 @@ export class RideDetailPage implements OnInit, OnDestroy {
               this.loadRide();
             } catch (error) {
               console.log(error);
+              this._service.presentToast('Error al cancelar reserva', 'danger');
             }
           }
         }
@@ -199,6 +208,7 @@ export class RideDetailPage implements OnInit, OnDestroy {
               this.loadRide();
             } catch (error) {
               console.log(error);
+              this._service.presentToast('Error al iniciar viaje', 'danger');
             }
           }
         }
@@ -234,6 +244,7 @@ export class RideDetailPage implements OnInit, OnDestroy {
       await loading.dismiss();
     } catch (error) {
       console.log(error);
+      this._service.presentToast('Error al confirmar pasajero', 'danger');
       await loading.dismiss();
     }
   }
@@ -245,6 +256,7 @@ export class RideDetailPage implements OnInit, OnDestroy {
       this.reloadRide();
       await loading.dismiss();
     } catch (error) {
+      this._service.presentToast('Error al recoger pasajero', 'danger');
       await loading.dismiss();
     }
   }
@@ -256,6 +268,7 @@ export class RideDetailPage implements OnInit, OnDestroy {
       this.reloadRide();
       await loading.dismiss();
     } catch (error) {
+      this._service.presentToast('Error al dejar pasajero', 'danger');
       await loading.dismiss();
     }
   }
@@ -277,6 +290,7 @@ export class RideDetailPage implements OnInit, OnDestroy {
               this.presentToast('¡Viaje completado!', 'success');
               this.reloadRide();
             } catch (error) {
+              this._service.presentToast('Error al completar viaje', 'danger');
               loading.dismiss();
             }
           }
@@ -300,6 +314,7 @@ export class RideDetailPage implements OnInit, OnDestroy {
       this.presentToast('¡Gracias por tu calificación!', 'success');
       this.reloadRide();
     } catch (error) {
+      this._service.presentToast('Error al enviar calificación', 'danger');
       loading.dismiss();
     }
   }

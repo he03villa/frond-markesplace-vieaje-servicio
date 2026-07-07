@@ -1,19 +1,10 @@
-<!-- Header dinámico -->
-<ion-header [class.header-solid]="headerSolid" class="reviews-header">
-  <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-button class="header-action back-btn" (click)="back()">
-        <ion-icon slot="icon-only" name="arrow-back-outline"></ion-icon>
-      </ion-button>
-    </ion-buttons>
-    <ion-title class="header-title">Reseñas</ion-title>
-    <ion-buttons slot="end">
-      <ion-button class="header-action" (click)="scrollToTop()">
-        <ion-icon name="arrow-up-outline"></ion-icon>
-      </ion-button>
-    </ion-buttons>
-  </ion-toolbar>
-</ion-header>
+<app-page-header title="Reseñas" [solid]="headerSolid" (back)="back()">
+  <ion-buttons slot="end">
+    <ion-button class="header-action" (click)="scrollToTop()">
+      <ion-icon name="arrow-up-outline" />
+    </ion-button>
+  </ion-buttons>
+</app-page-header>
 
 <ion-content 
   [fullscreen]="true" 
@@ -42,7 +33,7 @@
 
       <div class="rating-bars">
         @for(item of ratingBreakdown; track item.stars) {
-          <div class="bar-row" (click)="setFilter(item.stars.toString())">
+          <div class="bar-row" role="button" tabindex="0" (click)="setFilter(item.stars.toString())" (keydown.enter)="setFilter(item.stars.toString()); $event.preventDefault()" (keydown.space)="setFilter(item.stars.toString()); $event.preventDefault()">
             <span class="bar-label">{{ item.stars }} <ion-icon name="star"></ion-icon></span>
             <div class="bar-track">
               <div class="bar-fill" [style.width.%]="item.percentage" [style.background]="getRatingColor(item.stars)"></div>
@@ -241,11 +232,11 @@
 
 <!-- Modal imagen -->
 @if(showImageModal && selectedImage) {
-  <div class="image-modal" (click)="closeImageModal()">
+  <div class="image-modal" role="button" tabindex="0" (click)="closeImageModal()" (keydown.enter)="closeImageModal(); $event.preventDefault()" (keydown.space)="closeImageModal(); $event.preventDefault()">
     <button class="modal-close" (click)="closeImageModal()">
       <ion-icon name="close-outline"></ion-icon>
     </button>
-    <img [src]="selectedImage.url" [alt]="selectedImage.caption || ''" />
+    <img [src]="selectedImage.url" [alt]="selectedImage.caption || ''" (error)="_service.errorImage($event)" />
     @if(selectedImage.caption) {
       <div class="modal-caption">{{ selectedImage.caption }}</div>
     }

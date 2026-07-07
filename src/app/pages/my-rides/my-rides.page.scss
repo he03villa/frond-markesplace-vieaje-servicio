@@ -1,69 +1,5 @@
 @use '../../../theme/mixins' as app;
 
-// ============================================
-// HEADER
-// ============================================
-.rides-header {
-    --background: transparent;
-    --border-width: 0;
-    --color: var(--app-text-inverse);
-    position: absolute;
-    top: 0;
-    z-index: 100;
-    transition: all 0.3s ease;
-
-    ion-toolbar {
-        --background: transparent;
-        --min-height: 56px;
-        padding-top: env(safe-area-inset-top);
-    }
-
-    .back-btn,
-    .header-action {
-        --color: var(--app-text-inverse);
-        --background: rgba(255, 255, 255, 0.15);
-        --border-radius: 10px;
-        width: 36px;
-        height: 36px;
-        backdrop-filter: blur(10px);
-    }
-
-    .header-title {
-        opacity: 0;
-        transform: translateY(-10px);
-        transition: all 0.3s ease;
-        font-weight: 700;
-        font-size: 18px;
-        color: var(--app-text-inverse);
-    }
-
-    &.header-solid {
-        --background: var(--app-glass-bg);
-        --color: var(--app-text);
-        backdrop-filter: blur(20px);
-        box-shadow: var(--app-shadow-md);
-        position: fixed;
-
-        @include app.dark-mode {
-            --background: rgba(15, 23, 42, 0.95);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-        }
-
-        .header-title {
-            opacity: 1;
-            transform: translateY(0);
-            color: var(--app-text);
-        }
-
-        .back-btn,
-        .header-action {
-            --color: var(--app-primary);
-            --background: rgba(var(--app-primary-rgb), 0.1);
-        }
-    }
-}
-
-// ============================================
 // CONTENT
 // ============================================
 .rides-content {
@@ -581,6 +517,60 @@
     }
 }
 
+// ============================================
+// STATE CONTAINER (error, loading)
+// ============================================
+.state-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 64px 24px;
+    text-align: center;
+    gap: 12px;
+
+    .state-icon {
+        font-size: 48px;
+        color: var(--app-text-muted);
+        opacity: 0.5;
+    }
+
+    .state-text {
+        font-size: 15px;
+        font-weight: 600;
+        color: var(--app-text-secondary);
+        margin: 0;
+    }
+
+    .retry-btn {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 10px 20px;
+        background: var(--app-surface);
+        border: 1px solid var(--app-border);
+        border-radius: 20px;
+        color: var(--app-text);
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+
+        &:hover {
+            background: var(--app-primary);
+            color: var(--app-text-inverse);
+            border-color: var(--app-primary);
+        }
+
+        ion-icon {
+            font-size: 16px;
+        }
+    }
+}
+
+// ============================================
+// RESPONSIVE
+// ============================================
 @media (min-width: 768px) {
     .rides-list {
         display: grid;

@@ -20,7 +20,7 @@ export class ModalCompleteWorkerComponent {
   @Input() acceptedOffer: any;
 
   private modalCtr: ModalController = inject(ModalController);
-  private _service: ServiceService = inject(ServiceService);
+  _service: ServiceService = inject(ServiceService);
   private _serviceRequests: ServiceRequestsService = inject(ServiceRequestsService);
 
   completionNotes = '';

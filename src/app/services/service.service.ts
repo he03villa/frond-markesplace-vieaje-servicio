@@ -30,12 +30,7 @@ export class ServiceService {
       dataModal.message = dataModal.message == 'Unauthorized' ? 'Revisa tu correo o contraseña' : dataModal.message;
 
       console.error('Error en la solicitud:', error);
-      if (error.status === 401) {
-        await this.Alert(dataModal);
-        this.logout();
-      } else {
-        this.Alert(dataModal);
-      }
+      this.Alert(dataModal);
       throw error; // Mantenemos el rechazo de la promesa
     }
   }
@@ -183,6 +178,6 @@ export class ServiceService {
   logout() {
     localStorage.removeItem('dataUser');
     localStorage.removeItem('token');
-    location.href = '/login'; // Usar ruta específica
+    this._route.navigateByUrl('/login?sessionExpired=true');
   }
 }

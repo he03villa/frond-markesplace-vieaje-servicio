@@ -1,43 +1,14 @@
-<!-- Header -->
-<ion-header [class.header-solid]="headerSolid" class="services-header">
-  <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-button class="back-btn" (click)="back()">
-        <ion-icon slot="icon-only" name="arrow-back-outline"></ion-icon>
-      </ion-button>
-    </ion-buttons>
-    <ion-title class="header-title">Mis Servicios</ion-title>
-    <ion-buttons slot="end">
-      <ion-button class="header-action" (click)="showSearch = !showSearch">
-        <ion-icon [name]="showSearch ? 'close-outline' : 'search-outline'"></ion-icon>
-      </ion-button>
-      <ion-button class="header-action" (click)="showFilterModal = true">
-        <ion-icon name="options-outline"></ion-icon>
-      </ion-button>
-    </ion-buttons>
-  </ion-toolbar>
-
-  <!-- Search bar -->
-  @if(showSearch) {
-  <div class="search-bar">
-    <div class="search-input-wrapper">
-      <ion-icon name="search-outline" class="search-icon"></ion-icon>
-      <input 
-        type="text" 
-        [(ngModel)]="searchQuery"
-        (input)="onSearch($event)"
-        placeholder="Buscar en mis servicios..."
-        class="search-input"
-      />
-      @if(searchQuery) {
-      <button class="clear-btn" (click)="clearSearch()">
-        <ion-icon name="close-outline"></ion-icon>
-      </button>
-      }
-    </div>
-  </div>
-  }
-</ion-header>
+<app-page-header title="Mis Servicios" [solid]="headerSolid" [showSearch]="showSearch"
+  [(searchQuery)]="searchQuery" (searchQueryChange)="applyFilters()" (back)="back()">
+  <ion-buttons slot="end">
+    <ion-button class="header-action" (click)="showSearch = !showSearch">
+      <ion-icon [name]="showSearch ? 'close-outline' : 'search-outline'" />
+    </ion-button>
+    <ion-button class="header-action" (click)="showFilterModal = true">
+      <ion-icon name="options-outline" />
+    </ion-button>
+  </ion-buttons>
+</app-page-header>
 
 <ion-content 
   [fullscreen]="true" 
@@ -153,12 +124,21 @@
           </div>
         </div>
       }
+    } @else if (hasError) {
+      <div class="state-container">
+        <ion-icon name="cloud-offline-outline" class="state-icon"></ion-icon>
+        <p class="state-text">No pudimos cargar tus servicios</p>
+        <button class="retry-btn" (click)="loadServices(true)">
+          <ion-icon name="refresh"></ion-icon>
+          Reintentar
+        </button>
+      </div>
     } @else {
       @for(service of filteredServices; track service.id; let i = $index) {
         <div class="service-card" [style.animation-delay]="(i * 0.08) + 's'">
           <!-- Image -->
-          <div class="card-image" (click)="viewService(service.publishable_id)">
-            <img [src]="service.image" [alt]="service.title" loading="lazy" />
+          <div class="card-image" role="button" tabindex="0" (click)="viewService(service.publishable_id)" (keydown.enter)="viewService(service.publishable_id); $event.preventDefault()" (keydown.space)="viewService(service.publishable_id); $event.preventDefault()">
+            <img [src]="service.image" [alt]="service.title" loading="lazy" (error)="_services.errorImage($event)" />
             <div class="image-overlay"></div>
             
             <!-- Status badge -->
@@ -190,7 +170,7 @@
               <span class="time-badge">{{ service.relative_time }}</span>
             </div>
 
-            <h3 class="service-title" (click)="viewService(service.publishable_id)">{{ service.title }}</h3>
+            <h3 class="service-title" role="button" tabindex="0" (click)="viewService(service.publishable_id)" (keydown.enter)="viewService(service.publishable_id); $event.preventDefault()" (keydown.space)="viewService(service.publishable_id); $event.preventDefault()">{{ service.title }}</h3>
             <p class="service-desc">{{ service.description }}</p>
 
             <!-- Meta -->
@@ -223,18 +203,6 @@
               </div>
             </div>
           </div>
-
-          <!-- Actions -->
-          <!-- <div class="card-actions">
-            <button class="action-btn secondary" (click)="editService(service.id)">
-              <ion-icon name="create-outline"></ion-icon>
-              Editar
-            </button>
-            <button class="action-btn primary" (click)="openActions(service)">
-              <ion-icon name="options-outline"></ion-icon>
-              Más
-            </button>
-          </div> -->
         </div>
       }
 

@@ -118,5 +118,14 @@ export const API_ENDPOINTS = {
             subscribe: 'device-token/subscribe',
             unsubscribe: 'device-token/unsubscribe',
         }
+    },
+    userNotifications: {
+        name: 'notifications',
+        services: {
+            list: '',
+            unreadCount: 'unread-count',
+            markAsRead: '{id}/read',
+            markAllAsRead: 'read-all',
+        }
     }
 }

@@ -9,6 +9,9 @@
  * https://ionicframework.com/docs/layout/global-stylesheets
  */
 
+/* Shared header patterns (page-header, glass-header) */
+@use './theme/headers';
+
 /* Core CSS required for Ionic components to work properly */
 @import "@ionic/angular/css/core.css";
 
@@ -105,6 +108,18 @@ body {
   to {
     transform: rotate(360deg);
   }
+}
+
+// Focus visible outline for keyboard navigation
+:focus-visible {
+  outline: 2px solid var(--app-primary);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+// Remove focus outline for mouse users
+:focus:not(:focus-visible) {
+  outline: none;
 }
 
 // Reduced motion

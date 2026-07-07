@@ -18,12 +18,12 @@
 
         .bubble-content {
             background: var(--app-primary);
-            color: white;
+            color: var(--app-text-inverse);
             border-radius: var(--radius-lg) var(--radius-lg) 4px var(--radius-lg);
             box-shadow: 0 4px 15px rgba(var(--app-primary-rgb), 0.3);
 
             .bubble-text p {
-                color: white;
+                color: var(--app-text-inverse);
             }
 
             .bubble-meta .time {

@@ -1,18 +1,10 @@
-<ion-header [class.header-solid]="headerSolid" class="rides-header">
-  <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-button class="back-btn" (click)="back()">
-        <ion-icon slot="icon-only" name="arrow-back-outline"></ion-icon>
-      </ion-button>
-    </ion-buttons>
-    <ion-title class="header-title">Mis Viajes</ion-title>
-    <ion-buttons slot="end">
-      <ion-button class="header-action" (click)="scrollToTop()">
-        <ion-icon name="arrow-up-outline"></ion-icon>
-      </ion-button>
-    </ion-buttons>
-  </ion-toolbar>
-</ion-header>
+<app-page-header title="Mis Viajes" [solid]="headerSolid" (back)="back()">
+  <ion-buttons slot="end">
+    <ion-button class="header-action" (click)="scrollToTop()">
+      <ion-icon name="arrow-up-outline" />
+    </ion-button>
+  </ion-buttons>
+</app-page-header>
 
 <ion-content 
   [fullscreen]="true" 
@@ -106,6 +98,15 @@
           <ion-skeleton-text animated class="skeleton-line short"></ion-skeleton-text>
         </div>
       }
+    } @else if (hasError) {
+      <div class="state-container">
+        <ion-icon name="cloud-offline-outline" class="state-icon"></ion-icon>
+        <p class="state-text">No pudimos cargar tus viajes</p>
+        <button class="retry-btn" (click)="loadRides(true)">
+          <ion-icon name="refresh"></ion-icon>
+          Reintentar
+        </button>
+      </div>
     } @else {
       @for(ride of filteredRides; track ride.id; let i = $index) {
         <div class="ride-card" [style.animation-delay]="(i * 0.08) + 's'">
@@ -121,7 +122,7 @@
           </div>
 
           <!-- Route Visualization -->
-          <div class="route-visual" (click)="viewRide(ride.publishable_id || 0)">
+          <div class="route-visual" role="button" tabindex="0" (click)="viewRide(ride.publishable_id || 0)" (keydown.enter)="viewRide(ride.publishable_id || 0); $event.preventDefault()" (keydown.space)="viewRide(ride.publishable_id || 0); $event.preventDefault()">
             <div class="route-points">
               <div class="point origin">
                 <div class="dot"></div>

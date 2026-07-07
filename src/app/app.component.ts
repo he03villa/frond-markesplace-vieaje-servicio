@@ -5,16 +5,25 @@ import { distinctUntilChanged, filter, map, Subscription, skip } from 'rxjs';
 import { App } from '@capacitor/app';
 import { PushNotificationService } from './services/push-notification.service';
 import { AuthService } from './services/auth.service';
+import { NotificationsSidebarComponent } from './components/notifications-sidebar/notifications-sidebar.component';
+import { NotificationsSidebarService } from './services/notifications-sidebar.service';
+import { MenuSidebarComponent } from './components/menu-sidebar/menu-sidebar.component';
+import { MenuSidebarService } from './services/menu-sidebar.service';
+import { ServiceService } from './services/service.service';
 
 @Component({
   selector: 'app-root',
   templateUrl: 'app.component.html',
-  imports: [IonApp, IonRouterOutlet],
+  imports: [IonApp, IonRouterOutlet, NotificationsSidebarComponent, MenuSidebarComponent],
 })
 export class AppComponent implements OnInit, OnDestroy {
   private _router: Router = inject(Router);
   private _pushNotificationService: PushNotificationService = inject(PushNotificationService);
   private _authService: AuthService = inject(AuthService);
+  private _service: ServiceService = inject(ServiceService);
+  readonly notificationsSidebarService: NotificationsSidebarService = inject(NotificationsSidebarService);
+  readonly menuSidebarService: MenuSidebarService = inject(MenuSidebarService);
+
   private readonly HIDDEN_TAB_ROUTES = [
     'chat-conversation-users',
     'chat-conversation',
@@ -22,7 +31,8 @@ export class AppComponent implements OnInit, OnDestroy {
     'my-services',
     'my-rides',
     'stats',
-    'settings'
+    'settings',
+    'notifications'
   ];
 
   private routerSubscription?: Subscription;
@@ -66,6 +76,11 @@ export class AppComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.authSubscription?.unsubscribe();
     this.routerSubscription?.unsubscribe();
+  }
+
+  onViewAllNotifications(): void {
+    this.notificationsSidebarService.close();
+    this._service.url('/home/notifications');
   }
 
   private toggleTabBar(url: string): void {

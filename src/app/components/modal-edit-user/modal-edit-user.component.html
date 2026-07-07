@@ -17,7 +17,7 @@
   <div class="sheet-body">
     <!-- Avatar Section -->
     <div class="avatar-section">
-      <div class="avatar-main" (click)="fileInput.click()">
+      <div class="avatar-main" role="button" tabindex="0" (click)="fileInput.click()" (keydown.enter)="fileInput.click(); $event.preventDefault()" (keydown.space)="fileInput.click(); $event.preventDefault()">
         <img [src]="tempAvatar || data?.avatar" alt="Avatar" (error)="_service.errorImage($event)" />
         <div class="avatar-overlay">
           <div class="avatar-overlay-content">

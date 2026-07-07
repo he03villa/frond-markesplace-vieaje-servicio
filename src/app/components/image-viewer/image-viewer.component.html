@@ -1,5 +1,5 @@
 <ion-content class="image-viewer" [fullscreen]="true">
-  <div class="viewer-overlay" (click)="dismiss()">
+  <div class="viewer-overlay" role="button" tabindex="0" (click)="dismiss()" (keydown.enter)="dismiss(); $event.preventDefault()" (keydown.space)="dismiss(); $event.preventDefault()">
     <button class="btn-close-viewer" (click)="dismiss(); $event.stopPropagation()">
       <ion-icon name="close"></ion-icon>
     </button>
@@ -8,13 +8,13 @@
       <span class="separator">/</span>
       <span>{{ images.length }}</span>
     </div>
-    <div class="viewer-container" (click)="$event.stopPropagation()">
+    <div class="viewer-container" role="button" tabindex="0" (click)="$event.stopPropagation()" (keydown.enter)="$event.stopPropagation()" (keydown.space)="$event.stopPropagation()">
       <div class="image-wrapper"
         [style.transform]="'translateX(' + translateX + 'px) scale(' + scale + ')'"
         (touchstart)="onTouchStart($event)"
         (touchmove)="onTouchMove($event)"
         (touchend)="onTouchEnd()">
-        <img [src]="images[currentIndex]" alt="Evidencia" draggable="false">
+        <img [src]="images[currentIndex]" alt="Evidencia" draggable="false" (error)="_service.errorImage($event)">
       </div>
     </div>
     @if (images.length > 1) {
@@ -33,8 +33,11 @@
           <div
            class="thumb"
            [class.active]="$index === currentIndex"
-           (click)="currentIndex = $index; resetZoom(); $event.stopPropagation()">
-           <img [src]="img">
+           role="button" tabindex="0"
+           (click)="currentIndex = $index; resetZoom(); $event.stopPropagation()"
+           (keydown.enter)="currentIndex = $index; resetZoom(); $event.stopPropagation()"
+           (keydown.space)="currentIndex = $index; resetZoom(); $event.stopPropagation()">
+           <img [src]="img" (error)="_service.errorImage($event)">
          </div>
         }
       </div>

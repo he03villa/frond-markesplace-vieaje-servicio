@@ -1,15 +1,15 @@
-<ion-content [fullscreen]="true" class="ride-detail-page">
+<app-page-header title="Detalle del viaje" (back)="goBack()">
+  <ion-buttons slot="end">
+    <ion-button class="header-action" (click)="shareRide()">
+      <ion-icon slot="icon-only" name="share-outline" />
+    </ion-button>
+  </ion-buttons>
+</app-page-header>
 
-  <!-- Header flotante con blur -->
-  <div class="floating-header">
-    <ion-button fill="clear" color="dark" (click)="goBack()">
-      <ion-icon name="arrow-back" slot="icon-only"></ion-icon>
-    </ion-button>
-    <span class="header-title">Detalle del viaje</span>
-    <ion-button fill="clear" color="dark" (click)="shareRide()">
-      <ion-icon name="share-outline" slot="icon-only"></ion-icon>
-    </ion-button>
-  </div>
+<ion-content [fullscreen]="true" class="ride-detail-page">
+  <ion-refresher slot="fixed" (ionRefresh)="handleRefresh($event)">
+    <ion-refresher-content pullingIcon="arrow-down" pullingText="Tirar para actualizar" refreshingSpinner="crescent" refreshingText="Actualizando..."></ion-refresher-content>
+  </ion-refresher>
   @if (ride) {
     <div class="map-hero-wrapper">
       <app-location-picker

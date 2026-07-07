@@ -1,7 +1,7 @@
 import { Component, inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonContent, IonFooter, IonIcon } from '@ionic/angular/standalone';
+import { IonContent, IonFooter, IonIcon, IonRefresher, IonRefresherContent, IonSkeletonText, IonButton } from '@ionic/angular/standalone';
 import { ChatHeaderComponent } from 'src/app/components/chat-header/chat-header.component';
 import { MessageBubbleComponent } from 'src/app/components/message-bubble/message-bubble.component';
 import { TypingIndicatorComponent } from 'src/app/components/typing-indicator/typing-indicator.component';
@@ -13,14 +13,14 @@ import { ChatSocketService } from 'src/app/services/chat-socket.service';
 import { AuthService } from 'src/app/services/auth.service';
 import { ServiceService } from 'src/app/services/service.service';
 import { addIcons } from 'ionicons';
-import { arrowDown } from 'ionicons/icons';
+import { arrowDown, chatbubblesOutline } from 'ionicons/icons';
 
 @Component({
   selector: 'app-chat-conversation',
   templateUrl: './chat-conversation.page.html',
   styleUrls: ['./chat-conversation.page.scss'],
   standalone: true,
-  imports: [IonContent, CommonModule, FormsModule, ChatHeaderComponent, MessageBubbleComponent, TypingIndicatorComponent, MessageInputComponent, IonFooter, IonIcon]
+  imports: [IonContent, IonRefresher, IonRefresherContent, IonSkeletonText, CommonModule, FormsModule, ChatHeaderComponent, MessageBubbleComponent, TypingIndicatorComponent, MessageInputComponent, IonFooter, IonIcon, IonButton]
 })
 export class ChatConversationPage implements OnInit, OnDestroy {
 
@@ -44,12 +44,14 @@ export class ChatConversationPage implements OnInit, OnDestroy {
   conversation: any = null;
   messages: any[] = [];
   isTyping: boolean = false;
+  isLoading = false;
+  hasError = false;
   showScrollButton: boolean = false;
   contactName: string = '';
   user: any = this.authService.getCurrentUser();
 
   constructor() {
-    addIcons({ arrowDown });
+    addIcons({ arrowDown, chatbubblesOutline });
   }
 
   ngOnInit() {
@@ -85,6 +87,7 @@ export class ChatConversationPage implements OnInit, OnDestroy {
   }
 
   async loadConversation() {
+    this.isLoading = true;
     try {
       const [res, resMessages, resRead] = await Promise.all([
         this.chatService.getConversation(this.conversationId),
@@ -99,10 +102,14 @@ export class ChatConversationPage implements OnInit, OnDestroy {
       this.connectToRealtimeUpdates(this.conversationId);
     } catch (error) {
       console.error('Error cargando mensajes:', error);
+      this._service.presentToast('Error al cargar mensajes', 'danger');
+      this.hasError = true;
     }
+    this.isLoading = false;
   }
 
   async loadConversationUser() {
+    this.isLoading = true;
     console.log("USER",this.conversationId);
     try {
       const res = await this.chatService.getConversationUser(this.conversationId);
@@ -121,16 +128,26 @@ export class ChatConversationPage implements OnInit, OnDestroy {
       }
     } catch (error) {
       console.log(error);
+      this._service.presentToast('Error al cargar conversación', 'danger');
+      this.hasError = true;
     }
+    this.isLoading = false;
+  }
+
+  async handleRefresh(event: any) {
+    if (this.conversationId) {
+      await this.loadConversation();
+    }
+    event.target.complete();
   }
 
   goBack(): void {
-    this._service.url('/home/messages');
+    this._service.url('/home/chat-inbox');
   }
 
   openProfile(): void {
     if (this.conversation?.contact?.id) {
-      this._service.url('/chat/profile/' + this.conversation.contact.id);
+      this._service.url('/home/profile');
     }
   }
 
@@ -195,6 +212,7 @@ export class ChatConversationPage implements OnInit, OnDestroy {
       this.scrollToBottom();
     } catch (error) {
       console.error('Error enviando mensaje:', error);
+      this._service.presentToast('Error al enviar mensaje', 'danger');
     }
   }
 

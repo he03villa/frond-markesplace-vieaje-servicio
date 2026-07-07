@@ -4,6 +4,7 @@ import { ModalController, IonContent, IonIcon } from '@ionic/angular/standalone'
 import { addIcons } from 'ionicons';
 import { close, closeCircle, create, flash, informationCircle, refreshCircle } from 'ionicons/icons';
 import { DeliveriesServices } from 'src/app/services/deliveries.service';
+import { ServiceService } from 'src/app/services/service.service';
 
 @Component({
   selector: 'app-revision-modal',
@@ -13,6 +14,8 @@ import { DeliveriesServices } from 'src/app/services/deliveries.service';
   imports: [IonContent, FormsModule, IonIcon]
 })
 export class RevisionModalComponent {
+
+  _service: ServiceService = inject(ServiceService);
 
   @Input() deliveryId!: number;
   @Input() workerName!: string;

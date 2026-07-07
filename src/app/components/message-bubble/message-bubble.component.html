@@ -16,8 +16,8 @@
         @for (att of message.attachments; track $index) {
           <!-- ── Imagen ── -->
           @if (att.type === 'image') {
-          <div class="attachment-item image" (click)="previewAttachment(att, message.attachments)">
-            <img [src]="att.url" loading="lazy">
+          <div class="attachment-item image" role="button" tabindex="0" (click)="previewAttachment(att, message.attachments)" (keydown.enter)="previewAttachment(att, message.attachments); $event.preventDefault()" (keydown.space)="previewAttachment(att, message.attachments); $event.preventDefault()">
+            <img [src]="att.url" loading="lazy" (error)="_service.errorImage($event)">
           </div>
           }
 
@@ -42,7 +42,7 @@
 
           <!-- ── Archivo ── -->
           @if (att.type === 'file' || att.type === 'document') {
-          <div class="attachment-item file-item" (click)="previewAttachment(att, message.attachments)">
+          <div class="attachment-item file-item" role="button" tabindex="0" (click)="previewAttachment(att, message.attachments)" (keydown.enter)="previewAttachment(att, message.attachments); $event.preventDefault()" (keydown.space)="previewAttachment(att, message.attachments); $event.preventDefault()">
             <ion-icon name="document-outline"></ion-icon>
             <div class="file-info">
               <span class="file-name">{{ att.original_name }}</span>

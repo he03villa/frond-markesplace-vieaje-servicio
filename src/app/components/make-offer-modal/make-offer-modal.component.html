@@ -163,7 +163,7 @@
           </div>
           
           <div class="custom-time" [class.active]="isCustomTime">
-            <div class="custom-toggle" (click)="toggleCustomTime()">
+            <div class="custom-toggle" role="button" tabindex="0" (click)="toggleCustomTime()" (keydown.enter)="toggleCustomTime(); $event.preventDefault()" (keydown.space)="toggleCustomTime(); $event.preventDefault()">
               <ion-icon name="create-outline"></ion-icon>
               <span>Especificar otro tiempo</span>
               <ion-icon 
@@ -239,7 +239,7 @@
 
       <!-- Tips Inteligentes (Colapsable) -->
       <div class="tips-section" [class.expanded]="tipsExpanded">
-        <div class="tips-header" (click)="tipsExpanded = !tipsExpanded">
+        <div class="tips-header" role="button" tabindex="0" (click)="tipsExpanded = !tipsExpanded" (keydown.enter)="tipsExpanded = !tipsExpanded; $event.preventDefault()" (keydown.space)="tipsExpanded = !tipsExpanded; $event.preventDefault()">
           <div class="tips-icon">
             <ion-icon name="bulb"></ion-icon>
           </div>

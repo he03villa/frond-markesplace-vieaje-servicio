@@ -234,6 +234,11 @@
   --ion-toolbar-background: #ffffff;
   --ion-card-background: #ffffff;
 
+  // Overlay backgrounds (modals, action-sheets, alerts)
+  --ion-overlay-background-color: #ffffff;
+  --ion-alert-background: #ffffff;
+  --ion-alert-button-background: transparent;
+
   // Toggle
   --toggle-bg: #e2e8f0;
   --toggle-handle: #ffffff;
@@ -319,6 +324,11 @@ body.dark,
   --ion-item-background: #1e293b;
   --ion-toolbar-background: #1e293b;
   --ion-card-background: #1e293b;
+
+  // Overlay backgrounds (modals, action-sheets, alerts)
+  --ion-overlay-background-color: #1e293b;
+  --ion-alert-background: #1e293b;
+  --ion-alert-button-background: transparent;
 
   // Toggle
   --toggle-bg: #475569;

@@ -1,22 +1,13 @@
-<!-- Header dinámico: transparente al inicio, sólido al scroll -->
-<ion-header [class.header-solid]="headerSolid" class="profile-header-bar">
-  <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-button class="header-action back-btn" (click)="back()">
-        <ion-icon slot="icon-only" name="arrow-back-outline"></ion-icon>
-      </ion-button>
-    </ion-buttons>
-    <ion-title class="header-title">{{ profile?.name }}</ion-title>
-    <ion-buttons slot="end">
-      <ion-button (click)="openEditModal()" class="header-action-btn">
-        <ion-icon slot="icon-only" name="create-outline"></ion-icon>
-      </ion-button>
-      <ion-button (click)="shareProfile()" class="header-action-btn">
-        <ion-icon slot="icon-only" name="share-outline"></ion-icon>
-      </ion-button>
-    </ion-buttons>
-  </ion-toolbar>
-</ion-header>
+<app-page-header [title]="profile?.name || ''" [solid]="headerSolid" [overlay]="true" (back)="back()">
+  <ion-buttons slot="end">
+    <ion-button (click)="openEditModal()" class="header-action">
+      <ion-icon slot="icon-only" name="create-outline" />
+    </ion-button>
+    <ion-button (click)="shareProfile()" class="header-action">
+      <ion-icon slot="icon-only" name="share-outline" />
+    </ion-button>
+  </ion-buttons>
+</app-page-header>
 
 <ion-content [fullscreen]="true" scrollEvents="true" (ionScroll)="onScroll($event)" class="profile-content-wrapper">
   <ion-refresher slot="fixed" (ionRefresh)="handleRefresh($event)">
@@ -30,7 +21,7 @@
 
     <div class="hero-content">
       <!-- Avatar con anillo de progreso -->
-      <div class="avatar-container" (click)="openEditModal()">
+      <div class="avatar-container" role="button" tabindex="0" (click)="openEditModal()" (keydown.enter)="openEditModal(); $event.preventDefault()" (keydown.space)="openEditModal(); $event.preventDefault()">
         <svg class="avatar-ring-svg" viewBox="0 0 100 100">
           <circle class="ring-bg" cx="50" cy="50" r="46" />
           <circle class="ring-progress" cx="50" cy="50" r="46"
@@ -217,7 +208,7 @@
       } @else {
       <div class="bento-grid">
         <div class="bento-item wide">
-          <div class="bento-icon" style="background: rgba(99,102,241,0.15); color: #6366f1;">
+          <div class="bento-icon icon-primary">
             <ion-icon name="trending-up-outline"></ion-icon>
           </div>
           <div class="bento-data">
@@ -226,7 +217,7 @@
           </div>
         </div>
         <div class="bento-item">
-          <div class="bento-icon" style="background: rgba(16,185,129,0.15); color: #10b981;">
+          <div class="bento-icon icon-success">
             <ion-icon name="flash-outline"></ion-icon>
           </div>
           <div class="bento-data">
@@ -235,7 +226,7 @@
           </div>
         </div>
         <div class="bento-item">
-          <div class="bento-icon" style="background: rgba(245,158,11,0.15); color: #f59e0b;">
+          <div class="bento-icon icon-warning">
             <ion-icon name="people-outline"></ion-icon>
           </div>
           <div class="bento-data">
@@ -244,7 +235,7 @@
           </div>
         </div>
         <div class="bento-item wide">
-          <div class="bento-icon" style="background: rgba(236,72,153,0.15); color: #ec4899;">
+          <div class="bento-icon icon-danger">
             <ion-icon name="calendar-outline"></ion-icon>
           </div>
           <div class="bento-data">
@@ -305,7 +296,7 @@
       }
       } @else {
       @for(item of profile?.menuItems; track item.route; let i = $index) {
-      <div class="menu-item" (click)="navigate(item.route)" [style.animation-delay]="(i * 0.05) + 's'">
+      <div class="menu-item" role="button" tabindex="0" (click)="navigate(item.route)" (keydown.enter)="navigate(item.route); $event.preventDefault()" (keydown.space)="navigate(item.route); $event.preventDefault()" [style.animation-delay]="(i * 0.05) + 's'">
         <div class="menu-icon-box" [style.background]="item.bg" [style.color]="item.color">
           <ion-icon [name]="item.icon"></ion-icon>
         </div>
@@ -324,21 +315,10 @@
 
 </ion-content>
 
-<!-- FAB Speed Dial -->
-<!-- <ion-fab slot="fixed" vertical="bottom" horizontal="end" class="profile-fab">
-  <ion-fab-button class="fab-main">
-    <ion-icon name="add-outline"></ion-icon>
+<!-- Scroll to top FAB -->
+<ion-fab slot="fixed" vertical="bottom" horizontal="end" class="scroll-top-fab" [class.visible]="showScrollTop">
+  <ion-fab-button (click)="scrollToTop()" size="small" color="light">
+    <ion-icon name="arrow-up"></ion-icon>
   </ion-fab-button>
-  <ion-fab-list side="top">
-    <ion-fab-button (click)="openEditModal()" class="fab-action">
-      <ion-icon name="create-outline"></ion-icon>
-    </ion-fab-button>
-    <ion-fab-button (click)="shareProfile()" class="fab-action">
-      <ion-icon name="share-outline"></ion-icon>
-    </ion-fab-button>
-    <ion-fab-button (click)="navigate('/settings')" class="fab-action">
-      <ion-icon name="settings-outline"></ion-icon>
-    </ion-fab-button>
-  </ion-fab-list>
-</ion-fab> -->
+</ion-fab>
 

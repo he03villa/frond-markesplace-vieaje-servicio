@@ -1,8 +1,9 @@
 import { DecimalPipe } from '@angular/common';
-import { Component, ElementRef, EventEmitter, Input, Output, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, inject, Input, Output, ViewChild } from '@angular/core';
 import { IonIcon, IonButton } from "@ionic/angular/standalone";
 import { addIcons } from 'ionicons';
 import { cameraOutline, checkmarkCircleOutline, imagesOutline, trashOutline } from 'ionicons/icons';
+import { ServiceService } from 'src/app/services/service.service';
 
 @Component({
   selector: 'app-image-upload-section',
@@ -18,6 +19,7 @@ export class ImageUploadSectionComponent {
   @Output() imageRemoved = new EventEmitter<number>();
   @Output() imageLoaded = new EventEmitter<{event: any, index: number}>();
   @ViewChild('fileInput') fileInput!: ElementRef;
+  _service: ServiceService = inject(ServiceService);
 
   constructor() { 
     addIcons({ imagesOutline, cameraOutline, checkmarkCircleOutline, trashOutline });

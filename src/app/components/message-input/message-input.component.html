@@ -33,7 +33,7 @@
       <!-- Contenedor con overflow para la imagen/archivo -->
       <div class="preview-content">
         @if (file?.type?.startsWith('image/')) {
-        <img [src]="file.preview" alt="Preview">
+        <img [src]="file.preview" alt="Preview" (error)="_service.errorImage($event)">
         } @else {
         <div class="preview-file">
           <ion-icon [name]="iconForFile(file)"></ion-icon>

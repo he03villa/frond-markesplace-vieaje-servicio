@@ -45,8 +45,8 @@
     }
 
     .close-btn {
-        width: 36px;
-        height: 36px;
+        width: 44px;
+        height: 44px;
         border-radius: 50%;
         border: none;
         background: var(--app-bg);
@@ -132,7 +132,7 @@
 
         &.selected {
             background: var(--app-primary);
-            color: white;
+            color: var(--app-text-inverse);
         }
     }
 
@@ -244,7 +244,7 @@
         border-radius: var(--radius-md);
         border: none;
         background: var(--app-danger);
-        color: white;
+        color: var(--app-text-inverse);
         font-size: 16px;
         font-weight: 700;
         cursor: pointer;

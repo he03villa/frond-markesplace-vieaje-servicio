@@ -1,13 +1,6 @@
-<!-- publicar.page.html -->
+<app-page-header title="Publicar" backIcon="close-outline" (back)="cancelar()" />
+
 <ion-content>
-  <ion-header>
-    <ion-toolbar>
-      <ion-title>Publicar</ion-title>
-      <ion-buttons slot="start">
-        <ion-button (click)="cancelar()">Cancelar</ion-button>
-      </ion-buttons>
-    </ion-toolbar>
-  </ion-header>
 
   <ion-segment value="servicio" (ionChange)="tipoPublicacionChange($event)">
     <ion-segment-button value="servicio">
@@ -26,12 +19,18 @@
         <ion-label position="stacked">Título del Servicio *</ion-label>
         <ion-input formControlName="titulo" placeholder="Ej: Necesito estucar una pared"></ion-input>
       </ion-item>
+      @if(servicioTitulo?.touched && servicioTitulo?.invalid) {
+        <span class="error-message">{{ getErrorMessages(servicioTitulo) }}</span>
+      }
 
       <ion-item>
         <ion-label position="stacked">Descripción *</ion-label>
         <ion-textarea formControlName="descripcion" rows="4" 
           placeholder="Describe en detalle lo que necesitas..."></ion-textarea>
       </ion-item>
+      @if(servicioDescripcion?.touched && servicioDescripcion?.invalid) {
+        <span class="error-message">{{ getErrorMessages(servicioDescripcion) }}</span>
+      }
 
       <ion-item>
         <ion-label position="stacked">Categoría</ion-label>
@@ -53,11 +52,17 @@
         <ion-input type="number" formControlName="presupuesto" 
           placeholder="Presupuesto aproximado"></ion-input>
       </ion-item>
+      @if(servicioPresupuesto?.touched && servicioPresupuesto?.invalid) {
+        <span class="error-message">{{ getErrorMessages(servicioPresupuesto) }}</span>
+      }
 
       <ion-item>
         <ion-label position="stacked">Ubicación</ion-label>
         <ion-input formControlName="ubicacion" placeholder="Dirección"></ion-input>
       </ion-item>
+      @if(servicioUbicacion?.touched && servicioUbicacion?.invalid) {
+        <span class="error-message">{{ getErrorMessages(servicioUbicacion) }}</span>
+      }
 
       <ion-item>
         <ion-label>Fecha Límite</ion-label>
@@ -80,17 +85,26 @@
         <ion-label position="stacked">Origen *</ion-label>
         <ion-input formControlName="origen" placeholder="Lugar de salida"></ion-input>
       </ion-item>
+      @if(viajeOrigen?.touched && viajeOrigen?.invalid) {
+        <span class="error-message">{{ getErrorMessages(viajeOrigen) }}</span>
+      }
 
       <ion-item>
         <ion-label position="stacked">Destino *</ion-label>
         <ion-input formControlName="destino" placeholder="Lugar de llegada"></ion-input>
       </ion-item>
+      @if(viajeDestino?.touched && viajeDestino?.invalid) {
+        <span class="error-message">{{ getErrorMessages(viajeDestino) }}</span>
+      }
 
       <ion-item>
         <ion-label position="stacked">Fecha y Hora *</ion-label>
         <ion-datetime formControlName="fechaHora" 
           displayFormat="DD/MM/YYYY HH:mm"></ion-datetime>
       </ion-item>
+      @if(viajeFechaHora?.touched && viajeFechaHora?.invalid) {
+        <span class="error-message">{{ getErrorMessages(viajeFechaHora) }}</span>
+      }
 
       <ion-item>
         <ion-label position="stacked">Asientos Disponibles</ion-label>
@@ -105,6 +119,9 @@
         <ion-input type="number" formControlName="costo" 
           placeholder="Costo compartido"></ion-input>
       </ion-item>
+      @if(viajeCosto?.touched && viajeCosto?.invalid) {
+        <span class="error-message">{{ getErrorMessages(viajeCosto) }}</span>
+      }
 
       <ion-item>
         <ion-label position="stacked">Descripción (opcional)</ion-label>

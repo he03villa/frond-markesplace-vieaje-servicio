@@ -512,7 +512,7 @@ $glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
   background: var(--app-surface);
 
   i {
-    color: white;
+    color: var(--app-text-inverse);
     font-size: 0.5625rem;
     opacity: 0;
     transform: scale(0);

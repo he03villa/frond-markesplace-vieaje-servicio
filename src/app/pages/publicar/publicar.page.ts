@@ -1,7 +1,8 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonButton, IonSegment, IonSegmentButton, IonLabel, IonItem, IonList, IonSelectOption, IonSpinner, IonInput, IonTextarea, IonSelect, IonDatetime, IonRange } from '@ionic/angular/standalone';
+import { IonContent, IonButton, IonSegment, IonSegmentButton, IonLabel, IonItem, IonList, IonSelectOption, IonSpinner, IonInput, IonTextarea, IonSelect, IonDatetime, IonRange } from '@ionic/angular/standalone';
+import { PageHeaderComponent } from 'src/app/components/page-header/page-header.component';
 import { AlertController, NavController } from '@ionic/angular';
 
 @Component({
@@ -9,7 +10,7 @@ import { AlertController, NavController } from '@ionic/angular';
   templateUrl: './publicar.page.html',
   styleUrls: ['./publicar.page.scss'],
   standalone: true,
-  imports: [IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule, IonButtons, IonButton, IonButton, ReactiveFormsModule, IonSegment, IonSegmentButton, IonLabel, IonItem, IonList, IonSelectOption, IonSpinner, IonInput, IonTextarea, IonSelect, IonDatetime, IonRange]
+  imports: [IonContent, CommonModule, FormsModule, IonButton, ReactiveFormsModule, IonSegment, IonSegmentButton, IonLabel, IonItem, IonList, IonSelectOption, IonSpinner, IonInput, IonTextarea, IonSelect, IonDatetime, IonRange, PageHeaderComponent]
 })
 export class PublicarPage implements OnInit {
 

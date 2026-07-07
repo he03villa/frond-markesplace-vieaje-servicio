@@ -1,5 +1,6 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { IonContent, IonButton, IonIcon, IonList } from '@ionic/angular/standalone';
+import { IonContent, IonButton, IonIcon, IonList, IonButtons, IonSkeletonText, IonRefresher, IonRefresherContent } from '@ionic/angular/standalone';
+import { PageHeaderComponent } from 'src/app/components/page-header/page-header.component';
 import { addIcons } from 'ionicons';
 import { checkmarkDoneOutline, createOutline, searchOutline } from 'ionicons/icons';
 import { ConversationItemComponent } from 'src/app/components/conversation-item/conversation-item.component';
@@ -12,7 +13,7 @@ import { ServiceService } from 'src/app/services/service.service';
   templateUrl: './chat-inbox.page.html',
   styleUrls: ['./chat-inbox.page.scss'],
   standalone: true,
-  imports: [IonContent, IonButton, IonIcon, IonList, ConversationItemComponent, EmptyStateComponent]
+  imports: [IonContent, IonButton, IonIcon, IonList, IonButtons, IonSkeletonText, IonRefresher, IonRefresherContent, ConversationItemComponent, EmptyStateComponent, PageHeaderComponent]
 })
 export class ChatInboxPage implements OnInit {
 
@@ -20,6 +21,8 @@ export class ChatInboxPage implements OnInit {
   private _service: ServiceService = inject(ServiceService);
 
   conversations: Array<any> = [];
+  isLoading = false;
+  hasError = false;
 
   constructor() { 
     addIcons({
@@ -32,18 +35,27 @@ export class ChatInboxPage implements OnInit {
   }
 
   async getAllConversations() {
+    this.isLoading = true;
     try {
       const result = await this._chatService.getConversations();
       console.log(result);
       this.conversations = result.data ?? [];
     } catch (error) {
       console.log(error);
+      this._service.presentToast('Error al cargar conversaciones', 'danger');
+      this.hasError = true;
     }
+    this.isLoading = false;
   }
 
   openConversation(conversation: any) {
     this._service.url(`/home/${conversation.id}/chat-conversation`);
     //this.router.navigate(['/chat/conversation', conversation.id]);
+  }
+
+  async handleRefresh(event: any) {
+    await this.getAllConversations();
+    event.target.complete();
   }
 
   createNewMessage() {

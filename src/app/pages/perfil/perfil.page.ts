@@ -1,9 +1,10 @@
 import { Component, inject, OnInit } from '@angular/core';
 import {
-  IonContent, IonHeader, IonTitle, IonToolbar, IonIcon, IonButton,
+  IonContent, IonIcon, IonButton, IonFab, IonFabButton,
   IonButtons, IonSkeletonText,
   IonRefresher, IonRefresherContent, IonBadge
 } from '@ionic/angular/standalone';
+import { PageHeaderComponent } from 'src/app/components/page-header/page-header.component';
 import { addIcons } from 'ionicons';
 import {
   briefcaseOutline, call, camera, carOutline, checkmarkCircle, checkmarkDone,
@@ -16,7 +17,8 @@ import {
   arrowDown,
   peopleOutline,
   documentTextOutline,
-  arrowBackOutline
+  arrowBackOutline,
+  arrowUp
 } from 'ionicons/icons';
 import { UserProfile } from 'src/app/interface/user-profile';
 import { ServiceService } from 'src/app/services/service.service';
@@ -29,9 +31,9 @@ import { ModalEditUserComponent } from 'src/app/components/modal-edit-user/modal
   styleUrls: ['./perfil.page.scss'],
   standalone: true,
   imports: [
-    IonContent, IonHeader, IonTitle, IonToolbar, IonIcon, IonButton,
+    IonContent, IonIcon, IonButton, IonFab, IonFabButton,
     IonButtons, IonSkeletonText,
-    IonRefresher, IonRefresherContent, IonBadge
+    IonRefresher, IonRefresherContent, IonBadge, PageHeaderComponent
   ]
 })
 export class PerfilPage implements OnInit {
@@ -42,6 +44,7 @@ export class PerfilPage implements OnInit {
   // Estado UI
   isLoading = true;
   headerSolid = false;
+  showScrollTop = false;
 
   // Datos del perfil
   profile: UserProfile | null = null;
@@ -64,7 +67,7 @@ export class PerfilPage implements OnInit {
       shareOutline, personOutline, locationOutline, cashOutline, calendarOutline,
       trendingUpOutline, colorPaletteOutline, constructOutline, flashOutline,
       waterOutline, pawOutline, leafOutline, schoolOutline, sparklesOutline,
-      arrowUpOutline, addOutline, trashOutline, checkmarkOutline, arrowDown, peopleOutline, documentTextOutline,
+      arrowUpOutline, arrowUp, addOutline, trashOutline, checkmarkOutline, arrowDown, peopleOutline, documentTextOutline,
       arrowBackOutline
     });
   }
@@ -78,6 +81,12 @@ export class PerfilPage implements OnInit {
   onScroll(ev: any) {
     const scrollTop = ev.detail.scrollTop;
     this.headerSolid = scrollTop > 120;
+    this.showScrollTop = scrollTop > 400;
+  }
+
+  scrollToTop() {
+    const content: any = document.querySelector('ion-content.profile-content-wrapper');
+    content?.scrollToTop(500);
   }
 
   back(): void {

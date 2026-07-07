@@ -10,6 +10,7 @@ import { FilePicker } from '@capawesome/capacitor-file-picker';
 import { Capacitor } from '@capacitor/core';
 import { debounceTime, distinctUntilChanged, Subject, takeUntil } from 'rxjs';
 import { VoiceRecorder, RecordingData } from 'capacitor-voice-recorder';
+import { ServiceService } from 'src/app/services/service.service';
 
 @Component({
   selector: 'app-message-input',
@@ -24,6 +25,7 @@ export class MessageInputComponent implements OnInit, OnDestroy {
   @ViewChild('fileInputRef', { static: false }) fileInputRef!: ElementRef<HTMLInputElement>;
 
   messageText: string = '';
+  _service: ServiceService = inject(ServiceService);
   attachMenuOpen: boolean = false;
   selectedFiles: SelectedFile[] = [];
   isRecording = false;

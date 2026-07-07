@@ -1,15 +1,15 @@
 import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule, DecimalPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonIcon } from '@ionic/angular/standalone';
+import { IonIcon, IonSpinner } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import {
   add, addCircleOutline, apps, arrowForward, bookmarkOutline, briefcase, car, carOutline,
   carSport, carSportOutline, cart, cartOutline, chatbubble, chatbubbleOutline, checkmark, checkmarkCircle,
-  clipboardOutline, close, createOutline, documentText, documentTextOutline, eyeOutline,
+  clipboardOutline, close, cloudOfflineOutline, createOutline, documentText, documentTextOutline, eyeOutline,
   grid, handLeft, heartOutline, list, location, locationOutline, map, mapOutline, mic,
   navigate, notifications, notificationsOutline, options, people, peopleOutline, person,
-  personCircle, personOutline, remove, searchOutline, settingsOutline, shareOutline,
+  personCircle, personOutline, refresh, remove, searchOutline, settingsOutline, shareOutline,
   shareSocial, star, time, timeOutline, trashOutline, trendingUp
 } from 'ionicons/icons';
 import { ServiceService } from 'src/app/services/service.service';
@@ -23,13 +23,16 @@ import { RidesService } from 'src/app/services/rides.service';
 import { AuthService } from 'src/app/services/auth.service';
 import { ReviewsService } from 'src/app/services/reviews.service';
 import { ModalCreateServicesRideComponent } from 'src/app/components/modal-create-services-ride/modal-create-services-ride.component';
+import { NotificationService } from 'src/app/services/notification.service';
+import { NotificationsSidebarService } from 'src/app/services/notifications-sidebar.service';
+import { MenuSidebarService } from 'src/app/services/menu-sidebar.service';
 
 @Component({
   selector: 'app-initiate',
   templateUrl: './initiate.page.html',
   styleUrls: ['./initiate.page.scss'],
   standalone: true,
-  imports: [CommonModule, FormsModule, IonIcon, DecimalPipe]
+  imports: [CommonModule, FormsModule, IonIcon, IonSpinner, DecimalPipe]
 })
 export class InitiatePage implements OnInit, OnDestroy {
 
@@ -42,12 +45,19 @@ export class InitiatePage implements OnInit, OnDestroy {
   private _myAssignments: MyAssignmentsService = inject(MyAssignmentsService);
   private authService: AuthService = inject(AuthService);
   private _reviewService: ReviewsService = inject(ReviewsService);
+  private _notificationService: NotificationService = inject(NotificationService);
+  private _sidebarService: NotificationsSidebarService = inject(NotificationsSidebarService);
+  private _menuSidebarService: MenuSidebarService = inject(MenuSidebarService);
 
   // Datos principales
   summary: any;
   arrayServicesRequets: Array<any> = [];
   arrayRides: Array<any> = [];
   publications: Array<any> = [];
+  isLoadingServices = false;
+  isLoadingRides = false;
+  hasServicesError = false;
+  hasRidesError = false;
 
   // Tabs principales: 'services' | 'rides' | 'my-services'
   activeTab: string = 'services';
@@ -75,6 +85,9 @@ export class InitiatePage implements OnInit, OnDestroy {
   publicationFilter: string = 'all';
   currentUser: any;
 
+  // Notificaciones
+  unreadCount = 0;
+
   constructor() {
     addIcons({
       // Iconos existentes
@@ -87,7 +100,7 @@ export class InitiatePage implements OnInit, OnDestroy {
       chatbubbleOutline, createOutline, trashOutline, heartOutline,
       // NUEVOS iconos para "Mis Servicios"
       checkmark, checkmarkCircle, clipboardOutline, navigate, person, personCircle,
-      chatbubble, people, apps
+      chatbubble, people, apps, cloudOfflineOutline, refresh
     });
   }
 
@@ -97,6 +110,7 @@ export class InitiatePage implements OnInit, OnDestroy {
     this.cargarUser();
     this.cargarsummary();
     this.cargarServices();
+    this.loadUnreadCount();
     //this.cargarAssignments(); // Cargar asignaciones al inicio
     setTimeout(() => this.initUIEffects(), 100);
   }
@@ -115,6 +129,7 @@ export class InitiatePage implements OnInit, OnDestroy {
       }
     } catch (error) {
       console.log(error);
+      this._service.presentToast('Error al cargar usuario', 'danger');
     }
   }
 
@@ -140,6 +155,14 @@ export class InitiatePage implements OnInit, OnDestroy {
           }
           if (this.publications.length === 0) {
             this.cargarPublications();
+          }
+        } else if (event.tab === 'services') {
+          if (this.arrayServicesRequets.length === 0) {
+            this.cargarServices();
+          }
+        } else if (event.tab === 'rides') {
+          if (this.arrayRides.length === 0) {
+            this.cargarRides();
           }
         }
       }
@@ -169,8 +192,8 @@ export class InitiatePage implements OnInit, OnDestroy {
     );
 
     // 5. Menú morphing
-    this._ui.initMenuMorph('.menu-morph', (isOpen) => {
-      console.log('Menu toggled:', isOpen);
+    this._ui.initMenuMorph('.menu-morph', () => {
+      this._menuSidebarService.toggle();
     });
 
     // 6. Pull to refresh
@@ -215,6 +238,7 @@ export class InitiatePage implements OnInit, OnDestroy {
       }
     } catch (error) {
       console.log(error);
+      this._service.presentToast('Error al cargar reseñas', 'danger');
     }
     await loading.dismiss();
   }
@@ -237,13 +261,14 @@ export class InitiatePage implements OnInit, OnDestroy {
       }
     } catch (error) {
       console.log(error);
+      this._service.presentToast('Error al cargar resumen', 'danger');
     }
     await loading.dismiss();
   }
 
   async cargarServices() {
-    const loading = await this._service.presentLoading({ message: 'Cargando...' });
-    await loading.present();
+    this.isLoadingServices = true;
+    this.hasServicesError = false;
     try {
       const location = await this._locationService.getCurrentPosition();
       let data;
@@ -264,8 +289,10 @@ export class InitiatePage implements OnInit, OnDestroy {
       }
     } catch (error) {
       console.log(error);
+      this.hasServicesError = true;
+      this._service.presentToast('Error al cargar servicios', 'danger');
     }
-    await loading.dismiss();
+    this.isLoadingServices = false;
   }
 
   // ==========================================
@@ -351,13 +378,14 @@ export class InitiatePage implements OnInit, OnDestroy {
       }
     } catch (error) {
       console.log(error);
+      this._service.presentToast('Error al cargar publicaciones', 'danger');
     }
     await loading.dismiss();
   }
 
   async cargarRides() {
-    const loading = await this._service.presentLoading({ message: 'Cargando...' });
-    await loading.present();
+    this.isLoadingRides = true;
+    this.hasRidesError = false;
     try {
       const location = await this._locationService.getCurrentPosition();
       let data;
@@ -368,8 +396,6 @@ export class InitiatePage implements OnInit, OnDestroy {
       console.log(response);
       if (response.success) {
         this.arrayRides = response.data.data || [];
-        //this.myPublicationsCount = this.publications.length;
-
         setTimeout(() => {
           this._ui.animateEntrance('.pub-card', {
             duration: 500,
@@ -379,8 +405,10 @@ export class InitiatePage implements OnInit, OnDestroy {
       }
     } catch (error) {
       console.log(error);
+      this.hasRidesError = true;
+      this._service.presentToast('Error al cargar viajes', 'danger');
     }
-    await loading.dismiss();
+    this.isLoadingRides = false;
   }
 
   async cargarAssignmentsService(): Promise<void> {
@@ -580,11 +608,6 @@ export class InitiatePage implements OnInit, OnDestroy {
     console.log('Switching tab:', tab);
     await this._ui.triggerHaptic('light');
     this.activeTab = tab;
-
-    // Actualizar UI de tabs
-    document.querySelectorAll('.orbital-tab').forEach(t => {
-      t.classList.toggle('active', t.getAttribute('data-tab') === tab);
-    });
 
     // Cargar datos si es necesario
     if (tab === 'my-services') {
@@ -792,9 +815,34 @@ export class InitiatePage implements OnInit, OnDestroy {
 
   async createPublication() {
     await this._ui.triggerHaptic('medium');
-    // Abrir modal o navegar a creación
+    // Abrir modal o navegación a creación
     this._service.url('/home/create');
   }
+
+  // ==========================================
+  // NOTIFICACIONES
+  // ==========================================
+
+  toggleNotifications() {
+    this._sidebarService.toggle();
+    if (this._sidebarService.show()) {
+      this.loadUnreadCount();
+    }
+  }
+
+  async loadUnreadCount() {
+    if (!localStorage.getItem('token')) return;
+    try {
+      const res: any = await this._notificationService.getUnreadCount();
+      if (res.success) {
+        this.unreadCount = res.data.unread_count || 0;
+      }
+    } catch (error) {
+      console.error('Error loading unread count:', error);
+    }
+  }
+
+  // Helpers para templates
 
   // Helpers para templates
   getAssignmentIcon(assignment: Assignment): string {

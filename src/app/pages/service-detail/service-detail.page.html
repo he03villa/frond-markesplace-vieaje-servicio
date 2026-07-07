@@ -1,42 +1,40 @@
+<app-page-header [title]="(service.title | slice:0:25) + (service.title?.length > 25 ? '...' : '')" [solid]="isScrolled" [overlay]="true" (back)="goBack()">
+  <ion-buttons slot="end">
+    <ion-button class="header-action" (click)="shareService()">
+      <ion-icon name="share-social" />
+    </ion-button>
+    <ion-button class="header-action" (click)="toggleFavorite()">
+      <ion-icon [name]="isFavorite ? 'heart' : 'heart-outline'" />
+    </ion-button>
+    <ion-button class="header-action" (click)="showMoreOptions()">
+      <ion-icon name="ellipsis-vertical" />
+    </ion-button>
+  </ion-buttons>
+</app-page-header>
+
 <ion-content class="premium-detail" [fullscreen]="true" scrollEvents="true" (ionScroll)="onScroll($event)">
-  
-  <!-- Header Flotante con Glassmorphism -->
-  <div class="floating-detail-header" [class.scrolled]="isScrolled">
-    <div class="header-glass">
-      <button class="back-btn morph" (click)="goBack()">
-        <ion-icon name="arrow-back"></ion-icon>
-        <div class="btn-ripple"></div>
-      </button>
-      
-      <div class="header-title" [class.visible]="isScrolled">
-        <span class="title-text">{{ service.title | slice:0:25 }}{{ service.title?.length > 25 ? '...' : '' }}</span>
-      </div>
-      
-      <div class="header-actions">
-        <button class="action-icon" (click)="shareService()" [class.active]="showShareTooltip">
-          <ion-icon name="share-social"></ion-icon>
-          @if(showShareTooltip) {
-          <div class="tooltip">Compartir</div>
-          }
-        </button>
-        <button class="action-icon favorite" (click)="toggleFavorite()" [class.active]="isFavorite">
-          <ion-icon [name]="isFavorite ? 'heart' : 'heart-outline'"></ion-icon>
-          @if(isFavorite) {
-          <div class="heart-burst"></div>
-          }
-        </button>
-        <button class="action-icon more" (click)="showMoreOptions()">
-          <ion-icon name="ellipsis-vertical"></ion-icon>
-        </button>
-      </div>
-    </div>
-  </div>
+  <ion-refresher slot="fixed" (ionRefresh)="handleRefresh($event)">
+    <ion-refresher-content pullingIcon="arrow-down" pullingText="Tirar para actualizar" refreshingSpinner="crescent" refreshingText="Actualizando..."></ion-refresher-content>
+  </ion-refresher>
 
   <!-- Hero Section con Imagen Parallax -->
-  @if(service.images?.length > 0) {
+  @if(isLoading) {
+  <div class="hero-section">
+    <div class="hero-image-container">
+      <ion-skeleton-text animated class="hero-skeleton"></ion-skeleton-text>
+    </div>
+    <div class="gallery-strip skeleton">
+      @for(i of [1,2,3,4]; track $index) {
+      <ion-skeleton-text animated class="thumb-skeleton"></ion-skeleton-text>
+      }
+    </div>
+  </div>
+  }
+
+  @if(!isLoading && service.images?.length > 0) {
   <div class="hero-section">
     <div class="hero-image-container" [style.transform]="'translateY(' + parallaxOffset + 'px)'">
-      <img [src]="service.images[0]" class="hero-image" alt="Servicio">
+      <img [src]="service.images[0]" class="hero-image" alt="Servicio" (error)="_service.errorImage($event)">
       <div class="hero-gradient"></div>
     </div>
     
@@ -46,9 +44,12 @@
       <div *ngFor="let img of service.images.slice(0,4); let i = index" 
         class="thumb" 
         [class.active]="selectedImage === i"
+        role="button" tabindex="0"
         (click)="selectImage(i)"
+        (keydown.enter)="selectImage(i); $event.preventDefault()"
+        (keydown.space)="selectImage(i); $event.preventDefault()"
       >
-        <img [src]="img">
+        <img [src]="img" (error)="_service.errorImage($event)">
         @if(i === 3 && service.images.length > 4) {
         <div class="thumb-overlay">
           <span>+{{ service.images.length - 4 }}</span>
@@ -83,7 +84,7 @@
     
     <!-- Categoría y Título -->
     <div class="title-section">
-      <div class="category-pill" (click)="filterByCategory(service.category)">
+      <div class="category-pill" role="button" tabindex="0" (click)="filterByCategory(service.category)" (keydown.enter)="filterByCategory(service.category); $event.preventDefault()" (keydown.space)="filterByCategory(service.category); $event.preventDefault()">
         <div class="pill-icon">
           <ion-icon [name]="getCategoryIcon(service.category)"></ion-icon>
         </div>
@@ -150,7 +151,7 @@
     </div>
 
     <!-- Peril del Solicitante (Card Expandible) -->
-    <div class="user-card-premium" (click)="viewUserProfile(service.user?.id)">
+    <div class="user-card-premium" role="button" tabindex="0" (click)="viewUserProfile(service.user?.id)" (keydown.enter)="viewUserProfile(service.user?.id); $event.preventDefault()" (keydown.space)="viewUserProfile(service.user?.id); $event.preventDefault()">
       <div class="user-glow" [style.background]="'radial-gradient(circle at 30% 30%, ' + userColor + ', transparent)'"></div>
       <div class="user-content">
         <div class="user-avatar-ring">
@@ -318,8 +319,8 @@
                 <h5>Evidencia fotográfica</h5>
                 <div class="gallery-grid">
                   @for (img of service.service_requests_delivered.evidence_images; track $index) {
-                    <div class="gallery-item" (click)="openImageViewer($index)">
-                      <img [src]="img" alt="Evidencia {{ $index + 1 }}">
+                    <div class="gallery-item" role="button" tabindex="0" (click)="openImageViewer($index)" (keydown.enter)="openImageViewer($index); $event.preventDefault()" (keydown.space)="openImageViewer($index); $event.preventDefault()">
+                      <img [src]="img" alt="Evidencia {{ $index + 1 }}" (error)="_service.errorImage($event)">
                       <div class="image-overlay">
                         <ion-icon name="expand"></ion-icon>
                       </div>
@@ -519,7 +520,7 @@
           [destinationAddress]="service.address"
           (routeCalculated)="onRouteInfo($event)">
         </app-location-picker>
-        <div class="map-overlay" (click)="openFullMap()">
+        <div class="map-overlay" role="button" tabindex="0" (click)="openFullMap()" (keydown.enter)="openFullMap(); $event.preventDefault()" (keydown.space)="openFullMap(); $event.preventDefault()">
           <button class="expand-map-btn">
             <ion-icon name="expand"></ion-icon>
             <span>Ver mapa completo</span>
@@ -551,7 +552,7 @@
         Documentos
       </h2>
       <div class="documents-list">
-        <div class="doc-item" *ngFor="let doc of service.documents" (click)="downloadDocument(doc)">
+        <div class="doc-item" *ngFor="let doc of service.documents" role="button" tabindex="0" (click)="downloadDocument(doc)" (keydown.enter)="downloadDocument(doc); $event.preventDefault()" (keydown.space)="downloadDocument(doc); $event.preventDefault()">
           <div class="doc-icon" [class]="doc.type">
             <ion-icon [name]="getDocIcon(doc.type)"></ion-icon>
           </div>

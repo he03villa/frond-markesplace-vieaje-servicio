@@ -20,6 +20,7 @@
             [alt]="'Imagen ' + ($index + 1)"
             class="uploaded-image"
             (load)="onImageLoad($event, $index)"
+            (error)="_service.errorImage($event)"
           >
           <div class="image-overlay">
             <ion-button 

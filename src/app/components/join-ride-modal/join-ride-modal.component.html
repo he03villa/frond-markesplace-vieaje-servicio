@@ -130,7 +130,7 @@
 
   <!-- Resumen deslizable -->
   <div class="summary-panel" [class.expanded]="showSummary">
-    <div class="summary-toggle" (click)="toggleSummary()">
+    <div class="summary-toggle" role="button" tabindex="0" (click)="toggleSummary()" (keydown.enter)="toggleSummary(); $event.preventDefault()" (keydown.space)="toggleSummary(); $event.preventDefault()">
       <div class="toggle-line"></div>
       <span>Ver detalle</span>
     </div>

@@ -1,44 +1,8 @@
 @use '../../../theme/mixins' as app;
 
-// ============================================
-// RIDE DETAIL PAGE - MIGRADO A SISTEMA DE TEMA
-// ============================================
-
 .ride-detail-page {
     --background: var(--app-bg);
     background: linear-gradient(135deg, rgba(var(--app-primary-rgb), 0.05) 0%, rgba(var(--app-success-rgb), 0.05) 100%);
-}
-
-// ============================================
-// HEADER
-// ============================================
-.floating-header {
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 8px 12px;
-    background: var(--app-glass-bg);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border-bottom: 1px solid var(--app-glass-border);
-
-    @include app.dark-mode {
-        background: var(--app-glass-bg-dark);
-        border-color: var(--app-glass-border);
-    }
-
-    .header-title {
-        font-weight: 700;
-        font-size: 16px;
-        color: var(--app-text);
-    }
-
-    ion-button {
-        --color: var(--app-text);
-    }
 }
 
 // ============================================

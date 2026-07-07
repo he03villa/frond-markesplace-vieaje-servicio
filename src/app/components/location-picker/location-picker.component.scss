@@ -233,7 +233,7 @@ ion-searchbar {
 
       ion-icon {
         font-size: 24px;
-        color: white;
+        color: var(--app-text-inverse);
       }
     }
 
@@ -629,7 +629,7 @@ ion-searchbar {
     justify-content: center;
     font-weight: 800;
     font-size: 14px;
-    color: white;
+    color: var(--app-text-inverse);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
     transform: rotate(-45deg);
 

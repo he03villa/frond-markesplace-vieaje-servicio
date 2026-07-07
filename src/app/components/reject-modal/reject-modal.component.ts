@@ -4,6 +4,7 @@ import { ModalController, IonContent, IonIcon } from '@ionic/angular/standalone'
 import { addIcons } from 'ionicons';
 import { alertCircle, close, closeCircle, warning } from 'ionicons/icons';
 import { DeliveriesServices } from 'src/app/services/deliveries.service';
+import { ServiceService } from 'src/app/services/service.service';
 
 @Component({
   selector: 'app-reject-modal',
@@ -12,6 +13,8 @@ import { DeliveriesServices } from 'src/app/services/deliveries.service';
   imports: [IonContent, IonIcon, FormsModule],
 })
 export class RejectModalComponent {
+
+  _service: ServiceService = inject(ServiceService);
 
   @Input() deliveryId!: number;
   @Input() workerName!: string;

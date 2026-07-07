@@ -14,7 +14,7 @@ export class OnboardingPage implements AfterViewInit {
 
   @ViewChild('swiperContainer', { static: false }) swiperContainer?: ElementRef;
   private swiper?: Swiper;
-  private _service: ServiceService = inject(ServiceService);
+  _service: ServiceService = inject(ServiceService);
   currentSlide = 0;
   readonly totalSlides = 3;
 

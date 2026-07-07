@@ -1,0 +1,35 @@
+<ion-header [class.header-solid]="solid" [class.overlay]="overlay" class="app-page-header">
+  <ion-toolbar>
+    @if (showBack) {
+      <ion-buttons slot="start">
+        <ion-button class="btn-back" (click)="back.emit()">
+          <ion-icon slot="icon-only" [name]="backIcon" />
+        </ion-button>
+      </ion-buttons>
+    }
+    <ion-title class="header-title">{{ title }}</ion-title>
+    <ion-buttons slot="end">
+      <ng-content select="[slot=end]" />
+    </ion-buttons>
+  </ion-toolbar>
+  @if (showSearch) {
+    <div class="search-row">
+      <div class="search-input-wrapper">
+        <ion-icon name="search-outline" class="search-icon" />
+        <input
+          type="text"
+          [ngModel]="searchQuery"
+          (ngModelChange)="searchQueryChange.emit($event)"
+          placeholder="Buscar..."
+          class="search-input"
+        />
+        @if (searchQuery) {
+          <button class="clear-btn" (click)="searchQueryChange.emit('')">
+            <ion-icon name="close-outline" />
+          </button>
+        }
+        <ng-content select="[slot=search-suffix]" />
+      </div>
+    </div>
+  }
+</ion-header>

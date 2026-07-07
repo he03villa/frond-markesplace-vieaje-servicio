@@ -1,29 +1,33 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonButton, IonIcon, IonRefresher, IonRefresherContent, IonSkeletonText, IonFab, IonFabButton } from '@ionic/angular/standalone';
+import { CommonModule, Location } from '@angular/common';
+import { IonContent, IonButtons, IonButton, IonIcon, IonRefresher, IonRefresherContent, IonSkeletonText, IonFab, IonFabButton } from '@ionic/angular/standalone';
+import { PageHeaderComponent } from 'src/app/components/page-header/page-header.component';
 import { ServiceService } from 'src/app/services/service.service';
 import { ActionSheetController } from '@ionic/angular';
 import { RideItem, RideStats } from 'src/app/interface/my-rides';
 import { addIcons } from 'ionicons';
 import { addOutline, alertCircleOutline, arrowBackOutline, arrowDown, arrowForwardOutline, arrowUpOutline, calendarOutline, carOutline, cashOutline, checkmarkCircleOutline, chevronForwardOutline, closeOutline, createOutline, eyeOutline, flagOutline, locationOutline, navigateOutline, optionsOutline, pauseCircleOutline, peopleOutline, starOutline, timeOutline, trashOutline, trendingUpOutline } from 'ionicons/icons';
 import { RidesService } from 'src/app/services/rides.service';
+import { ModalCreateServicesRideComponent } from 'src/app/components/modal-create-services-ride/modal-create-services-ride.component';
 
 @Component({
   selector: 'app-my-rides',
   templateUrl: './my-rides.page.html',
   styleUrls: ['./my-rides.page.scss'],
   standalone: true,
-  imports: [IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, IonButtons, IonButton, IonIcon, IonRefresher, IonRefresherContent, IonSkeletonText, IonFab, IonFabButton]
+  imports: [IonContent, CommonModule, IonButtons, IonButton, IonIcon, IonRefresher, IonRefresherContent, IonSkeletonText, IonFab, IonFabButton, PageHeaderComponent]
 })
 export class MyRidesPage implements OnInit {
   private actionSheetCtrl = inject(ActionSheetController);
   private _services = inject(ServiceService);
   private _ridesService = inject(RidesService);
+  private _location: Location = inject(Location);
 
   headerSolid = false;
   activeTab: 'upcoming' | 'completed' | 'cancelled' | 'all' = 'all';
 
   isLoading = true;
+  hasError = false;
   rides: RideItem[] = [];
   filteredRides: RideItem[] = [];
 
@@ -61,7 +65,7 @@ export class MyRidesPage implements OnInit {
   }
 
   back() {
-    this._services.url('/home/profile');
+    this._location.back();
   }
 
   async loadRides(reset = false) {
@@ -85,6 +89,7 @@ export class MyRidesPage implements OnInit {
       this.isLoading = false;
     } catch (error) {
       console.log(error);
+      this.hasError = true;
     }
   }
 
@@ -154,7 +159,9 @@ export class MyRidesPage implements OnInit {
   }
 
   createRide() {
-    this._services.url('/create-ride');
+    //this._services.url('/create-ride');
+    const type = 'ride';
+    this._services.openModal(ModalCreateServicesRideComponent, { type }, {});
   }
 
   getStatusColor(status: string): string {

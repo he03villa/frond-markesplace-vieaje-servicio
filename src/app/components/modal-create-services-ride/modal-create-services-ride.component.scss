@@ -510,7 +510,7 @@ ion-grid {
   padding: var(--space-xl);
   background: var(--app-gradient-primary);
   border-radius: var(--radius-xl);
-  color: white;
+  color: var(--app-text-inverse);
   box-shadow: var(--app-shadow-lg), 0 0 20px rgba(var(--app-primary-rgb), 0.2);
   position: relative;
   overflow: hidden;
@@ -650,7 +650,7 @@ image-upload-section {
         top: var(--space-xs);
         right: var(--space-xs);
         background: var(--app-danger);
-        color: white;
+        color: var(--app-text-inverse);
         border: none;
         border-radius: 50%;
         width: 28px;
@@ -835,6 +835,17 @@ ion-item.item-invalid {
   0%, 100% { transform: translateX(0); }
   25%      { transform: translateX(-5px); }
   75%      { transform: translateX(5px); }
+}
+
+// ============================================
+// FIELD ERROR (inline validation)
+// ============================================
+.field-error {
+  display: block;
+  font-size: 12px;
+  color: var(--app-danger);
+  margin: 4px 16px 0;
+  padding-left: 16px;
 }
 
 // Responsive tweaks

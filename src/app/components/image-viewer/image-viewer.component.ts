@@ -2,6 +2,7 @@ import { Component, inject, Input, OnInit } from '@angular/core';
 import { ModalController, IonContent, IonIcon } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { add, chevronBack, chevronForward, close, remove } from 'ionicons/icons';
+import { ServiceService } from 'src/app/services/service.service';
 
 @Component({
   selector: 'app-image-viewer',
@@ -11,6 +12,8 @@ import { add, chevronBack, chevronForward, close, remove } from 'ionicons/icons'
   imports: [IonContent, IonIcon]
 })
 export class ImageViewerComponent implements OnInit {
+
+  _service: ServiceService = inject(ServiceService);
 
   @Input() images: string[] = [];
   @Input() initialIndex = 0;

@@ -1,5 +1,7 @@
-import { Component, inject, OnInit } from '@angular/core';
-import { IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonButton, IonIcon, IonRefresher, IonRefresherContent } from '@ionic/angular/standalone';
+import { Component, inject, OnInit, LOCALE_ID } from '@angular/core';
+import { Location } from '@angular/common';
+import { IonContent, IonButtons, IonButton, IonIcon, IonRefresher, IonRefresherContent } from '@ionic/angular/standalone';
+import { PageHeaderComponent } from 'src/app/components/page-header/page-header.component';
 import { addIcons } from 'ionicons';
 import { arrowBackOutline, arrowDown, arrowUpOutline, barChartOutline, calendarOutline, cashOutline, flashOutline, peopleOutline, pulseOutline, starOutline, timeOutline, trendingDownOutline, trendingUpOutline, trophyOutline } from 'ionicons/icons';
 import { RidesService } from 'src/app/services/rides.service';
@@ -11,16 +13,18 @@ import { ChartBar, InsightItem, StatPeriod } from 'src/app/interface/statistics'
   templateUrl: './statistics.page.html',
   styleUrls: ['./statistics.page.scss'],
   standalone: true,
-  imports: [IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonButton, IonIcon, IonRefresher, IonRefresherContent]
+  imports: [IonContent, IonButtons, IonButton, IonIcon, IonRefresher, IonRefresherContent, PageHeaderComponent]
 })
 export class StatisticsPage implements OnInit {
 
   private _ridesService: RidesService = inject(RidesService);
   private _service: ServiceService = inject(ServiceService);
+  private _location: Location = inject(Location);
 
   headerSolid = false;
   activePeriod: 'week' | 'month' | 'year' = 'month';
   isLoading = true;
+  hasError = false;
 
   periods: StatPeriod[] = [
     { label: 'Semana', value: 'week' },
@@ -86,7 +90,7 @@ export class StatisticsPage implements OnInit {
   }
 
   back() {
-    this._service.url('/home/profile');
+    this._location.back();
   }
 
   async loadRidesStatistics(refresh = false) {
@@ -116,6 +120,9 @@ export class StatisticsPage implements OnInit {
       this.isLoading = false;
     } catch (error) {
       console.log(error);
+      this._service.presentToast('Error al cargar estadísticas', 'danger');
+      this.hasError = true;
+      this.isLoading = false;
     }
   }
 

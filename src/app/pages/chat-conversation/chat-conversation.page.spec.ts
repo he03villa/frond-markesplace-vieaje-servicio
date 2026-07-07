@@ -76,13 +76,13 @@ describe('ChatConversationPage', () => {
 
   it('should navigate back', () => {
     component.goBack();
-    expect(serviceSpy.url).toHaveBeenCalledWith('/home/messages');
+    expect(serviceSpy.url).toHaveBeenCalledWith('/home/chat-inbox');
   });
 
   it('should open profile', () => {
     component.conversation = { contact: { id: 5 } };
     component.openProfile();
-    expect(serviceSpy.url).toHaveBeenCalledWith('/chat/profile/5');
+    expect(serviceSpy.url).toHaveBeenCalledWith('/home/profile');
   });
 
   it('should send message', fakeAsync(() => {

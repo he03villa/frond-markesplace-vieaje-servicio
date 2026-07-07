@@ -37,6 +37,9 @@
           required>
         </ion-input>
       </ion-item>
+      @if(showErrors && !serviceForm.title) {
+        <span class="field-error">El título es obligatorio</span>
+      }
       <div class="counter">{{serviceForm.title?.length || 0}}/255</div>
 
       <!-- Descripción -->
@@ -52,6 +55,9 @@
           required>
         </ion-textarea>
       </ion-item>
+      @if(showErrors && !serviceForm.description) {
+        <span class="field-error">La descripción es obligatoria</span>
+      }
 
       <!-- Categoría -->
       <ion-item>
@@ -75,6 +81,9 @@
           <ion-select-option value="otros">Otros</ion-select-option>
         </ion-select>
       </ion-item>
+      @if(showErrors && !serviceForm.category) {
+        <span class="field-error">Selecciona una categoría</span>
+      }
 
       <!-- Ubicación del servicio -->
       <div class="section-header">
@@ -99,6 +108,9 @@
           <small>{{ serviceForm.address }}</small>
         </ion-text>
       </ion-item>
+      }
+      @if(showErrors && !serviceForm.latitude) {
+        <span class="field-error">Selecciona una ubicación en el mapa</span>
       }
 
       <!-- Presupuesto -->
@@ -211,6 +223,9 @@
         </ion-text>
       </ion-item>
       }
+      @if(showErrors && !rideForm.origin_lat) {
+        <span class="field-error">Selecciona el punto de origen en el mapa</span>
+      }
 
       <!-- Destino -->
       <div class="section-header">
@@ -234,6 +249,9 @@
           <small>{{ rideForm.destination_address }}</small>
         </ion-text>
       </ion-item>
+      }
+      @if(showErrors && !rideForm.destination_lat) {
+        <span class="field-error">Selecciona el destino en el mapa</span>
       }
 
       <!-- Resumen de ruta -->
@@ -280,6 +298,9 @@
           required>
         </ion-datetime>
       </ion-item>
+      @if(showErrors && !rideForm.departure_time) {
+        <span class="field-error">Selecciona la fecha y hora de salida</span>
+      }
 
       <!-- Asientos disponibles -->
       <ion-item>
@@ -302,6 +323,9 @@
           <ion-select-option value="8">8 asientos</ion-select-option>
         </ion-select>
       </ion-item>
+      @if(showErrors && !rideForm.available_seats) {
+        <span class="field-error">Selecciona la cantidad de asientos</span>
+      }
 
       <!-- Precio por asiento -->
       <ion-item>
@@ -319,6 +343,9 @@
           <ion-text slot="start">$</ion-text>
         </ion-input>
       </ion-item>
+      @if(showErrors && !rideForm.price_per_seat) {
+        <span class="field-error">El precio por asiento es obligatorio</span>
+      }
 
       <!-- Total estimado -->
       @if(rideForm.available_seats && rideForm.price_per_seat) {

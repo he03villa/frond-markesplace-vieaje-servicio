@@ -1,7 +1,8 @@
 import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule, CurrencyPipe, DatePipe, DecimalPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonContent, IonIcon } from '@ionic/angular/standalone';
+import { IonContent, IonIcon, IonButtons, IonButton, IonRefresher, IonRefresherContent, IonSkeletonText } from '@ionic/angular/standalone';
+import { PageHeaderComponent } from 'src/app/components/page-header/page-header.component';
 import { ActivatedRoute } from '@angular/router';
 import { ServiceService } from 'src/app/services/service.service';
 import { addIcons } from 'ionicons';
@@ -29,6 +30,11 @@ import { ImageViewerComponent } from 'src/app/components/image-viewer/image-view
   standalone: true,
   imports: [
     IonContent,
+    IonButtons,
+    IonButton,
+    IonRefresher,
+    IonRefresherContent,
+    IonSkeletonText,
     CommonModule,
     FormsModule,
     IonIcon,
@@ -37,6 +43,7 @@ import { ImageViewerComponent } from 'src/app/components/image-viewer/image-view
     LocationPickerComponent,
     FileSizePipe,
     TimeAgoPipe,
+    PageHeaderComponent,
   ],
   providers: [
     CurrencyPipe
@@ -46,6 +53,7 @@ export class ServiceDetailPage implements OnInit, OnDestroy {
 
   // Propiedades de estado UI
   isScrolled = false;
+  isLoading = true;
   parallaxOffset = 0;
   selectedImage = 0;
   descExpanded = false;
@@ -184,6 +192,7 @@ export class ServiceDetailPage implements OnInit, OnDestroy {
   // CARGA DE DATOS
   // ==========================================
   async loadServiceDetail() {
+    this.isLoading = true;
     const loading = await this._service.presentLoading({ message: 'Cargando...' });
     await loading.present();
     try {
@@ -206,7 +215,13 @@ export class ServiceDetailPage implements OnInit, OnDestroy {
     } catch (error) {
       console.log(error);
     }
+    this.isLoading = false;
     await loading.dismiss();
+  }
+
+  async handleRefresh(event: any) {
+    await this.loadServiceDetail();
+    event.target.complete();
   }
 
   private generateUserColor(name: string): string {

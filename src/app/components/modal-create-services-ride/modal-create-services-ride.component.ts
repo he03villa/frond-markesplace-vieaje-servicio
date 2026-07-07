@@ -53,6 +53,7 @@ export class ModalCreateServicesRideComponent implements OnInit {
   private _serviceRequestsService: ServiceRequestsService = inject(ServiceRequestsService);
   private _riderService: RidesService = inject(RidesService);
   publicationType: 'service' | 'ride' = 'service';
+  showErrors = false;
 
   // Formulario para servicio
   serviceForm: any = {
@@ -231,6 +232,7 @@ export class ModalCreateServicesRideComponent implements OnInit {
   }
 
   async createPublication() {
+    this.showErrors = true;
     if (!this.isFormValid()) {
       this.showError('Por favor completa todos los campos requeridos');
       return;
@@ -362,6 +364,7 @@ export class ModalCreateServicesRideComponent implements OnInit {
   }
 
   resetForm() {
+    this.showErrors = false;
     if (this.publicationType === 'service') {
       this.serviceForm = {
         title: '',

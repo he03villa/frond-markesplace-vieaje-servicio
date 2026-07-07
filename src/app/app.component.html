@@ -7,4 +7,6 @@
     <div class="noise-overlay"></div>
   </div>
   <ion-router-outlet></ion-router-outlet>
+  <app-menu-sidebar [show]="menuSidebarService.show()" (close)="menuSidebarService.close()"></app-menu-sidebar>
+  <app-notifications-sidebar [show]="notificationsSidebarService.show()" (close)="notificationsSidebarService.close()" (viewAll)="onViewAllNotifications()"></app-notifications-sidebar>
 </ion-app>
