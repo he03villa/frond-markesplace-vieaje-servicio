@@ -5,6 +5,10 @@
     --radius-md: 16px;
     --radius-sm: 12px;
     --radius-xl: 24px;
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+    display: block;
 }
 
 // ============================================
@@ -174,8 +178,8 @@
 
     .action-pill {
         position: relative;
-        width: 40px;
-        height: 40px;
+        width: clamp(44px, 6vw, 48px);
+        height: clamp(44px, 6vw, 48px);
         border-radius: 50%;
         border: none;
         background: var(--app-surface);
@@ -262,8 +266,11 @@
     padding-top: calc(var(--header-height, 80px) + 20px);
     padding-bottom: 100px;
     overflow-y: auto;
-    height: 100vh;
+    overflow-x: hidden;
+    height: 100dvh;
     scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
 
     &::-webkit-scrollbar {
         width: 6px;
@@ -287,7 +294,7 @@
 // HERO SECTION
 // ============================================
 .hero-section {
-    padding: 0 20px;
+    padding: 0 clamp(20px, 2.5vw, 20px);
     margin-bottom: 24px;
 }
 
@@ -295,7 +302,7 @@
     position: relative;
     background: var(--app-surface);
     border-radius: var(--radius-xl);
-    padding: 24px;
+    padding: clamp(16px, 2.5vw, 24px);
     box-shadow: var(--app-shadow-md);
     animation: card-enter 0.8s var(--smooth, cubic-bezier(0.4, 0, 0.2, 1)) backwards;
 
@@ -329,8 +336,8 @@
 .profile-content {
     display: flex;
     align-items: flex-start;
-    gap: 16px;
-    margin-bottom: 20px;
+    gap: clamp(10px, 2vw, 16px);
+    margin-bottom: clamp(12px, 2.5vw, 20px);
     position: relative;
     z-index: 1;
 }
@@ -339,8 +346,8 @@
     position: relative;
 
     .avatar-ring {
-        width: 64px;
-        height: 64px;
+        width: clamp(48px, 8vw, 64px);
+        height: clamp(48px, 8vw, 64px);
         border-radius: 50%;
         padding: 3px;
         background: var(--app-gradient-primary);
@@ -421,7 +428,7 @@
     flex: 1;
 
     .greeting {
-        font-size: 26px;
+        font-size: clamp(20px, 5vw, 26px);
         font-weight: 800;
         color: var(--app-text);
         margin-bottom: 4px;
@@ -436,7 +443,7 @@
     }
 
     .context {
-        font-size: 15px;
+        font-size: clamp(14px, 2.5vw, 15px);
         color: var(--app-text-secondary);
         margin-bottom: 12px;
     }
@@ -639,32 +646,28 @@
 // STATS DASHBOARD
 // ============================================
 .stats-dashboard {
-    display: flex;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
     gap: 16px;
-    padding: 0 40px;
+    padding: 0 clamp(20px, 4vw, 40px);
     margin-bottom: 28px;
-    overflow-x: auto;
-    scrollbar-width: none;
-
-    &::-webkit-scrollbar {
-        display: none;
-    }
+    container-type: inline-size;
 }
 
 .stat-float {
-    flex: 1;
-    min-width: 160px;
+    min-width: 0;
     background: var(--app-surface);
     border-radius: var(--radius-xl);
-    padding: 20px;
+    padding: clamp(14px, 2vw, 20px);
     display: flex;
     align-items: center;
-    gap: 16px;
+    gap: clamp(10px, 1.5vw, 16px);
     box-shadow: var(--app-shadow-lg);
     position: relative;
     overflow: hidden;
     animation: float-up 0.6s var(--smooth, cubic-bezier(0.4, 0, 0.2, 1)) backwards;
     animation-delay: var(--delay, 0s);
+    container-type: inline-size;
 
     @include app.dark-mode {
         box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
@@ -721,7 +724,7 @@
 
         .stat-value {
             display: block;
-            font-size: 32px;
+            font-size: clamp(24px, 5vw, 32px);
             font-weight: 800;
             color: var(--app-text);
             line-height: 1;
@@ -775,11 +778,22 @@
     }
 }
 
+// Stat card container query — stack vertically when narrow
+@container (max-width: 240px) {
+    .stat-float {
+        flex-direction: column;
+        text-align: center;
+        padding: 14px;
+
+        .stat-value { font-size: 24px; }
+    }
+}
+
 // ============================================
 // GRID MOLECULAR DE ACCIONES
 // ============================================
 .actions-molecular {
-    padding: 0 40px;
+    padding: 0 clamp(20px, 4vw, 40px);
     margin-bottom: 28px;
 
     .section-title {
@@ -795,7 +809,7 @@
 .molecular-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 12px;
+    gap: clamp(8px, 1.5vw, 12px);
 
     .mol-cell {
         position: relative;
@@ -920,7 +934,7 @@
 // TABS ORBITALES
 // ============================================
 .orbital-tabs {
-    padding: 0 30px;
+    padding: 0 clamp(20px, 3vw, 30px);
     margin-bottom: 24px;
 
     .tab-track {
@@ -998,6 +1012,25 @@
             font-size: 12px;
             font-weight: 600;
         }
+
+        .orbit-badge {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            min-width: 18px;
+            height: 18px;
+            padding: 0 5px;
+            background: var(--app-danger);
+            color: var(--app-text-inverse);
+            font-size: 10px;
+            font-weight: 700;
+            border-radius: 9px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid var(--app-surface-elevated);
+            line-height: 1;
+        }
     }
 }
 
@@ -1005,12 +1038,25 @@
 // CONTENIDO DE TABS
 // ============================================
 .tab-contents {
-    padding: 0 40px;
+    padding: 0 clamp(20px, 4vw, 40px);
     padding-bottom: 140px;
+    overflow-x: hidden;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+.main-scroll > *,
+.tab-contents > *,
+.tab-panel > * {
+    max-width: 100%;
+    box-sizing: border-box;
 }
 
 .tab-panel {
     display: none;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
     animation: panel-fade 0.4s var(--smooth, cubic-bezier(0.4, 0, 0.2, 1));
 
     &.active {
@@ -1037,7 +1083,7 @@
     margin-bottom: 20px;
 
     .panel-title {
-        font-size: 20px;
+        font-size: clamp(16px, 2.5vw, 20px);
         font-weight: 700;
         color: var(--app-text);
     }
@@ -1121,12 +1167,11 @@
 
     .tile-content {
         display: flex;
-        height: 140px;
     }
 
     .tile-visual {
         position: relative;
-        width: 140px;
+        width: min(140px, 30vw);
         flex-shrink: 0;
         overflow: hidden;
 
@@ -1180,7 +1225,7 @@
             gap: 12px;
 
             .tile-title {
-                font-size: 17px;
+                font-size: clamp(14px, 2.2vw, 17px);
                 font-weight: 700;
                 color: var(--app-text);
                 line-height: 1.3;
@@ -1358,7 +1403,7 @@
     .ticket-stub {
         position: relative;
         background: var(--app-gradient-primary);
-        padding: 24px;
+        padding: clamp(16px, 2.5vw, 24px);
         color: var(--app-text-inverse);
 
         .stub-hole {
@@ -1388,12 +1433,15 @@
             align-items: center;
             gap: 16px;
             margin-bottom: 16px;
+            min-width: 0;
 
             .route-point {
                 display: flex;
                 flex-direction: column;
                 align-items: center;
                 gap: 6px;
+                flex-shrink: 1;
+                min-width: 0;
 
                 .point-marker {
                     width: 16px;
@@ -1415,6 +1463,10 @@
                 .point-name {
                     font-size: 14px;
                     font-weight: 600;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    max-width: 100%;
                 }
 
                 &.end {
@@ -1473,7 +1525,7 @@
     }
 
     .ticket-body {
-        padding: 20px;
+        padding: clamp(14px, 2vw, 20px);
 
         .driver-profile {
             display: flex;
@@ -1483,8 +1535,8 @@
 
             .driver-avatar {
                 position: relative;
-                width: 48px;
-                height: 48px;
+                width: clamp(40px, 6vw, 48px);
+                height: clamp(40px, 6vw, 48px);
 
                 img {
                     width: 100%;
@@ -1580,13 +1632,13 @@
             .price-tag {
                 &.large {
                     .price {
-                        font-size: 28px;
+                        font-size: clamp(22px, 4vw, 28px);
                         font-weight: 800;
                         color: var(--app-text);
                     }
 
                     .unit {
-                        font-size: 14px;
+                        font-size: clamp(12px, 1.5vw, 14px);
                         color: var(--app-text-muted);
                     }
                 }
@@ -2296,11 +2348,11 @@
         color: var(--app-text);
         margin: 0 0 6px 0;
         line-height: 1.3;
-        /* white-space: nowrap; */
         overflow: hidden;
-        /* text-overflow: ellipsis; */
+        text-overflow: ellipsis;
         transition: color 0.3s;
         letter-spacing: -0.3px;
+        display: -webkit-box;
         -webkit-line-clamp: 2;
         -webkit-box-orient: vertical;
     }
@@ -2586,7 +2638,7 @@
     padding-top: 8px;
     padding-bottom: 20px;
     width: 100%;
-    max-width: 100vw;
+    max-width: 100%;
     overflow-x: hidden;
     box-sizing: border-box;
 }
@@ -2766,7 +2818,8 @@
                     color: var(--app-text-secondary);
                     font-weight: 600;
                     margin-top: 2px;
-                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
                 }
             }
         }
@@ -3048,6 +3101,7 @@
                 cursor: pointer;
                 transition: all 0.2s;
                 flex: 1;
+                min-width: 0;
                 white-space: nowrap;
 
                 ion-icon {
@@ -3382,6 +3436,22 @@
 // RESPONSIVE
 // ============================================
 @media (min-width: 768px) {
+    .tab-contents {
+        padding: 0 40px;
+    }
+
+    .stats-dashboard {
+        padding: 0 40px;
+    }
+
+    .actions-molecular {
+        padding: 0 40px;
+    }
+
+    .orbital-tabs {
+        padding: 0 30px;
+    }
+
     .my-publications {
         padding: 0 24px 100px;
     }
@@ -3410,132 +3480,84 @@
     }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 600px) {
     .molecular-grid {
-        gap: 8px;
-
-        .mol-cell {
-            padding: 16px;
-
-            &.primary {
-                .cell-icon {
-                    width: 48px;
-                    height: 48px;
-                    font-size: 24px;
-                }
-
-                .cell-title {
-                    font-size: 16px;
-                }
-            }
-        }
+        grid-template-columns: repeat(2, 1fr);
     }
+}
 
-    .stat-float {
-        min-width: 140px;
-        padding: 16px;
+@media (max-width: 480px) {
+    .my-publications { padding: 0 20px 100px; }
 
-        .stat-icon-wrap {
-            width: 48px;
-            height: 48px;
-        }
+    .settings-gear { display: none; }
+    .quick-chips { display: none; }
+    .mood-btn { display: none; }
 
-        .stat-data .stat-value {
-            font-size: 24px;
-        }
-    }
+    .tab-contents { padding-left: 24px; padding-right: 24px; }
+    .stats-dashboard { padding-left: 24px; padding-right: 24px; }
+    .actions-molecular { padding-left: 24px; padding-right: 24px; }
+    .hero-section { padding-left: 24px; padding-right: 24px; }
+    .orbital-tabs { padding-left: 24px; padding-right: 24px; }
 
-    .service-tile .tile-content {
-        height: 120px;
+    .stat-icon-wrap .progress-ring { display: none; }
 
+    .service-tile {
+        .tile-content { flex-direction: column; }
         .tile-visual {
-            width: 120px;
+            width: 100%;
+            height: 80px;
         }
+        .tile-body { padding: 12px; }
+        .tile-desc { -webkit-line-clamp: 1; }
+        .tile-actions { display: none !important; }
     }
 
-    .pub-content {
-        padding: 18px 16px 14px 22px;
+    .mol-cell { padding: 14px; }
+    .mol-cell.primary {
+        grid-row: span 1;
+        .cell-icon { width: 52px; height: 52px; font-size: 24px; }
+        .cell-title { font-size: 16px; }
     }
 
-    .pub-type-icon {
-        width: 44px;
-        height: 44px;
-        font-size: 20px;
-        border-radius: 14px;
+    .pub-content { padding: 18px 16px 14px 20px !important; }
+    .pub-type-icon { width: 44px; height: 44px; font-size: 20px; }
+    .pub-stats { gap: 12px; flex-wrap: wrap; }
+
+    .sub-orbit-nav { padding: 0 16px; }
+    .assignments-list { padding: 0 16px 180px !important; }
+    .assignment-filters { padding: 0 16px !important; }
+    .assignments-summary { padding: 0 20px; }
+    .filter-bar { padding: 4px 16px; gap: 8px; }
+    .filter-chip { height: 36px; font-size: 13px; }
+    .assignment-card .assign-content { padding: 14px; }
+
+    .assignment-filters .assign-filter {
+        padding: 6px 10px; font-size: 11px;
+        ion-icon { display: none; }
     }
+}
 
-    .pub-title {
-        font-size: 16px;
+@media (max-width: 360px) {
+    .brand-name { display: none; }
+    .ride-time { font-size: 12px; }
+
+    .tab-contents { padding-left: 20px; padding-right: 20px; }
+    .stats-dashboard { padding-left: 20px; padding-right: 20px; }
+    .actions-molecular { padding-left: 20px; padding-right: 20px; }
+    .hero-section { padding-left: 20px; padding-right: 20px; }
+    .orbital-tabs { padding-left: 20px; padding-right: 20px; }
+
+    .mol-cell { padding: 12px; }
+    .mol-cell.primary {
+        .cell-icon { width: 44px; height: 44px; font-size: 20px; }
+        .cell-title { font-size: 14px; }
     }
+    .mol-cell:not(.primary) .cell-title { display: none; }
+    .mol-cell:not(.primary) .cell-icon { margin-bottom: 0; }
 
-    .pub-status {
-        padding: 5px 10px;
-        font-size: 10px;
-    }
+    .service-tile .tile-body { padding: 8px; }
 
-    .sub-orbit-nav {
-        .sub-orbit-btn {
-            padding: 8px 12px;
-            font-size: 12px;
-            min-width: 100px;
-        }
-    }
-
-    .assignment-filters {
-        .assign-filter {
-            padding: 6px 10px;
-            font-size: 11px;
-
-            ion-icon {
-                display: none;
-            }
-        }
-    }
-
-    .assignments-summary .summary-card .summary-stat {
-        min-width: 100%;
-
-        .stat-info {
-            flex-direction: row;
-            align-items: baseline;
-            gap: 6px;
-
-            .stat-number {
-                font-size: 20px;
-            }
-        }
-    }
-
-    .assignment-card {
-        .assign-content {
-            padding: 14px;
-        }
-
-        .assign-header {
-            .assign-type {
-                font-size: 10px;
-            }
-
-            .assign-status {
-                font-size: 9px;
-                padding: 3px 8px;
-            }
-        }
-
-        .assign-title {
-            font-size: 14px;
-        }
-
-        .assign-footer {
-            .assign-price .amount {
-                font-size: 20px;
-            }
-
-            .assign-actions .action-btn {
-                max-width: none;
-            }
-        }
-    }
+    .pub-content { padding: 14px 12px 12px 16px !important; }
 }
 
 @media (orientation: landscape) and (max-height: 500px) {

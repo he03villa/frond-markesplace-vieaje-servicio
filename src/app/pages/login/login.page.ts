@@ -2,18 +2,17 @@ import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { IonContent, IonSegmentButton, IonCard, IonCardContent, IonSegment, IonItem, IonLabel, IonInput, IonButton } from '@ionic/angular/standalone';
+import { IonContent } from '@ionic/angular/standalone';
 import { ErrorComponent } from 'src/app/components/error/error.component';
 import { ServiceService } from 'src/app/services/service.service';
 import { AuthService } from 'src/app/services/auth.service';
-import { PasswordValidators } from 'src/app/validators/password-validators';
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.page.html',
   styleUrls: ['./login.page.scss'],
   standalone: true,
-  imports: [ReactiveFormsModule, ErrorComponent]
+  imports: [ReactiveFormsModule, ErrorComponent, IonContent]
 })
 export class LoginPage implements OnInit {
 
@@ -27,6 +26,10 @@ export class LoginPage implements OnInit {
   isLoading = false;
 
   constructor() { }
+
+  ionViewWillEnter() {
+    this.iniciarForm();
+  }
 
   ngOnInit() {
     this.iniciarForm();
@@ -50,16 +53,11 @@ export class LoginPage implements OnInit {
 
   async login(event: Event) {
     event.preventDefault();
-    const target = event.target as HTMLFormElement;
-    this._service.addLoading(target);
-    console.log(this.form);
     if (this.form.valid) {
       const data = this.form.value;
-      console.log(data);
       this.isLoading = true;
       try {
         const response = await this._authService.login(data);
-        console.log(response);
         if (response.success) {
           this._authService.saveSession(response.data);
           this.isLoading = false;
@@ -68,12 +66,10 @@ export class LoginPage implements OnInit {
       } catch (error) {
         console.error(error);
       }
-      this._service.removeLoading(target);
+      this.isLoading = false;
     } else {
       this.form.markAllAsTouched();
       this._service.formValidate(this.form);
-      this._service.removeLoading(target);
-      this.isLoading = false;
     }
   }
 

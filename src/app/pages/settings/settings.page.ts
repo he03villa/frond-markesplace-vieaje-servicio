@@ -252,7 +252,6 @@ export class SettingsPage implements OnInit {
     try {
       const res = await this.authService.logout();
       if (res.success) {
-        this.authService.emitUser(null);
         loading.dismiss();
         this._service.logout();
       }
@@ -266,7 +265,6 @@ export class SettingsPage implements OnInit {
   async deleteAccount() {
     const resul = await this._service.openModal(DeleteAccountModalComponent, {}, { cssClass: 'delete-account-modal' });
     if (resul.data.deleted) {
-      this.authService.emitUser(null);
       this._service.logout();
     }
   }

@@ -1032,6 +1032,8 @@
     min-height: 350px;
 
     app-location-picker {
+        --map-min-height: 80px;
+        --map-height: 100%;
         display: block;
         width: 100%;
         height: 100%;
@@ -1046,10 +1048,8 @@
 // TICKET FLOAT CARD
 // ============================================
 .ticket-float-card {
-    position: absolute;
-    bottom: -30px;
-    left: 16px;
-    right: 16px;
+    position: relative;
+    margin: 9px 16px;
     padding: 20px;
     background: var(--app-gradient-primary);
     border-radius: 20px;
@@ -1079,7 +1079,7 @@
 // CONTENT BELOW MAP
 // ============================================
 .content-below-map {
-    padding-top: 50px;
+    padding-top: 0px;
     padding-bottom: 20px;
 }
 

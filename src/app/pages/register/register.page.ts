@@ -1,4 +1,5 @@
 import { Component, inject, OnInit } from '@angular/core';
+import { ViewWillEnter } from '@ionic/angular';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ServiceService } from 'src/app/services/service.service';
 import { AuthService } from 'src/app/services/auth.service';
@@ -13,7 +14,7 @@ import { CommonModule } from '@angular/common';
   standalone: true,
   imports: [ReactiveFormsModule, ErrorComponent, CommonModule]
 })
-export class RegisterPage implements OnInit {
+export class RegisterPage implements OnInit, ViewWillEnter {
 
   _service: ServiceService = inject(ServiceService);
   private fb: FormBuilder = inject(FormBuilder);
@@ -26,6 +27,10 @@ export class RegisterPage implements OnInit {
   isLoading = false;
 
   constructor() { }
+
+  ionViewWillEnter() {
+    this.iniciarForm();
+  }
 
   ngOnInit() {
     this.iniciarForm();

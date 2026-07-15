@@ -7,7 +7,7 @@ import { ActivatedRoute } from '@angular/router';
 import { ServiceService } from 'src/app/services/service.service';
 import { AuthService } from 'src/app/services/auth.service';
 import { addIcons } from 'ionicons';
-import { addCircle, arrowBack, call, carOutline, carSport, chatbubble, checkmark, checkmarkCircle, closeCircle, ellipseOutline, enter, exit, flag, informationCircleOutline, person, personOutline, play, shareOutline, shieldCheckmark, star, starOutline } from 'ionicons/icons';
+import { addCircle, arrowBack, arrowDown, call, carOutline, carSport, chatbubble, checkmark, checkmarkCircle, closeCircle, ellipseOutline, enter, exit, flag, informationCircleOutline, person, personOutline, play, shareOutline, shieldCheckmark, star, starOutline } from 'ionicons/icons';
 import { LocationPickerComponent } from 'src/app/components/location-picker/location-picker.component';
 import { RidesService } from 'src/app/services/rides.service';
 import { JoinRideModalComponent } from 'src/app/components/join-ride-modal/join-ride-modal.component';
@@ -77,7 +77,7 @@ export class RideDetailPage implements OnInit, OnDestroy {
     addIcons({
       arrowBack, shareOutline, carSport, checkmark, shieldCheckmark, star, call, chatbubble,
       carOutline, person, personOutline, ellipseOutline, informationCircleOutline, checkmarkCircle, enter, exit,
-      addCircle, play, flag, starOutline, closeCircle
+      addCircle, play, flag, starOutline, closeCircle, arrowDown
     });
   }
 

@@ -31,17 +31,17 @@
   </div>
   }
 
-  @if(!isLoading && service.images?.length > 0) {
+  @if(!isLoading && service.image_urls?.length > 0) {
   <div class="hero-section">
     <div class="hero-image-container" [style.transform]="'translateY(' + parallaxOffset + 'px)'">
-      <img [src]="service.images[0]" class="hero-image" alt="Servicio" (error)="_service.errorImage($event)">
+      <img [src]="service.image_urls[0]" class="hero-image" alt="Servicio" (error)="_service.errorImage($event)">
       <div class="hero-gradient"></div>
     </div>
     
     <!-- Galería Thumbnails -->
-    @if(service.images.length > 1) {
+    @if(service.image_urls.length > 1) {
     <div class="gallery-strip">
-      <div *ngFor="let img of service.images.slice(0,4); let i = index" 
+      <div *ngFor="let img of service.image_urls.slice(0,4); let i = index" 
         class="thumb" 
         [class.active]="selectedImage === i"
         role="button" tabindex="0"
@@ -50,9 +50,9 @@
         (keydown.space)="selectImage(i); $event.preventDefault()"
       >
         <img [src]="img" (error)="_service.errorImage($event)">
-        @if(i === 3 && service.images.length > 4) {
+        @if(i === 3 && service.image_urls.length > 4) {
         <div class="thumb-overlay">
-          <span>+{{ service.images.length - 4 }}</span>
+          <span>+{{ service.image_urls.length - 4 }}</span>
         </div>
         }
       </div>

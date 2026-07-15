@@ -6,7 +6,7 @@ import { PageHeaderComponent } from 'src/app/components/page-header/page-header.
 import { ActivatedRoute } from '@angular/router';
 import { ServiceService } from 'src/app/services/service.service';
 import { addIcons } from 'ionicons';
-import { arrowBack, briefcase, calendar, calendarOutline, cash, cashOutline, chatbubble, chatbubbleOutline, checkmark, checkmarkCircle, checkmarkOutline, chevronDown, chevronForward, chevronForwardOutline, chevronUp, close, closeCircle, construct, cube, documentText, downloadOutline, ellipsisVertical, expand, eye, eyeOutline, flame, folderOpen, grid, hammer, heart, heartOutline, imagesOutline, informationCircle, location, locationOutline, lockClosed, map, navigate, navigateOutline, peopleOutline, personOutline, pricetagOutline, refreshCircle, shareOutline, shareSocial, sparkles, star, starOutline, swapHorizontal, time, timeOutline, warning } from 'ionicons/icons';
+import { arrowBack, arrowDown, briefcase, calendar, calendarOutline, cash, cashOutline, chatbubble, chatbubbleOutline, checkmark, checkmarkCircle, checkmarkOutline, chevronDown, chevronForward, chevronForwardOutline, chevronUp, close, closeCircle, construct, cube, documentText, downloadOutline, ellipsisVertical, expand, eye, eyeOutline, flame, folderOpen, grid, hammer, heart, heartOutline, imagesOutline, informationCircle, location, locationOutline, lockClosed, map, navigate, navigateOutline, peopleOutline, personOutline, pricetagOutline, refreshCircle, shareOutline, shareSocial, sparkles, star, starOutline, swapHorizontal, time, timeOutline, warning } from 'ionicons/icons';
 import { LocationPickerComponent } from 'src/app/components/location-picker/location-picker.component';
 import { ServiceRequestsService } from 'src/app/services/service-requests.service';
 import { MakeOfferModalComponent } from 'src/app/components/make-offer-modal/make-offer-modal.component';
@@ -105,7 +105,8 @@ export class ServiceDetailPage implements OnInit, OnDestroy {
       documentText, expand, eye, flame, folderOpen, grid, heart, heartOutline, location, map,
       navigate, personOutline, pricetagOutline, shareSocial, sparkles, star, time, timeOutline,
       downloadOutline, ellipsisVertical, swapHorizontal, lockClosed, briefcase, checkmarkCircle,
-      navigateOutline, cash, informationCircle, calendar, locationOutline, hammer, warning, cube, refreshCircle, starOutline
+      navigateOutline, cash, informationCircle, calendar, locationOutline, hammer, warning, cube, refreshCircle, starOutline,
+      arrowDown
     });
   }
 

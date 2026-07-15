@@ -1,9 +1,16 @@
 @use '../../../theme/mixins' as app;
 
+.location-picker-container {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
 // Base del mapa
-[id^="map-"] {
+.leaflet-map-inner {
   z-index: 1;
-  height: var(--map-height);
+  flex: 1;
+  min-height: var(--map-min-height, 400px);
   width: 100%;
   border-radius: 0 0 var(--radius-lg) var(--radius-lg);
   overflow: hidden;

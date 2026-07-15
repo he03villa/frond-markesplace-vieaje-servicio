@@ -1,8 +1,11 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Injectable, Injector } from '@angular/core';
 import { Router } from '@angular/router';
 import { firstValueFrom, Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { AlertController, ModalController, ToastController, LoadingController } from '@ionic/angular/standalone';
+import { WebsocketService } from './websocket.service';
+import { ChatSocketService } from './chat-socket.service';
+import { AuthService } from './auth.service';
 
 @Injectable({
   providedIn: 'root',
@@ -13,6 +16,7 @@ export class ServiceService {
   private modalCtrl: ModalController = inject(ModalController);
   private toastController: ToastController = inject(ToastController);
   private loadingController: LoadingController = inject(LoadingController);
+  private injector: Injector = inject(Injector);
 
   url(textUrl: String, data: any = undefined) {
     this._route.navigate([textUrl], data);
@@ -28,6 +32,9 @@ export class ServiceService {
       };
       dataModal.message = this.getErrorMessage(error);
       dataModal.message = dataModal.message == 'Unauthorized' ? 'Revisa tu correo o contraseña' : dataModal.message;
+      if (!dataModal.message || dataModal.message === 'undefined' || dataModal.message === 'null') {
+        dataModal.message = 'Error desconocido. Por favor, intenta nuevamente.';
+      }
 
       console.error('Error en la solicitud:', error);
       this.Alert(dataModal);
@@ -41,11 +48,16 @@ export class ServiceService {
       return 'Error desconocido. Por favor, intenta nuevamente.';
     }
 
+    const _sanitize = (msg: string): string =>
+      !msg || msg === 'undefined' || msg === 'null'
+        ? 'Error desconocido. Por favor, intenta nuevamente.'
+        : msg;
+
     // Caso 1: Error con campo 'error' directo (objeto con error simple)
     if (error.error && typeof error.error === 'object') {
       // Subcaso 1a: { error: "Unauthorized" }
       if (typeof error.error.error === 'string') {
-        return error.error.error;
+        return _sanitize(error.error.error);
       }
 
       // Subcaso 1b: { error: { email: ["El email no existe."] } }
@@ -54,27 +66,27 @@ export class ServiceService {
       for (const field of errorFields) {
         if (Array.isArray(error.error[field]) && error.error[field].length > 0) {
           // Retornar el primer mensaje del array
-          return error.error[field][0];
+          return _sanitize(error.error[field][0]);
         }
       }
 
       // Si error.error es un objeto pero no coincide con los casos anteriores
       if (Object.keys(error.error).length > 0) {
         if (typeof error.error.message === 'string') {
-          return error.error.message;
+          return _sanitize(error.error.message);
         }
-        return JSON.stringify(error.error);
+        return _sanitize(JSON.stringify(error.error));
       }
     }
 
     // Caso 2: Error con mensaje directo
     if (error.error && typeof error.error === 'string') {
-      return error.error;
+      return _sanitize(error.error);
     }
 
     // Caso 3: Usar el mensaje del HttpErrorResponse
     if (error.message) {
-      return error.message;
+      return _sanitize(error.message);
     }
 
     // Caso 4: Error basado en status code
@@ -91,7 +103,7 @@ export class ServiceService {
         case 500:
           return 'Error interno del servidor.';
         default:
-          return `Error ${error.status}: ${error.statusText || 'Error desconocido'}`;
+          return _sanitize(`Error ${error.status}: ${error.statusText || 'Error desconocido'}`);
       }
     }
 
@@ -178,6 +190,22 @@ export class ServiceService {
   logout() {
     localStorage.removeItem('dataUser');
     localStorage.removeItem('token');
+
+    try {
+      const websocketService = this.injector.get(WebsocketService);
+      websocketService.disconnect();
+    } catch {}
+
+    try {
+      const chatSocketService = this.injector.get(ChatSocketService);
+      chatSocketService.disconnect();
+    } catch {}
+
+    try {
+      const authService = this.injector.get(AuthService);
+      authService.emitUser(null);
+    } catch {}
+
     this._route.navigateByUrl('/login?sessionExpired=true');
   }
 }

@@ -32,7 +32,9 @@ export class AppComponent implements OnInit, OnDestroy {
     'my-rides',
     'stats',
     'settings',
-    'notifications'
+    'notifications',
+    'service-detail',
+    'ride-detail',
   ];
 
   private routerSubscription?: Subscription;
@@ -58,10 +60,13 @@ export class AppComponent implements OnInit, OnDestroy {
 
     App.addListener('appUrlOpen', (event) => {
       const url = new URL(event.url);
-      const path = url.pathname === '' ? '/' : url.pathname;
+      const rawPath = url.pathname === '/' || url.pathname === ''
+        ? url.hostname
+        : url.pathname.replace(/^\//, '');
+      const path = rawPath || '/';
       const params: Record<string, string> = {};
       url.searchParams.forEach((value, key) => { params[key] = value; });
-      this._router.navigate([path], { queryParams: params });
+      this._router.navigate([path.startsWith('/') ? path : '/' + path], { queryParams: params });
     });
 
     this.routerSubscription = this._router.events.pipe(

@@ -22,50 +22,51 @@
         [originAddress]="ride.route.origin.address"
         [destinationAddress]="ride.route.destination.address">
       </app-location-picker>
-      <!-- Hero: Ticket principal -->
-      <div class="ticket-float-card">
-        <div class="ticket-punch left"></div>
-        <div class="ticket-punch right"></div>
-    
-        <div class="route-main">
-          <div class="city-block origin">
-            <span class="city-code">{{ ride.route.origin_short ? ride.route.origin_short.substring(0, 3) : '' | uppercase }}</span>
-            <span class="city-name">{{ ride.route.origin_short }}</span>
-            @if(ride.schedule.departure_time) {
-              <span class="time">
-                {{ ride.schedule.departure_time | date:'h:mm a' }}
-              </span>
-            }
-          </div>
-    
-          <div class="route-connector">
-            <div class="plane-line">
-              <div class="line-track"></div>
-              <div class="vehicle-bubble">
-                <ion-icon name="car-sport"></ion-icon>
-              </div>
+    </div>
+
+    <!-- Hero: Ticket principal -->
+    <div class="ticket-float-card">
+      <div class="ticket-punch left"></div>
+      <div class="ticket-punch right"></div>
+  
+      <div class="route-main">
+        <div class="city-block origin">
+          <span class="city-code">{{ ride.route.origin_short ? ride.route.origin_short.substring(0, 3) : '' | uppercase }}</span>
+          <span class="city-name">{{ ride.route.origin_short }}</span>
+          @if(ride.schedule.departure_time) {
+            <span class="time">
+              {{ ride.schedule.departure_time | date:'h:mm a' }}
+            </span>
+          }
+        </div>
+  
+        <div class="route-connector">
+          <div class="plane-line">
+            <div class="line-track"></div>
+            <div class="vehicle-bubble">
+              <ion-icon name="car-sport"></ion-icon>
             </div>
-            @if (ride.route.distance_km) {
-              <span class="duration">{{ ride.route.distance_km }} km</span>
-            }
           </div>
-    
-          <div class="city-block destination">
-            <span class="city-code">{{ ride.route.destination_short ? ride.route.destination_short.substring(0, 3) : '' | uppercase }}</span>
-            <span class="city-name">{{ ride.route.destination_short }}</span>
-            @if (ride.schedule.departure_time) {
-              <span class="time">
-                ~{{ getEstimatedArrival() | date:'h:mm a' }}
-              </span>
-            }
-          </div>
+          @if (ride.route.distance_km) {
+            <span class="duration">{{ ride.route.distance_km }} km</span>
+          }
         </div>
-    
-        <!-- Status chip animado -->
-        <div class="status-chip" [class]="'status-' + ride.status">
-          <span class="pulse-dot"></span>
-          <span class="status-text">{{ statusLabel(ride.status) }}</span>
+  
+        <div class="city-block destination">
+          <span class="city-code">{{ ride.route.destination_short ? ride.route.destination_short.substring(0, 3) : '' | uppercase }}</span>
+          <span class="city-name">{{ ride.route.destination_short }}</span>
+          @if (ride.schedule.departure_time) {
+            <span class="time">
+              ~{{ getEstimatedArrival() | date:'h:mm a' }}
+            </span>
+          }
         </div>
+      </div>
+  
+      <!-- Status chip animado -->
+      <div class="status-chip" [class]="'status-' + ride.status">
+        <span class="pulse-dot"></span>
+        <span class="status-text">{{ statusLabel(ride.status) }}</span>
       </div>
     </div>
   

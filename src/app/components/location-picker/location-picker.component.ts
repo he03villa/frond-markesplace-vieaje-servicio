@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, CUSTOM_ELEMENTS_SCHEMA, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import { Component, CUSTOM_ELEMENTS_SCHEMA, EventEmitter, inject, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { IonButton, IonIcon, IonSearchbar, IonItem, IonLabel, IonSpinner } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
@@ -7,6 +7,7 @@ import { locateOutline, searchOutline, navigateOutline, closeOutline, arrowForwa
 import * as L from 'leaflet';
 import 'leaflet-routing-machine';
 import { SearchResult } from 'src/app/interface/search-result';
+import { LocationService } from 'src/app/services/location.service';
 
 @Component({
   selector: 'app-location-picker',
@@ -55,6 +56,7 @@ export class LocationPickerComponent implements OnInit, OnDestroy {
 
   private isMapInitialized = false;
   private userLocation: L.LatLng | null = null;
+  private locationService = inject(LocationService);
 
   searchQuery: string = '';
   searchResults: SearchResult[] = [];
@@ -112,6 +114,12 @@ export class LocationPickerComponent implements OnInit, OnDestroy {
       const container = document.getElementById(this.mapId);
       if (!container) {
         console.error('Contenedor del mapa no encontrado:', this.mapId);
+        return;
+      }
+
+      // Si Leaflet ya inicializó este contenedor, marcar y salir
+      if ((container as any)._leaflet_id) {
+        this.isMapInitialized = true;
         return;
       }
 
@@ -185,6 +193,11 @@ export class LocationPickerComponent implements OnInit, OnDestroy {
       }
 
       this.isMapInitialized = true;
+
+      // Forzar recálculo en el siguiente frame (evita offsetHeight 0)
+      setTimeout(() => {
+        if (this.map) this.map.invalidateSize();
+      }, 0);
     } catch (error) {
       console.error('Error al inicializar el mapa:', error);
     }
@@ -225,39 +238,55 @@ export class LocationPickerComponent implements OnInit, OnDestroy {
       .addTo(this.map)
       .bindPopup(this.destinationAddress || 'Destino');
 
-    // ✅ RUTA REAL con leaflet-routing-machine
-    this.routingControl = L.Routing.control({
-      waypoints: [
-        L.latLng(this.originLat, this.originLng),
-        L.latLng(this.destinationLat, this.destinationLng)
-      ],
-      routeWhileDragging: false,
-      addWaypoints: false,
-      draggableWaypoints: false,
-      fitSelectedRoutes: true,
-      showAlternatives: false,
-      collapsible: true,
-      collapsed: true,
-      show: false, // ocultar panel de instrucciones
-      lineOptions: {
-        styles: [{
-          color: '#4f46e5',
-          weight: 5,
-          opacity: 0.8,
-          lineCap: 'round',
-          lineJoin: 'round'
-        }],
-        extendToWaypoints: true,
-        missingRouteTolerance: 10
-      },
-      createMarker: () => null // No crear marcadores extra, ya tenemos los nuestros
-    } as any).addTo(this.map);
+    // ✅ RUTA REAL via OSRM HTTP + L.polyline
+    this.fetchOsrmRoute();
+  }
 
-    // Escuchar cuando la ruta se calcula para ajustar vista
-    this.routingControl.on('routesfound', (e: any) => {
-      const route = e.routes[0];
-      console.log('Ruta calculada:', route.summary.totalDistance / 1000, 'km');
-    });
+  private async fetchOsrmRoute() {
+    const originLat = this.originLat!;
+    const originLng = this.originLng!;
+    const destLat = this.destinationLat!;
+    const destLng = this.destinationLng!;
+
+    try {
+      const url = `https://router.project-osrm.org/route/v1/driving/${originLng},${originLat};${destLng},${destLat}?overview=full&geometries=geojson&steps=false`;
+      const response = await fetch(url, { signal: AbortSignal.timeout(15000) });
+      if (!response.ok) {
+        let message = `Error del servidor (${response.status})`;
+        try {
+          const errorBody = await response.json();
+          if (errorBody.code === 'NoRoute') {
+            message = 'No hay ruta de conducción entre origen y destino';
+          } else if (errorBody.message) {
+            message = errorBody.message;
+          }
+        } catch (_) { }
+        throw new Error(message);
+      }
+
+      const data = await response.json();
+      if (!data.routes?.length) {
+        throw new Error('No se encontró una ruta entre los puntos');
+      }
+
+      const route = data.routes[0];
+      const coords: [number, number][] = route.geometry.coordinates.map(
+        (c: number[]) => [c[1], c[0]]
+      );
+
+      this.routeLine = L.polyline(coords, {
+        color: '#4f46e5',
+        weight: 5,
+        opacity: 0.8,
+      }).addTo(this.map);
+
+      this.map.fitBounds((this.routeLine as any).getBounds(), {
+        padding: [60, 60],
+        maxZoom: 16,
+      });
+    } catch (error) {
+      console.error('Error consultando OSRM en modo route:', error);
+    }
   }
 
   // ═══════════════════════════════════════════════════════
@@ -271,91 +300,111 @@ export class LocationPickerComponent implements OnInit, OnDestroy {
 
     this.isCalculatingRoute = true;
 
-    try {
-      const position = await this.getCurrentPosition();
-      this.userLocation = L.latLng(position.coords.latitude, position.coords.longitude);
-
-      if (this.routingControl) {
-        this.map.removeControl(this.routingControl);
-      }
-
-      this.routingControl = L.Routing.control({
-        waypoints: [
-          this.userLocation,
-          L.latLng(this.destinationLat, this.destinationLng)
-        ],
-        routeWhileDragging: false,
-        addWaypoints: false,
-        draggableWaypoints: false,
-        fitSelectedRoutes: true,
-        showAlternatives: false,
-        collapsible: true,
-        collapsed: true,
-        show: false,
-        lineOptions: {
-          styles: [{ color: '#3880ff', weight: 6, opacity: 0.8 }],
-          extendToWaypoints: true,
-          missingRouteTolerance: 10
-        },
-        createMarker: (i: number, waypoint: any, n: number) => {
-          if (i === 0) {
-            return L.marker(waypoint.latLng, {
-              icon: L.icon({
-                iconUrl: 'assets/marker-icon.png',
-                shadowUrl: 'assets/marker-shadow.png',
-                iconSize: [25, 41],
-                iconAnchor: [12, 41],
-                popupAnchor: [1, -34],
-                shadowSize: [41, 41]
-              })
-            });
-          }
-          return null;
-        }
-      } as any).addTo(this.map);
-
-      this.routingControl.on('routesfound', (e: any) => {
-        const route = e.routes[0];
-        this.routeInfo = {
-          distance: route.summary.totalDistance / 1000,
-          duration: route.summary.totalTime / 60
-        };
-        this.routeCalculated.emit(this.routeInfo);
-        this.isCalculatingRoute = false;
-      });
-
-      this.routingControl.on('routingerror', () => {
-        alert('No se pudo calcular la ruta. Intenta de nuevo.');
-        this.isCalculatingRoute = false;
-      });
-
-    } catch (error) {
-      console.error('Error calculando ruta:', error);
+    // 1. Obtener ubicación actual
+    const pos = await this.locationService.getCurrentPosition();
+    if (!pos) {
+      console.error('No se pudo obtener la ubicación del usuario');
       alert('No se pudo obtener tu ubicación actual. Verifica los permisos.');
       this.isCalculatingRoute = false;
+      return;
     }
+
+    const originLat = pos.lat;
+    const originLng = pos.lng;
+
+    // 2. Validar que el mapa esté listo
+    if (!this.map) {
+      console.error('El mapa no está inicializado');
+      alert('Error al cargar el mapa. Intenta de nuevo.');
+      this.isCalculatingRoute = false;
+      return;
+    }
+
+    // 3. Limpiar ruta anterior
+    this.clearRoute();
+
+    // 4. Agregar marcador de origen (ubicación del usuario)
+    const originIcon = L.icon({
+      iconUrl: 'assets/marker-icon.png',
+      shadowUrl: 'assets/marker-shadow.png',
+      iconSize: [25, 41],
+      iconAnchor: [12, 41],
+      popupAnchor: [1, -34],
+      shadowSize: [41, 41]
+    });
+    this.originMarker = L.marker([pos.lat, pos.lng], { icon: originIcon }).addTo(this.map)
+      .bindPopup('Mi ubicación');
+
+    // 5. Consultar OSRM directamente via HTTP
+    try {
+      const url = `https://router.project-osrm.org/route/v1/driving/${originLng},${originLat};${this.destinationLng},${this.destinationLat}?overview=full&geometries=geojson&steps=false`;
+
+      const response = await fetch(url, { signal: AbortSignal.timeout(15000) });
+      if (!response.ok) {
+        let message = `Error del servidor (${response.status})`;
+        try {
+          const errorBody = await response.json();
+          if (errorBody.code === 'NoRoute') {
+            message = 'No hay ruta de conducción entre tu ubicación y el destino';
+          } else if (errorBody.message) {
+            message = errorBody.message;
+          }
+        } catch (_) { }
+        throw new Error(message);
+      }
+
+      const data = await response.json();
+
+      if (!data.routes?.length) {
+        throw new Error('No se encontró una ruta entre los puntos');
+      }
+
+      const route = data.routes[0];
+      const coords: [number, number][] = route.geometry.coordinates.map(
+        (c: number[]) => [c[1], c[0]]
+      );
+
+      // 6. Dibujar polyline en el mapa
+      this.routeLine = L.polyline(coords, {
+        color: '#3880ff',
+        weight: 6,
+        opacity: 0.8,
+      }).addTo(this.map);
+
+      this.map.fitBounds((this.routeLine as any).getBounds(), {
+        padding: [60, 60],
+        maxZoom: 16,
+      });
+
+      // 7. Emitir info de la ruta
+      this.routeInfo = {
+        distance: route.distance / 1000,
+        duration: route.duration / 60,
+      };
+      this.routeCalculated.emit(this.routeInfo);
+
+    } catch (error) {
+      console.error('Error consultando OSRM:', error);
+      alert(
+        error instanceof Error
+          ? `Error: ${error.message}`
+          : 'No se pudo calcular la ruta. Intenta de nuevo.'
+      );
+    }
+
+    this.isCalculatingRoute = false;
   }
 
   clearRoute() {
-    if (this.routingControl) {
-      this.map.removeControl(this.routingControl);
-      this.routingControl = null;
-      this.routeInfo = null;
+    if (this.routeLine) {
+      this.map.removeLayer(this.routeLine);
+      this.routeLine = undefined;
     }
-  }
-
-  private getCurrentPosition(): Promise<GeolocationPosition> {
-    return new Promise((resolve, reject) => {
-      if (!navigator.geolocation) {
-        reject(new Error('Geolocalización no soportada'));
-        return;
-      }
-      navigator.geolocation.getCurrentPosition(resolve, reject, {
-        enableHighAccuracy: true,
-        timeout: 10000,
-        maximumAge: 0
-      });
-    });
+    if (this.originMarker) {
+      this.map.removeLayer(this.originMarker);
+      this.originMarker = undefined;
+    }
+    this.routeInfo = null;
   }
 
   // ═══════════════════════════════════════════════════════
@@ -435,23 +484,16 @@ export class LocationPickerComponent implements OnInit, OnDestroy {
       return;
     }
 
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        async (position) => {
-          const lat = position.coords.latitude;
-          const lng = position.coords.longitude;
-
-          if (this.map && this.marker) {
-            this.map.setView([lat, lng], 15);
-            this.marker.setLatLng([lat, lng]);
-            await this.emitLocation(lat, lng);
-          }
-        },
-        (error) => {
-          console.error('Error obteniendo ubicación:', error);
-          alert('No se pudo obtener tu ubicación. Verifica los permisos.');
-        }
-      );
+    try {
+      const pos = await this.locationService.getCurrentPosition();
+      if (pos && this.map && this.marker) {
+        this.map.setView([pos.lat, pos.lng], 15);
+        this.marker.setLatLng([pos.lat, pos.lng]);
+        await this.emitLocation(pos.lat, pos.lng);
+      }
+    } catch (error) {
+      console.error('Error obteniendo ubicación:', error);
+      alert('No se pudo obtener tu ubicación. Verifica los permisos.');
     }
   }
 

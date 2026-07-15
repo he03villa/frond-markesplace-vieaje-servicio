@@ -9,6 +9,10 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/onboarding/onboarding.page').then( m => m.OnboardingPage)
   },
   {
+    path: 'email-verified',
+    loadComponent: () => import('./pages/email-verify/email-verify.page').then( m => m.EmailVerifyPage)
+  },
+  {
     path: '',
     canActivate: [onboardingGuard, loginGuard],
     children: [
@@ -20,10 +24,6 @@ export const routes: Routes = [
       {
         path: 'register',
         loadComponent: () => import('./pages/register/register.page').then( m => m.RegisterPage)
-      },
-      {
-        path: 'email-verified',
-        loadComponent: () => import('./pages/email-verify/email-verify.page').then( m => m.EmailVerifyPage)
       },
       {
         path: 'forgot-password',
